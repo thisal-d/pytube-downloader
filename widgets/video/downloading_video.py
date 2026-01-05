@@ -324,6 +324,7 @@ class DownloadingVideo(Video):
                             )
                             self.bytes_downloaded += len(chunk)
                             self.total_bytes_downloaded += len(chunk)
+
                             self.set_downloading_progress()
                         else:
                             if self.bytes_downloaded == download_file_size:
@@ -350,7 +351,6 @@ class DownloadingVideo(Video):
                     
         except Exception as error:
             print(f"downloading_video.py L-336 : {error}")
-            self.total_bytes_downloaded -= self.bytes_downloaded
             self.set_downloading_failed()
     
     
@@ -486,31 +486,33 @@ class DownloadingVideo(Video):
         """
         Set the status to 'failed' if downloading fails.
         """
-
-        if self.download_state == "removed":
-            return
-        
-        self.download_state = "failed"
-    
-        if self.mode == "playlist":
-            self.video_download_status_callback(self, self.download_state)
+        try:
+            if self.download_state == "removed":
+                return
             
-        if GeneralSettings.settings["re_download_automatically"] and self.automatically_re_download_count < 5:
-            time.sleep(1)
-            self.automatically_re_download_count += 1
-            self.download_video()
-        else:
-            DownloadManager.unregister_from_active(self)
-            self.display_status()
-            self.pause_resume_btn.place_forget()
-            self.re_download_btn.place(
-                rely=0.5,
-                anchor="w",
-                relx=1,
-                x=-80 * AppearanceSettings.get_scale("decimal"))
+            self.download_state = "failed"
+        
+            if self.mode == "playlist":
+                self.video_download_status_callback(self, self.download_state)
+                
+            if GeneralSettings.settings["re_download_automatically"] and self.automatically_re_download_count < 5:
+                time.sleep(1)
+                self.automatically_re_download_count += 1
+                self.download_video()
+            else:
+                DownloadManager.unregister_from_active(self)
+                self.display_status()
+                self.pause_resume_btn.place_forget()
+                self.re_download_btn.place(
+                    rely=0.5,
+                    anchor="w",
+                    relx=1,
+                    x=-80 * AppearanceSettings.get_scale("decimal"))
 
-        if self.mode == "video":
-            self.show_notification()
+            if self.mode == "video":
+                self.show_notification()
+        except Exception as error:
+            print("downloading_video.py L-540 : ", error)
             
     def set_converting_failed(self):
         VideoConvertManager.unregister_from_active(self)
