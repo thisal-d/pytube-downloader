@@ -2,7 +2,7 @@ import customtkinter as ctk
 from tkinter import PhotoImage
 import tkinter as tk
 from settings import AppearanceSettings
-from services import ThemeManager
+from services import ThemeManager, LanguageManager
 from utils import ImageUtility, FileUtility
 from typing import Callable
 from PIL import Image
@@ -52,6 +52,7 @@ class HistoryObject(ctk.CTkFrame):
         self.create_widgets()
         self.place_widgets()
         self.set_data()
+        self.set_widgets_texts()
         
         self.set_widgets_sizes()
         self.set_widgets_fonts()
@@ -61,7 +62,7 @@ class HistoryObject(ctk.CTkFrame):
         self.set_widgets_colors()
         
         self.bind_widgets_events()
-        
+        LanguageManager.register_widget(self)
         ThemeManager.register_widget(self)
         
     def get_resized_thumbnail(self, thumbnail_path: str):
@@ -203,7 +204,6 @@ class HistoryObject(ctk.CTkFrame):
         if self.default_thumbnail_used:
             self.configure_default_thumbnails()
         
-
     def set_widgets_accent_color(self):
         """Set accent color for widgets."""
 
@@ -216,7 +216,13 @@ class HistoryObject(ctk.CTkFrame):
     def update_widgets_accent_color(self):
         """Update accent color for widgets."""
         self.set_widgets_accent_color()
+
+    def set_widgets_texts(self):
+        self.download_btn.configure(text=LanguageManager.data["download"])
         
+    def update_widgets_text(self):
+        self.set_widgets_texts()
+
     def set_widgets_sizes(self):
         """Set sizes for widgets."""
         scale = AppearanceSettings.get_scale("decimal")

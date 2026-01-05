@@ -972,6 +972,15 @@ class App(ctk.CTk):
             border_color=ThemeManager.get_color_based_on_theme("primary"),
         )
 
+        if self.selected_download_mode == "playlist":
+            self.playlist_radio_btn.configure(
+                text_color=ThemeManager.get_color_based_on_theme("text_normal"),
+            )
+        elif self.selected_download_mode == "video":
+            self.video_radio_btn.configure(
+                text_color=ThemeManager.get_color_based_on_theme("text_normal"),
+            )
+        
         # Add URL button colors
         self.add_url_btn.configure(bg_color=ThemeManager.get_color_based_on_theme("background"),
                                    text_color=ThemeManager.get_color_based_on_theme("background"))
@@ -1674,9 +1683,11 @@ class App(ctk.CTk):
         if download_mode == "playlist":
             self.playlist_radio_btn.select()
             self.video_radio_btn.deselect()
+            self.video_radio_btn.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
         else:
             self.video_radio_btn.select()
             self.playlist_radio_btn.deselect()
+            self.playlist_radio_btn.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
 
     def update_active_videos_count_status(self) -> None:
         """
