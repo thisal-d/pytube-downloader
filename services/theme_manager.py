@@ -53,15 +53,23 @@ class ThemeManager:
 
     @staticmethod
     def set_title_bar_style(window: ctk.CTk) -> None:
-        try:
-            title_bar_color.set(window, ThemeManager.get_color_based_on_theme("background")) # sets the titlebar color to magenta
-        except Exception as error:
-            print("Error on changin title bar color")
-
-        try:
-            title_bar_text_color.set(window, ThemeManager.get_color_based_on_theme("text_muted")) # sets the titlebar color to magenta
-        except Exception as error:
-            print("Error on changin title text color")
+        while True:
+            try:
+                title_bar_color.set(window, ThemeManager.get_color_based_on_theme("background")) # sets the titlebar color to background color
+                break
+            except Exception as error:
+                print("Error on changin title bar color")
+                time.sleep(1)
+                continue
+        
+        while True:
+            try:
+                title_bar_text_color.set(window, ThemeManager.get_color_based_on_theme("text_muted")) # sets the titlebar color to text color
+                break
+            except Exception as error:
+                print("Error on changin title text color")
+                time.sleep(1)
+                continue
 
     @staticmethod
     def update_accent_color() -> None:

@@ -267,6 +267,12 @@ class AboutPanel(ctk.CTkFrame):
 
         self.developed_by__label.configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
 
+        if  self.contribute_data_retrieve_status == "Failed":
+            self.contributors_status_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_warning"))
+        else:
+            self.contributors_status_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
+
+
         self.contributors_frame.configure(fg_color=ThemeManager.get_color_based_on_theme("background"))
 
         self.explore_btns_frame.configure(fg_color=ThemeManager.get_color_based_on_theme("background"))
@@ -296,7 +302,7 @@ class AboutPanel(ctk.CTkFrame):
 
         self.developed_by__label.grid(row=2, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")
         self.dash4_label.grid(row=2, column=1, pady=(pady, 0), sticky="w")
-        self.contributors_status_label.grid(row=2, column=3, pady=(pady, 0), sticky="w")
+        self.contributors_status_label.grid(row=2, column=2, pady=(pady, 0), sticky="w")
 
        
         self.explore_title_label.grid(row=4, column=0, padx=(100, 0), pady=(pady, 0), sticky="w")

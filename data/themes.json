@@ -1,5 +1,9 @@
 {
-    "Dark Default" : "dark_default",
-    "Light Default" : "light_default",
-    "Cyberpunk Black" : "cyberpunk_black"
+    "Dark Default": "dark_default",
+    "Light Default": "light_default",
+    "Cyberpunk Black": "cyberpunk_black",
+    "Nord Breeze": "nord_breeze",
+    "Neon Abyss": "neon_abyss",
+    "Deep Ocean": "deep_ocean",
+    "Forest Emerald": "forest_emerald"
 }

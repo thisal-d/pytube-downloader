@@ -1,0 +1,14 @@
+{
+    "background": "#022c22",
+    "background_warning": "#f97316",
+    "background_warning_hover": "#ea580c",
+    "border": "#064e3b",
+    "foreground": "#ecfdf5",
+    "primary": "#065f46",
+    "primary_hover": "#047857",
+    "secondary": "#047857",
+    "secondary_hover": "#059669",
+    "text_muted": "#6ee7b7",
+    "text_normal": "#d1fae5",
+    "text_warning": "#fdba74"
+}

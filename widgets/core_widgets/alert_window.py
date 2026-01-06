@@ -29,7 +29,9 @@ class AlertWindow(ctk.CTkToplevel):
         super().__init__(
             master=master,
             width=width,
-            height=height)
+            height=height,
+            fg_color=ThemeManager.get_color_based_on_theme("background")
+        )
 
         # If ensure_previous_closed is true, wait until the previous alert window is closed
         if wait_for_previous:
@@ -63,31 +65,51 @@ class AlertWindow(ctk.CTkToplevel):
         self.transient(master)
         self.grab_set()
 
+        self.info_image = ctk.CTkImage(Image.open("assets\\ui images\\info.png"), size=(70 * scale, 70 * scale))
         self.info_image_label = ctk.CTkLabel(
             master=self,
             text="",
-            width=70, height=70
+            image=self.info_image,
+            width=70 * scale, height=70*scale
         )
 
         self.error_msg_label = ctk.CTkLabel(
             master=self,
+            text=LanguageManager.data[self.alert_msg],
+            font=("Arial", 13 * scale, "bold"),
+            text_color=ThemeManager.get_color_based_on_theme("text_warning")
         )
         
         if more_details is not None:
             self.more_details_label = ctk.CTkLabel(
                 master=self,
+                text=self.more_details,
+                font=("Arial", 12 * scale, "bold"),
+                text_color=ThemeManager.get_color_based_on_theme("text_normal")
             )
 
         if cancel_button_display is True:
             self.cancel_button = ctk.CTkButton(
                 master=self,
                 command=self.on_click_cancel_button,
+                text=LanguageManager.data["cancel"],
+                font=("Arial", 12 * scale, "bold"),
+                width=100 * scale, height=28 * scale,
+                text_color=ThemeManager.get_color_based_on_theme("text_normal"),
+                fg_color=ThemeManager.get_color_based_on_theme("background_warning"),
+                hover_color=ThemeManager.get_color_based_on_theme("background_warning_hover"),
             )
 
         if ok_button_display is True:
             self.ok_button = ctk.CTkButton(
                 master=self,
                 command=self.on_click_ok_button,
+                text=LanguageManager.data["ok"],
+                font=("Arial", 12 * scale, "bold"),
+                width=100 * scale, height=28 * scale,
+                text_color=ThemeManager.get_color_based_on_theme("text_normal"),
+                fg_color=ThemeManager.get_accent_color("normal"),
+                hover_color=ThemeManager.get_accent_color("hover"),
             )
 
         self.ok_button_callback = ok_button_callback
@@ -99,11 +121,12 @@ class AlertWindow(ctk.CTkToplevel):
         self.move("event")
 
         self.place_widgets()
-        self.set_widgets_sizes()
-        self.set_widgets_texts()
-        self.set_widgets_fonts()
-        self.set_widgets_colors()
-        self.set_widgets_accent_color()
+        
+        # self.set_widgets_sizes()
+        # self.set_widgets_texts()
+        # self.set_widgets_fonts()
+        # self.set_widgets_colors()
+        # self.set_widgets_accent_color()
 
         ThemeManager.set_title_bar_style(self)
 
@@ -148,19 +171,26 @@ class AlertWindow(ctk.CTkToplevel):
         """Set colors for the widgets."""
         self.configure(fg_color=ThemeManager.get_color_based_on_theme("background"))
         
-        self.ok_button.configure(
-            text_color=ThemeManager.get_color_based_on_theme("text_normal"),
-        )
+        if self.is_ok_button_displayed:
+            self.ok_button.configure(
+                text_color=ThemeManager.get_color_based_on_theme("text_normal"),
+            )
         
-        self.cancel_button.configure(
-            text_color=ThemeManager.get_color_based_on_theme("text_normal"),
-            fg_color=ThemeManager.get_color_based_on_theme("background_warning"),
-            hover_color=ThemeManager.get_color_based_on_theme("background_warning_hover"),
-        )
+        if self.is_cancel_button_displayed:
+            self.cancel_button.configure(
+                text_color=ThemeManager.get_color_based_on_theme("text_normal"),
+                fg_color=ThemeManager.get_color_based_on_theme("background_warning"),
+                hover_color=ThemeManager.get_color_based_on_theme("background_warning_hover"),
+            )
         
         self.error_msg_label.configure(
             text_color=ThemeManager.get_color_based_on_theme("text_warning")
         )
+
+        if self.more_details is not None:
+            self.more_details_label.configure(
+                text_color=ThemeManager.get_color_based_on_theme("text_normal")
+            )
 
     def update_widgets_colors(self):
         """Update colors for the widgets."""

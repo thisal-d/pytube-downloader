@@ -2134,6 +2134,8 @@ class App(ctk.CTk):
         self.tray_menu.stop()
         self.deiconify()
 
+        print("Run here")
+
     def minimize_to_tray(self) -> None:
         """
         Minimize the application window to the system tray.

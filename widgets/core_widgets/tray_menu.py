@@ -43,3 +43,4 @@ class TrayMenu:
         Stop the system tray icon.
         """
         self.tray_icon.stop()
+        self.tray_icon._hide()
