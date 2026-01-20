@@ -3,7 +3,7 @@ from typing import List, Literal, Union, Callable
 from widgets.play_list import PlayList
 from widgets.video.downloading_video import DownloadingVideo
 from widgets.video.added_video import AddedVideo
-from utils import GuiUtils
+from utils import GuiUtils, ValueConvertUtility
 from settings import AppearanceSettings, GeneralSettings
 from services import (
     LanguageManager,
@@ -38,6 +38,8 @@ class DownloadingPlayList(PlayList):
         self.status_label: Union[ctk.CTkLabel, None] = None
         self.re_download_btn: Union[ctk.CTkButton, None] = None
         self.videos_status_counts_label: Union[ctk.CTkLabel, None] = None
+        self.total_download_size_progress_label: Union[ctk.CTkLabel, None] = None
+
         # callback utils
         self.playlist_download_complete_callback = playlist_download_complete_callback
         self.added_videos: List[AddedVideo] = videos
@@ -209,13 +211,26 @@ class DownloadingPlayList(PlayList):
                 
     def videos_progress_track(self):
         total_completion: float = 0
+        total_bytes_downloaded: float = 0
+        total_bytes_to_download: float = 0
         for video in self.videos:
             if video.file_size != 0:
                 total_completion += video.total_bytes_downloaded / video.file_size
+                total_bytes_downloaded += video.total_bytes_downloaded
+                total_bytes_to_download += video.file_size
         avg_completion = total_completion / self.playlist_video_count
-        self.set_playlist_download_progress(avg_completion)
+        self.set_playlist_download_progress(avg_completion, total_bytes_downloaded, total_bytes_to_download)
+    
+    def get_total_download_size(self):
+        total_bytes_to_download: float = 0
+        for video in self.videos:
+            if video.file_size != 0:
+                total_bytes_to_download += video.file_size
+        return total_bytes_to_download
 
-    def set_playlist_download_progress(self, progress):
+    def set_playlist_download_progress(self, progress, total_bytes_downloaded, total_bytes_to_download):
+        self.total_download_size_progress_label.configure(
+            text=f"{ValueConvertUtility.convert_size(total_bytes_downloaded, decimal_points=2)} / {ValueConvertUtility.convert_size(total_bytes_to_download, decimal_points=2)}")
         self.download_progress_bar.set(progress)
         self.download_percentage_label.configure(text=f"{round(progress * 100, 2)} %")
 
@@ -306,6 +321,8 @@ class DownloadingPlayList(PlayList):
             command=self.re_download_videos, hover=False
         )
         self.videos_status_counts_label = ctk.CTkLabel(master=self.sub_frame)
+        self.total_download_size_progress_label = ctk.CTkLabel(master=self.sub_frame, anchor="w", text="11.00GB")
+
 
     def set_widgets_texts(self):
         super().set_widgets_texts()
@@ -318,6 +335,11 @@ class DownloadingPlayList(PlayList):
                  f"{LanguageManager.data['downloaded']} : {len(self.downloaded_videos)}",
         )
 
+        total_download_size = ValueConvertUtility.convert_size(self.get_total_download_size(), decimal_points=2)
+        self.total_download_size_progress_label.configure(
+            text=f"0.0 B / {total_download_size}"
+        )
+
     def set_widgets_fonts(self):
         super().set_widgets_fonts()
 
@@ -325,6 +347,7 @@ class DownloadingPlayList(PlayList):
 
         self.download_percentage_label.configure(font=("Segoe UI", 12 * scale, "bold"))
         self.status_label.configure(font=("Segoe UI", 12 * scale, "bold"))
+        self.total_download_size_progress_label.configure(font=("Segoe UI", 12 * scale, "bold"))
         self.re_download_btn.configure(font=("Segoe UI", 20 * scale, "normal"))
         self.videos_status_counts_label.configure(font=("Segoe UI", 11 * scale, "normal"))
 
@@ -338,6 +361,7 @@ class DownloadingPlayList(PlayList):
         self.download_percentage_label.configure(height=15 * scale)
         self.status_label.configure(height=15 * scale)
         self.re_download_btn.configure(width=15 * scale, height=15 * scale)
+        self.total_download_size_progress_label.configure(height=15 * scale)
         self.videos_status_counts_label.configure(height=15 * scale)
 
     # configure widgets colors depend on root width
@@ -363,6 +387,7 @@ class DownloadingPlayList(PlayList):
         self.status_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
         self.re_download_btn.configure(fg_color=ThemeManager.get_color_based_on_theme("primary"))
         self.download_progress_bar.configure(fg_color=ThemeManager.get_color_based_on_theme("secondary"))
+        self.total_download_size_progress_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
         
     def on_mouse_enter_self(self, _event):
         # super().on_mouse_enter_self(_event)
@@ -377,7 +402,7 @@ class DownloadingPlayList(PlayList):
 
         """
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
-        self.re_download_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
+        self.re_download_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal".++0])
         """
         
     def bind_widgets_events(self):
@@ -405,6 +430,7 @@ class DownloadingPlayList(PlayList):
         self.download_progress_bar.place(relwidth=1, rely=0.4, anchor="w")
         self.status_label.place(relx=0.775, anchor="n", rely=0.55)
         self.videos_status_counts_label.place(rely=0.875, relx=0.5, anchor="center")
+        self.total_download_size_progress_label.place(rely=0.2, relx=0.8, anchor="center")
 
     # configure widgets sizes and place location depend on root width
     def configure_widget_sizes(self, _event):
@@ -413,6 +439,7 @@ class DownloadingPlayList(PlayList):
             width=self.master_frame.winfo_width() / 2 - (50 * scale + 15 * scale) - (20 * scale)
         )
         self.sub_frame.configure(width=(self.winfo_width() / 2) - (110 * scale))
+
 
     def __del__(self):
         """Clear the Memory."""
@@ -432,6 +459,7 @@ class DownloadingPlayList(PlayList):
         del self.failed_videos
         del self.downloaded_videos
         del self.download_state
+        del self.total_download_size_progress_label
 
         super().__del__()
         
@@ -443,6 +471,7 @@ class DownloadingPlayList(PlayList):
         self.status_label.destroy()
         self.re_download_btn.destroy()
         self.videos_status_counts_label.destroy()
+        self.total_download_size_progress_label.destroy()
         
         super().destroy_widgets()
     

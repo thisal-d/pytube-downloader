@@ -142,7 +142,7 @@ class PlayList(ctk.CTkFrame):
             hover=False,
         )
         self.url_label = ctk.CTkLabel(master=self.info_frame, anchor="w", text=self.playlist_url)
-
+        
         self.remove_btn = ctk.CTkButton(master=self.playlist_main_frame, command=self.kill, text="X", hover=False)
         self.playlist_video_count_label = ctk.CTkLabel(
             master=self.playlist_main_frame,
@@ -526,23 +526,19 @@ class PlayList(ctk.CTkFrame):
         self.view_btn.place(rely=0.7, x=15 * scale, anchor="w")
 
         self.info_frame.place(x=50*scale + 15 * scale, y=1)
-
         self.playlist_title_label.place(x=0, rely=0.2, anchor="w")
         self.channel_btn.place(x=0, rely=0.5, anchor="w")
         self.url_label.place(x=0, rely=0.8, anchor="w")
 
         self.playlist_video_count_label.place(relx=1, x=-40 * scale, rely=0.8, anchor="w")
         self.remove_btn.place(relx=1, x=-25 * scale, y=3 * scale)
-
-        self.playlist_videos_frame.place(
-            x=0, y=0,
-            relwidth=1
-        )
+        
+        self.playlist_videos_frame.place(x=0, y=0, relwidth=1)
         
         self.previous_btn.place(rely=1, y=-20 * scale, relx=0.5, anchor="e", x=-40 * scale)
         self.next_btn.place(rely=1, y=-20 * scale, relx=0.5, anchor="w", x=40 * scale)
         self.tab_info_label.place(rely=1, y=-20 * scale, relx=0.5, anchor="center")
-        
+
     def configure_widget_sizes(self, _event):
         ...
         
@@ -572,6 +568,7 @@ class PlayList(ctk.CTkFrame):
         del self.playlist_video_count_label
         del self.playlist_item_frame
         
+        del self.total_download_size_progress_label
         del self.videos
         
         del self.last_viewed_index
@@ -597,6 +594,7 @@ class PlayList(ctk.CTkFrame):
         self.previous_btn.destroy()
         self.next_btn.destroy()
         self.tab_info_label.destroy()
+        self.self.total_download_size_progress_label.destroy()
         
         super().destroy()
 
