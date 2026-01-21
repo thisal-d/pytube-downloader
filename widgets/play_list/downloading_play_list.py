@@ -39,10 +39,13 @@ class DownloadingPlayList(PlayList):
         self.re_download_btn: Union[ctk.CTkButton, None] = None
         self.videos_status_counts_label: Union[ctk.CTkLabel, None] = None
         self.total_download_size_progress_label: Union[ctk.CTkLabel, None] = None
+        self.estimated_time_label: Union[ctk.CTkLabel, None] = None
+        self.time_taken_label: Union[ctk.CTkLabel, None] = None                                                                                                                 
 
         # callback utils
         self.playlist_download_complete_callback = playlist_download_complete_callback
         self.added_videos: List[AddedVideo] = videos
+
         # vars for state track
         self.waiting_videos: List[DownloadingVideo] = []
         self.downloading_videos: List[DownloadingVideo] = []
@@ -51,7 +54,7 @@ class DownloadingPlayList(PlayList):
         self.downloaded_videos: List[DownloadingVideo] = []
         self.converting_videos: List[DownloadingVideo] = []
         self.download_state: Literal["waiting", "downloading", "downloaded", "failed", "converting"] = "waiting"
-
+         
         super().__init__(
             root=root,
             master=master,

@@ -109,6 +109,9 @@ class DownloadingVideo(Video):
         # download speed
         self.total_download_time: int = 0
 
+        self.download_start_time: int = 0
+        self.current_download_taken_time: int = 0
+
         super().__init__(
             root=root,
             master=master,
@@ -291,6 +294,7 @@ class DownloadingVideo(Video):
 
     def download_file(self, download_stream, download_file_name: str, download_file_size: int, download_type: Literal["audio", "video", "video_only", "audio_for_video"] = None):        
         self.bytes_downloaded = 0
+        self.download_time = 0
         try:
             with open(download_file_name, "wb") as self.downloading_file:
                 stream = pytube_request.stream(download_stream.url)
@@ -314,6 +318,7 @@ class DownloadingVideo(Video):
                         chunk = next(stream, None)
                         time_e = time.time()
                         self.total_download_time += time_e - time_s
+                        self.download_time += time_e - time_s
                         if chunk:
                             self.downloading_file.write(chunk)
                             self.net_speed_label.configure(
@@ -346,6 +351,7 @@ class DownloadingVideo(Video):
                     except Exception as error:
                         print(f"downloading_video.py L-332 : {error}")
                         self.total_bytes_downloaded -= self.bytes_downloaded
+                        self.total_download_time -= self.download_time
                         self.set_downloading_failed()
                         break
                     
