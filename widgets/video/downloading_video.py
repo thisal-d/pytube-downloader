@@ -86,6 +86,7 @@ class DownloadingVideo(Video):
         self.process_percentage_label: Union[ctk.CTkLabel, None] = None
         self.download_type_label: Union[ctk.CTkLabel, None] = None
         self.net_speed_label: Union[ctk.CTkLabel, None] = None
+        self.download_time_label: Union[ctk.CTkLabel, None] = None
         self.status_label: Union[ctk.CTkLabel, None] = None
         self.re_download_btn: Union[ctk.CTkButton, None] = None
         self.pause_resume_btn: Union[ctk.CTkButton, None] = None
@@ -319,6 +320,7 @@ class DownloadingVideo(Video):
                         time_e = time.time()
                         self.total_download_time += time_e - time_s
                         self.download_time += time_e - time_s
+                        self.download_time_label.configure(text=f"{ValueConvertUtility.convert_time(self.download_time)}")
                         if chunk:
                             self.downloading_file.write(chunk)
                             self.net_speed_label.configure(
@@ -345,6 +347,7 @@ class DownloadingVideo(Video):
                                 break
                             else:
                                 self.total_bytes_downloaded -= self.bytes_downloaded
+                                self.total_download_time -= self.download_time
                                 self.set_downloading_failed()
                                 break
                             
@@ -623,6 +626,7 @@ class DownloadingVideo(Video):
         self.download_type_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.net_speed_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.status_label = ctk.CTkLabel(master=self.sub_frame, text="")
+        self.download_time_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.re_download_btn = ctk.CTkButton(
             master=self,
             text="⟳",
@@ -657,6 +661,7 @@ class DownloadingVideo(Video):
         self.process_percentage_label.configure(font=("Segoe UI", 12 * scale, "bold"))
         self.download_type_label.configure(font=("Segoe UI", 12 * scale, "bold"))
         self.net_speed_label.configure(font=("Segoe UI", 12 * scale, "bold"), )
+        self.download_time_label.configure(font=("Segoe UI", 12 * scale, "bold"), )
         self.status_label.configure(font=("Segoe UI", 12 * scale, "bold"))
         self.re_download_btn.configure(font=("Segoe UI", 20 * scale, "normal"))
         self.pause_resume_btn.configure(font=("Segoe UI", 20 * scale, "normal"))
@@ -678,6 +683,7 @@ class DownloadingVideo(Video):
         self.net_speed_label.configure(height=20 * scale)
         self.status_label.configure(height=20 * scale)
         self.re_download_btn.configure(width=15 * scale, height=15 * scale)
+        self.download_time_label.configure(height=20 * scale, width=20 * scale)
         self.pause_resume_btn.configure(width=15 * scale, height=15 * scale)
 
     def set_widgets_accent_color(self):
@@ -713,6 +719,7 @@ class DownloadingVideo(Video):
         self.download_progress_bar.configure(fg_color=ThemeManager.get_color_based_on_theme("secondary"))
         self.net_speed_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
         self.status_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
+        self.download_time_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
         self.re_download_btn.configure(fg_color=ThemeManager.get_color_based_on_theme("primary"))
         self.pause_resume_btn.configure(fg_color=ThemeManager.get_color_based_on_theme("primary"))
 
@@ -784,8 +791,9 @@ class DownloadingVideo(Video):
         """
         super().place_widgets()
         self.sub_frame.place(relx=0.5, y=1)
-        self.download_progress_label.place(relx=0.25, anchor="center", rely=0.2)
-        self.download_type_label.place(relx=0.75, anchor="center", rely=0.2)
+        self.download_progress_label.place(relx=0.2, anchor="center", rely=0.2)
+        self.download_type_label.place(relx=0.55, anchor="center", rely=0.2)
+        self.download_time_label.place(relx=0.8, anchor="center", rely=0.2)
         self.download_progress_bar.place(relwidth=1, rely=0.5, anchor="w")
         self.process_percentage_label.place(relx=0.115, anchor="center", rely=0.8)
         self.net_speed_label.place(relx=0.445, anchor="center", rely=0.8)

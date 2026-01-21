@@ -231,6 +231,12 @@ class DownloadingPlayList(PlayList):
                 total_bytes_to_download += video.file_size
         return total_bytes_to_download
 
+    def get_total_download_time_taken(self):
+        total_download_time: float = 0
+        for video in self.videos:
+            total_download_time += video.total_download_time
+        return total_download_time
+
     def set_playlist_download_progress(self, progress, total_bytes_downloaded, total_bytes_to_download):
         self.total_download_size_progress_label.configure(
             text=f"{ValueConvertUtility.convert_size(total_bytes_downloaded, decimal_points=2)} / {ValueConvertUtility.convert_size(total_bytes_to_download, decimal_points=2)}")

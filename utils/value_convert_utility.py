@@ -18,9 +18,9 @@ class ValueConvertUtility:
         seconds = seconds - (hours * 3600) - (minutes * 60)
 
         if hours > 0:
-            converted_time = f"{hours}:{minutes:0>2}:{seconds:0>2}"
+            converted_time = f"{hours}:{minutes:0>2}:{int(seconds):0>2}"
         else:
-            converted_time = f"{minutes}:{seconds:0>2}"
+            converted_time = f"{minutes}:{int(seconds):0>2}"
 
         return converted_time
 
