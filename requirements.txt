@@ -8,3 +8,4 @@ pytubefix
 win11toast
 ctkchart
 hPyT
+requests
