@@ -24,7 +24,8 @@ from services import (
 from utils import (
     GuiUtils,
     ValueConvertUtility,
-    FileUtility
+    FileUtility,
+    DownloadInfoUtility
 )
 
 
@@ -109,9 +110,6 @@ class DownloadingVideo(Video):
         
         # download speed
         self.total_download_time: int = 0
-
-        self.download_start_time: int = 0
-        self.current_download_taken_time: int = 0
 
         super().__init__(
             root=root,
@@ -294,6 +292,7 @@ class DownloadingVideo(Video):
             )
 
     def download_file(self, download_stream, download_file_name: str, download_file_size: int, download_type: Literal["audio", "video", "video_only", "audio_for_video"] = None):        
+        # store current download status if need to rollback to previous status
         self.bytes_downloaded = 0
         self.download_time = 0
         try:
@@ -318,11 +317,12 @@ class DownloadingVideo(Video):
                         self.pause_resume_btn_command = "pause"
                         chunk = next(stream, None)
                         time_e = time.time()
-                        self.total_download_time += time_e - time_s
-                        self.download_time += time_e - time_s
-                        self.download_time_label.configure(text=f"{ValueConvertUtility.convert_time(self.download_time)}")
                         if chunk:
                             self.downloading_file.write(chunk)
+                            # Calculate running time
+                            self.total_download_time += time_e - time_s
+                            self.download_time += time_e - time_s
+
                             self.net_speed_label.configure(
                                 text=ValueConvertUtility.convert_size(
                                     len(chunk) / (time_e - time_s),
@@ -488,6 +488,16 @@ class DownloadingVideo(Video):
         self.download_progress_label.configure(
             text=f"{ValueConvertUtility.convert_size(self.total_bytes_downloaded, 2)} / {self.converted_file_size}"
         )
+
+        estimated_time = DownloadInfoUtility.get_estimated_time(self.download_type_info["size"], self.total_download_time, self.total_bytes_downloaded)
+        print("total size", ValueConvertUtility.convert_size(self.download_type_info["size"], decimal_points=2))
+        print("total download time", ValueConvertUtility.convert_time(self.total_download_time))
+        print("total bytes downloaded", ValueConvertUtility.convert_size(self.total_bytes_downloaded, decimal_points=2))
+        print("estimated time", ValueConvertUtility.convert_time(estimated_time))
+        print("-"*10)
+        
+        self.download_time_label.configure(text=f"{ValueConvertUtility.convert_time(estimated_time)}")
+
         if self.mode == "playlist":
             self.video_download_progress_callback()
             
