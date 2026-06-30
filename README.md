@@ -16,7 +16,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![UI](https://img.shields.io/badge/UI-tkinter%2Bcustomtkinter-green)
-![Version](https://img.shields.io/badge/version-6.1.0-orange)
+![Version](https://img.shields.io/badge/version-6.2.0-orange)
 
 ---
 
