@@ -13,3 +13,4 @@ build
 build_definitions.h
 scons-report.txt
 scons-error-report.pickle
+nuitka-crash-report.xml
