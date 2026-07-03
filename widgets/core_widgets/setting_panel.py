@@ -1,64 +1,55 @@
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
+
 import customtkinter as ctk
-from widgets import (
-    GeneralPanel,
-    AppearancePanel,
-    NetworkPanel,
-    DownloadsPanel,
-    AboutPanel,
-    NavigationPanel
-)
-from services import (
-    ThemeManager
-)
+
+from services import ThemeManager
 from settings import (
     AppearanceSettings,
 )
+from widgets import AboutPanel, AppearancePanel, DownloadsPanel, GeneralPanel, NavigationPanel, NetworkPanel
 
 
 class SettingPanel(ctk.CTkFrame):
     def __init__(
-            self,
-            master: Any = None,
-            # changes callbacks
-            theme_settings_change_callback: Callable = None,
-            general_settings_change_callback: Callable = None,
-            restart_callback: Callable = None):
-        
+        self,
+        master: Any = None,
+        # changes callbacks
+        theme_settings_change_callback: Callable = None,
+        general_settings_change_callback: Callable = None,
+        restart_callback: Callable = None,
+    ):
+
         super().__init__(
             master=master,
         )
         self.general_panel = GeneralPanel(
-            master=self,
-            general_settings_change_callback=general_settings_change_callback
+            master=self, general_settings_change_callback=general_settings_change_callback
         )
         self.appearance_panel = AppearancePanel(
             master=self,
             theme_settings_change_callback=theme_settings_change_callback,
-            restart_callback=restart_callback
+            restart_callback=restart_callback,
         )
 
         self.network_panel = NetworkPanel(
-            master=self,
-            general_settings_change_callback=general_settings_change_callback
+            master=self, general_settings_change_callback=general_settings_change_callback
         )
 
         self.downloads_panel = DownloadsPanel(
             master=self,
             general_settings_change_callback=general_settings_change_callback,
-            restart_callback=restart_callback 
+            restart_callback=restart_callback,
         )
 
-        self.about_panel = AboutPanel(
-            master=self
-        )
+        self.about_panel = AboutPanel(master=self)
 
         self.panels = [
             self.general_panel,
             self.appearance_panel,
             self.network_panel,
             self.downloads_panel,
-            self.about_panel
+            self.about_panel,
         ]
         self.navigation_panel = NavigationPanel(
             master=self,
@@ -68,18 +59,15 @@ class SettingPanel(ctk.CTkFrame):
             width=200 * AppearanceSettings.get_scale("decimal"),
         )
 
-        self.vertical_line = ctk.CTkFrame(
-            master=self,
-            width=2
-        )
-        
+        self.vertical_line = ctk.CTkFrame(master=self, width=2)
+
         self.set_widgets_accent_color()
         self.set_widgets_colors()
         self.set_widgets_sizes()
         self.place_widgets()
-        
+
         ThemeManager.register_widget(self)
-        
+
     def place_widgets(self) -> None:
         self.navigation_panel.pack(side="left", fill="y")
         self.vertical_line.pack(side="left", fill="y")

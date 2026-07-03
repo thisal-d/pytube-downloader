@@ -1,14 +1,8 @@
-from app import App
-from settings import (
-    AppearanceSettings,
-    GeneralSettings
-)
 import threading
-from services import (
-    LanguageManager,
-    ThemeManager,
-    InformationManager
-)
+
+from app import App
+from services import InformationManager, LanguageManager, ThemeManager
+from settings import AppearanceSettings, GeneralSettings
 
 
 def main() -> None:
@@ -29,16 +23,18 @@ def main() -> None:
         app.run()
     except Exception as error:
         import traceback
+
         error_details = traceback.format_exc()
         print(f"PyTube Downloader failed to start:\n{error_details}")
         try:
             import tkinter as tk
             from tkinter import messagebox
+
             _root = tk.Tk()
             _root.withdraw()
             messagebox.showerror(
                 "PyTube Downloader - Startup Error",
-                f"The application failed to start.\n\nReason: {error}\n\nCheck the console for full details."
+                f"The application failed to start.\n\nReason: {error}\n\nCheck the console for full details.",
             )
             _root.destroy()
         except Exception:

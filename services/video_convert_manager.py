@@ -1,7 +1,8 @@
-import threading
-import queue
-from typing import Callable
 import os
+import queue
+import threading
+from collections.abc import Callable
+
 from settings.general_settings import GeneralSettings
 
 
@@ -34,8 +35,10 @@ class VideoConvertManager:
             # Block until signalled (no busy-wait)
             VideoConvertManager._signal_queue.get()
 
-            if (GeneralSettings.settings["max_simultaneous_converts"] > VideoConvertManager.active_convert_count and
-                    VideoConvertManager.queued_convert_count > 0):
+            if (
+                GeneralSettings.settings["max_simultaneous_converts"] > VideoConvertManager.active_convert_count
+                and VideoConvertManager.queued_convert_count > 0
+            ):
                 try:
                     VideoConvertManager.queued_convert_count -= 1
                     VideoConvertManager.queued_converts[0].convert_video()

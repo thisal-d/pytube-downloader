@@ -1,19 +1,18 @@
-from typing import Any, List, Callable, Literal
+from collections.abc import Callable
+from typing import Any, Literal
+
 import customtkinter as ctk
+
+from services import LanguageManager, ThemeManager
+from settings import AppearanceSettings
+from utils import JsonUtility, SettingsValidateUtility
 from widgets.components.accent_color_button import AccentColorButton
-from services import ThemeManager, LanguageManager
-from utils import SettingsValidateUtility, JsonUtility
-from settings import (
-    AppearanceSettings
-)
 
 
 class AppearancePanel(ctk.CTkFrame):
     def __init__(
-            self,
-            master: Any = None,
-            theme_settings_change_callback: Callable = None,
-            restart_callback: Callable = None):
+        self, master: Any = None, theme_settings_change_callback: Callable = None, restart_callback: Callable = None
+    ):
 
         super().__init__(
             master=master,
@@ -36,7 +35,7 @@ class AppearancePanel(ctk.CTkFrame):
             width=140 * AppearanceSettings.get_scale("decimal"),
             height=28 * AppearanceSettings.get_scale("decimal"),
         )
-        
+
         """
         self.system_theme_check_box = ctk.CTkCheckBox(
             master=self,
@@ -56,7 +55,7 @@ class AppearancePanel(ctk.CTkFrame):
         )
 
         # add accent  color buttons
-        self.accent_color_buttons: List[AccentColorButton] = []
+        self.accent_color_buttons: list[AccentColorButton] = []
         for accent_color in AppearanceSettings.settings["accent"]["colors"]:
             button = AccentColorButton(
                 master=self.accent_color_frame,
@@ -89,9 +88,7 @@ class AppearancePanel(ctk.CTkFrame):
         )
 
         self.custom_accent_color_apply_btn = ctk.CTkButton(
-            master=self,
-            state="disabled",
-            command=self.apply_custom_accent_color
+            master=self, state="disabled", command=self.apply_custom_accent_color
         )
 
         self.custom_accent_color_alert_text = ctk.CTkTextbox(
@@ -116,11 +113,7 @@ class AppearancePanel(ctk.CTkFrame):
             to=200,
         )
 
-        self.scale_apply_btn = ctk.CTkButton(
-            master=self,
-            state="disabled",
-            command=self.ask_to_restart
-        )
+        self.scale_apply_btn = ctk.CTkButton(master=self, state="disabled", command=self.ask_to_restart)
 
         self.scale_value_entry = ctk.CTkEntry(
             master=self,
@@ -142,21 +135,17 @@ class AppearancePanel(ctk.CTkFrame):
             number_of_steps=320,
             to=100,
         )
-        
+
         self.opacity_value_entry = ctk.CTkEntry(
             master=self,
         )
 
-        
-        self.settings_reset_button = ctk.CTkButton(
-            master=self, 
-            command=self.reset_settings
-        )    
+        self.settings_reset_button = ctk.CTkButton(master=self, command=self.reset_settings)
 
         # callbacks for settings changes
         self.restart_callback = restart_callback
         self.theme_settings_change_callback = theme_settings_change_callback
-        
+
         self.scale_entry_previous_value: str = ""
         self.opacity_entry_previous_value: str = ""
 
@@ -172,31 +161,32 @@ class AppearancePanel(ctk.CTkFrame):
         # Register widget with ThemeManager
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
-        
+
     def set_value_to_entry(self, entry: ctk.CTkEntry, value: str) -> None:
         entry.delete(0, "end")
         entry.insert(0, value)
 
     def cancel_scale_settings_resetting(self):
         self.scale_change_slider.set(AppearanceSettings.get_scale("perentage"))
-        self.set_value_to_entry(self.scale_value_entry, f"{AppearanceSettings.get_scale("perentage")} %")
-        
+        self.set_value_to_entry(self.scale_value_entry, f"{AppearanceSettings.get_scale('perentage')} %")
+
     def reset_settings(self):
         self.apply_theme_mode("Dark Default")
         self.theme_combo_box.set("Dark Default")
-        
+
         if not self.accent_color_buttons[0].pressed:
-            self.accent_color_buttons[0].on_mouse_enter_self('event')
+            self.accent_color_buttons[0].on_mouse_enter_self("event")
             self.apply_accent_color(self.accent_color_buttons[0])
-            
+
         self.scale_change_slider.set(100)
         self.apply_opacity(100)
 
         self.opacity_change_slider.set(100)
         self.set_value_to_entry(self.scale_value_entry, f"{100.0} %")
-        
+
         if AppearanceSettings.get_scale("perentage") != 100:
             from widgets import AlertWindow
+
             scale = AppearanceSettings.get_scale("decimal")
             AlertWindow(
                 master=self.master.master,
@@ -208,10 +198,9 @@ class AppearancePanel(ctk.CTkFrame):
                 ok_button_display=True,
                 cancel_button_display=True,
                 ok_button_callback=self.apply_scale,
-                cancel_button_callback=self.cancel_scale_settings_resetting
+                cancel_button_callback=self.cancel_scale_settings_resetting,
             )
-        
-    
+
     def release_all_accent_color_buttons(self):
         """
         Release all pressed accent color buttons.
@@ -266,12 +255,12 @@ class AppearancePanel(ctk.CTkFrame):
         """
         Disable synchronization with the OS.
         """
-        
+
         # self.system_theme_check_box.configure(command=self.sync_theme_with_os)
-        
+
         self.theme_combo_box.configure(state="normal")
-        AppearanceSettings.settings["root"]["theme_mode"] = (
-            AppearanceSettings.themes.index(ctk.get_appearance_mode().lower())
+        AppearanceSettings.settings["root"]["theme_mode"] = AppearanceSettings.themes.index(
+            ctk.get_appearance_mode().lower()
         )
         self.theme_settings_change_callback("theme_mode")
 
@@ -297,6 +286,7 @@ class AppearancePanel(ctk.CTkFrame):
 
     def ask_to_restart(self):
         from widgets import AlertWindow
+
         scale = AppearanceSettings.get_scale("decimal")
         AlertWindow(
             master=self.master.master,
@@ -306,7 +296,7 @@ class AppearancePanel(ctk.CTkFrame):
             height=int(130 * scale),
             ok_button_display=True,
             cancel_button_display=True,
-            ok_button_callback=self.apply_scale
+            ok_button_callback=self.apply_scale,
         )
 
     def apply_scale(self):
@@ -325,48 +315,45 @@ class AppearancePanel(ctk.CTkFrame):
         if SettingsValidateUtility.validate_accent_color(colors):
             fg_color = colors.split(",")[0]
             hover_color = colors.split(",")[1]
-            self.custom_accent_color_display_btn.configure(
-                fg_color=fg_color,
-                hover_color=hover_color
-            )
+            self.custom_accent_color_display_btn.configure(fg_color=fg_color, hover_color=hover_color)
             self.custom_accent_color_entry.delete(0, "end")
             self.custom_accent_color_entry.insert("end", f"{fg_color}, {hover_color}")
             self.custom_accent_color_apply_btn.configure(state="normal")
         else:
             self.custom_accent_color_display_btn.configure(
-                fg_color=ThemeManager.get_color_based_on_theme("background"),   
-                hover_color=ThemeManager.get_color_based_on_theme("background")
-            )     
+                fg_color=ThemeManager.get_color_based_on_theme("background"),
+                hover_color=ThemeManager.get_color_based_on_theme("background"),
+            )
             self.custom_accent_color_apply_btn.configure(state="disabled")
-            
+
     def validate_scale_value(self, _event):
         """
         Validate scale value
         """
         if self.scale_entry_previous_value == self.scale_value_entry.get():
             return
-        
+
         self.scale_entry_previous_value = self.scale_value_entry.get()
         text = self.scale_value_entry.get()
         value = text.strip().replace(" ", "")
         if SettingsValidateUtility.validate_scale_value(value):
-            value = value[0: -1]
+            value = value[0:-1]
             value = float(int(float(value)))
             self.scale_change_slider.set(value)
             self.change_scale(value)
-            
+
     def validate_opacity_value(self, _event):
         """
         Validate opacity value
         """
         if self.opacity_entry_previous_value == self.opacity_value_entry.get():
             return
-        
+
         self.opacity_entry_previous_value = self.opacity_value_entry.get()
         text = self.opacity_value_entry.get()
         value = text.strip().replace(" ", "")
         if SettingsValidateUtility.validate_opacity_value(value):
-            value = value[0: -1]
+            value = value[0:-1]
             value = float(value)
             self.opacity_change_slider.set(value)
             self.apply_opacity(value)
@@ -385,7 +372,7 @@ class AppearancePanel(ctk.CTkFrame):
             dropdown_fg_color=ThemeManager.get_color_based_on_theme("primary"),
             text_color=ThemeManager.get_color_based_on_theme("text_normal"),
             dropdown_text_color=ThemeManager.get_color_based_on_theme("text_muted"),
-            fg_color=ThemeManager.get_color_based_on_theme("primary")
+            fg_color=ThemeManager.get_color_based_on_theme("primary"),
         )
 
         """
@@ -422,12 +409,12 @@ class AppearancePanel(ctk.CTkFrame):
         self.scale_change_slider.configure(
             button_color=ThemeManager.get_color_based_on_theme("secondary"),
             button_hover_color=ThemeManager.get_color_based_on_theme("secondary_hover"),
-            fg_color=ThemeManager.get_color_based_on_theme("primary")
-        )     
+            fg_color=ThemeManager.get_color_based_on_theme("primary"),
+        )
         self.scale_value_entry.configure(
             fg_color=ThemeManager.get_color_based_on_theme("primary"),
             text_color=ThemeManager.get_color_based_on_theme("text_normal"),
-            border_color=ThemeManager.get_color_based_on_theme("border")
+            border_color=ThemeManager.get_color_based_on_theme("border"),
         )
         self.scale_apply_btn.configure(
             text_color=ThemeManager.get_color_based_on_theme("background"),
@@ -438,20 +425,20 @@ class AppearancePanel(ctk.CTkFrame):
         self.opacity_change_slider.configure(
             button_color=ThemeManager.get_color_based_on_theme("secondary"),
             button_hover_color=ThemeManager.get_color_based_on_theme("secondary_hover"),
-            fg_color=ThemeManager.get_color_based_on_theme("primary")
-        )     
+            fg_color=ThemeManager.get_color_based_on_theme("primary"),
+        )
         self.opacity_value_entry.configure(
             fg_color=ThemeManager.get_color_based_on_theme("primary"),
             border_color=ThemeManager.get_color_based_on_theme("border"),
-            text_color=ThemeManager.get_color_based_on_theme("text_normal")
+            text_color=ThemeManager.get_color_based_on_theme("text_normal"),
         )
 
         self.settings_reset_button.configure(
             fg_color=ThemeManager.get_color_based_on_theme("background_warning"),
             hover_color=ThemeManager.get_color_based_on_theme("background_warning_hover"),
-            text_color=ThemeManager.get_color_based_on_theme("text_normal")
+            text_color=ThemeManager.get_color_based_on_theme("text_normal"),
         )
-    
+
     def update_widgets_colors(self):
         """Update colors for the widgets."""
         self.set_widgets_colors()
@@ -460,9 +447,7 @@ class AppearancePanel(ctk.CTkFrame):
         """
         Update accent color.
         """
-        self.theme_combo_box.configure(
-            dropdown_hover_color=ThemeManager.get_accent_color("hover")
-        )
+        self.theme_combo_box.configure(dropdown_hover_color=ThemeManager.get_accent_color("hover"))
         self.custom_accent_color_apply_btn.configure(
             fg_color=ThemeManager.get_accent_color("normal"),
             hover_color=ThemeManager.get_accent_color("hover"),
@@ -481,7 +466,7 @@ class AppearancePanel(ctk.CTkFrame):
             fg_color=ThemeManager.get_accent_color("normal"),
             hover_color=ThemeManager.get_accent_color("hover"),
         )
-        
+
         self.opacity_change_slider.configure(
             progress_color=ThemeManager.get_accent_color("normal"),
         )
@@ -506,7 +491,7 @@ class AppearancePanel(ctk.CTkFrame):
         self.accent_color_label.grid(row=1, column=0, padx=(100, 0), pady=(pady, 0), sticky="nw")
         self.dash2_label.grid(row=1, column=1, padx=(30, 30), pady=(pady, 0), sticky="nw")
         self.accent_color_frame.grid(row=1, column=2, pady=(pady, 0), sticky="w")
-        
+
         # place accent color buttons
         max_columns = 3
         row = 0
@@ -536,9 +521,9 @@ class AppearancePanel(ctk.CTkFrame):
         self.dash5_label.grid(row=5, column=1, padx=(30, 30), pady=(pady, 0), sticky="w")
         self.opacity_change_slider.grid(row=5, column=2, pady=(pady, 0), sticky="sw")
         self.opacity_value_entry.grid(row=5, column=3, padx=(20, 0), pady=(pady, 0), sticky="w")
-        
+
         self.settings_reset_button.grid(row=5, column=3, pady=(pady, 0), padx=(100 * scale, 0), sticky="w")
-        
+
     def set_widgets_sizes(self):
         scale = AppearanceSettings.get_scale("decimal")
         self.theme_combo_box.configure(width=140 * scale, height=28 * scale)
@@ -548,43 +533,34 @@ class AppearancePanel(ctk.CTkFrame):
             accent_color_button.configure(width=30 * scale, height=30 * scale, corner_radius=6 * scale)
         self.custom_accent_color_display_btn.configure(width=30 * scale, height=30 * scale, corner_radius=6 * scale)
         self.custom_accent_color_entry.configure(width=140 * scale, height=28 * scale)
-        self.custom_accent_color_apply_btn.configure(width=80*scale, height=24 * scale)
+        self.custom_accent_color_apply_btn.configure(width=80 * scale, height=24 * scale)
         self.custom_accent_color_alert_text.configure(width=590 * scale, height=85 * scale)
-        
+
         self.scale_change_slider.configure(width=180 * scale, height=18 * scale)
         self.scale_value_entry.configure(width=70 * scale, height=24 * scale)
-        self.scale_apply_btn.configure(width=80*scale, height=24 * scale)
+        self.scale_apply_btn.configure(width=80 * scale, height=24 * scale)
         self.opacity_change_slider.configure(width=180 * scale, height=18 * scale)
         self.opacity_value_entry.configure(width=70 * scale, height=24 * scale)
-        
-        self.settings_reset_button.configure(width=80*scale, height=24 * scale)
+
+        self.settings_reset_button.configure(width=80 * scale, height=24 * scale)
 
     def set_widgets_texts(self):
         self.theme_label.configure(text=LanguageManager.data["theme"])
-        
-        self.theme_combo_box.configure(
-            values = self.theme_names
-        )
-        
+
+        self.theme_combo_box.configure(values=self.theme_names)
+
         self.theme_combo_box.set(AppearanceSettings.settings["theme"]["display_name"])
 
         # self.system_theme_check_box.configure(text=LanguageManager.data["sync_with_os"])
         self.accent_color_label.configure(text=LanguageManager.data["accent_color"])
-        self.custom_accent_color_label.configure(
-            text=LanguageManager.data["custom_accent_color"]
-        )
+        self.custom_accent_color_label.configure(text=LanguageManager.data["custom_accent_color"])
         self.custom_accent_color_apply_btn.configure(text=LanguageManager.data["apply"])
         self.custom_accent_color_alert_text.delete(1.0, "end")
-        self.custom_accent_color_alert_text.insert(
-            "end",
-            LanguageManager.data["custom_accent_color_alert_text"]
-        )
+        self.custom_accent_color_alert_text.insert("end", LanguageManager.data["custom_accent_color_alert_text"])
         self.scale_label.configure(text=LanguageManager.data["scale"])
         self.scale_apply_btn.configure(text=LanguageManager.data["apply"])
         self.opacity_label.configure(text=LanguageManager.data["transparent"])
-        self.settings_reset_button.configure(
-            text=LanguageManager.data["reset"]
-        )
+        self.settings_reset_button.configure(text=LanguageManager.data["reset"])
 
     def update_widgets_text(self):
         self.set_widgets_texts()
@@ -625,30 +601,32 @@ class AppearancePanel(ctk.CTkFrame):
         self.custom_accent_color_alert_text.bind("<Key>", lambda e: "break")
         if AppearanceSettings.settings["accent"]["selected"]["is_custom"] == False:
             for button in self.accent_color_buttons:
-                if button.fg_color == AppearanceSettings.settings["accent"]["selected"]["color"][0] and \
-                        button.hover_color == AppearanceSettings.settings["accent"]["selected"]["color"][1]:
+                if (
+                    button.fg_color == AppearanceSettings.settings["accent"]["selected"]["color"][0]
+                    and button.hover_color == AppearanceSettings.settings["accent"]["selected"]["color"][1]
+                ):
                     button.on_mouse_enter_self("event")
                     button.set_pressed()
         else:
             # add default value to entry using data
             self.custom_accent_color_entry.insert(
                 "end",
-                AppearanceSettings.settings["accent"]["selected"]["color"][0] +
-                ", " + AppearanceSettings.settings["accent"]["selected"]["color"][1]
+                AppearanceSettings.settings["accent"]["selected"]["color"][0]
+                + ", "
+                + AppearanceSettings.settings["accent"]["selected"]["color"][1],
             )
             self.validate_custom_accent_color("event")
             self.custom_accent_color_apply_btn.configure(state="disabled")
-
 
         self.theme_combo_box.set(AppearanceSettings.settings["theme"]["display_name"])
 
         self.opacity_change_slider.set(AppearanceSettings.get_opacity("percentage"))
 
         self.scale_change_slider.set(AppearanceSettings.get_scale("percentage"))
-        self.scale_entry_previous_value = f"{AppearanceSettings.get_scale("percentage")} %"
+        self.scale_entry_previous_value = f"{AppearanceSettings.get_scale('percentage')} %"
 
-        self.set_value_to_entry(self.scale_value_entry, f"{AppearanceSettings.get_scale("percentage")} %")
-        self.set_value_to_entry(self.opacity_value_entry, f"{AppearanceSettings.get_opacity("percentage")} %")
+        self.set_value_to_entry(self.scale_value_entry, f"{AppearanceSettings.get_scale('percentage')} %")
+        self.set_value_to_entry(self.opacity_value_entry, f"{AppearanceSettings.get_opacity('percentage')} %")
 
     def bind_widgets_events(self):
         """
@@ -665,11 +643,13 @@ class AppearancePanel(ctk.CTkFrame):
                 fg_color=ThemeManager.get_color_based_on_theme("primary_hover"),
                 button_color=ThemeManager.get_color_based_on_theme("secondary_hover"),
             )
+
         def on_mouse_leave_theme_combo_box(event_):
             self.theme_combo_box.configure(
                 fg_color=ThemeManager.get_color_based_on_theme("primary"),
                 button_color=ThemeManager.get_color_based_on_theme("secondary"),
             )
+
         self.theme_combo_box.bind("<Enter>", on_mouse_enter_theme_combo_box)
         self.theme_combo_box.bind("<Leave>", on_mouse_leave_theme_combo_box)
 
@@ -692,10 +672,12 @@ class AppearancePanel(ctk.CTkFrame):
             self.custom_accent_color_entry.configure(
                 fg_color=ThemeManager.get_color_based_on_theme("primary_hover"),
             )
+
         def on_mouse_leave_custom_accent_color_entry(event_):
             self.custom_accent_color_entry.configure(
                 fg_color=ThemeManager.get_color_based_on_theme("primary"),
             )
+
         self.custom_accent_color_entry.bind("<Enter>", on_mouse_enter_custom_accent_color_entry)
         self.custom_accent_color_entry.bind("<Leave>", on_mouse_leave_custom_accent_color_entry)
 
@@ -703,21 +685,24 @@ class AppearancePanel(ctk.CTkFrame):
             self.scale_value_entry.configure(
                 fg_color=ThemeManager.get_color_based_on_theme("primary_hover"),
             )
+
         def on_mouse_leave_scale_value_entry(event_):
             self.scale_value_entry.configure(
                 fg_color=ThemeManager.get_color_based_on_theme("primary"),
             )
+
         self.scale_value_entry.bind("<Enter>", on_mouse_enter_scale_value_entry)
         self.scale_value_entry.bind("<Leave>", on_mouse_leave_scale_value_entry)
-
 
         def on_mouse_enter_opacity_value_entry(event_):
             self.opacity_value_entry.configure(
                 fg_color=ThemeManager.get_color_based_on_theme("primary_hover"),
             )
+
         def on_mouse_leave_opacity_value_entry(event_):
             self.opacity_value_entry.configure(
                 fg_color=ThemeManager.get_color_based_on_theme("primary"),
             )
+
         self.opacity_value_entry.bind("<Enter>", on_mouse_enter_opacity_value_entry)
         self.opacity_value_entry.bind("<Leave>", on_mouse_leave_opacity_value_entry)

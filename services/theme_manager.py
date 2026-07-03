@@ -1,26 +1,29 @@
-import customtkinter as ctk
+import threading
 import time
 from pathlib import Path
-from typing import List, Tuple, Any, Literal
-import threading
+from typing import Any, Literal
+
+import customtkinter as ctk
+from hPyT import title_bar_color, title_bar_text_color
+
 from settings import AppearanceSettings
 from utils import JsonUtility
-from hPyT import title_bar_color, title_bar_text_color
+
 
 class ThemeManager:
     # List to keep track of all registered child objects
-    registered_widgets: List[Any] = []
+    registered_widgets: list[Any] = []
 
     # Variable to track current theme mode
     current_theme_mode: Literal["Dark", "Light", None] = None
 
     theme_colors: dict = None
-    
+
     @staticmethod
     def update_theme() -> None:
         ThemeManager.initialize()
         ThemeManager.update_widgets_colors()
-        
+
     @staticmethod
     def get_color_based_on_theme(color: str) -> str:
         """Returns appropriate color based on the current theme mode."""
@@ -64,7 +67,7 @@ class ThemeManager:
                 title_bar_color.set(window, ThemeManager.get_color_based_on_theme("background"))
                 break
             except Exception as error:
-                delay = _BACKOFF_BASE * (2 ** attempt)
+                delay = _BACKOFF_BASE * (2**attempt)
                 print(f"theme_manager: failed to set title bar color (attempt {attempt + 1}/{_MAX_RETRIES}): {error}")
                 if attempt < _MAX_RETRIES - 1:
                     time.sleep(delay)
@@ -74,8 +77,10 @@ class ThemeManager:
                 title_bar_text_color.set(window, ThemeManager.get_color_based_on_theme("text_muted"))
                 break
             except Exception as error:
-                delay = _BACKOFF_BASE * (2 ** attempt)
-                print(f"theme_manager: failed to set title bar text color (attempt {attempt + 1}/{_MAX_RETRIES}): {error}")
+                delay = _BACKOFF_BASE * (2**attempt)
+                print(
+                    f"theme_manager: failed to set title bar text color (attempt {attempt + 1}/{_MAX_RETRIES}): {error}"
+                )
                 if attempt < _MAX_RETRIES - 1:
                     time.sleep(delay)
 

@@ -1,6 +1,3 @@
-from typing import Union
-
-
 class ValueConvertUtility:
     @staticmethod
     def convert_time(seconds: int) -> str:
@@ -25,7 +22,7 @@ class ValueConvertUtility:
         return converted_time
 
     @staticmethod
-    def convert_size(size: Union[int, float], decimal_points: int) -> str:
+    def convert_size(size: int | float, decimal_points: int) -> str:
         """
         Convert size to a human-readable format (e.g., KB, MB, GB) with specified decimal points.
 
@@ -48,7 +45,7 @@ class ValueConvertUtility:
             converted_size = f"{int(size)} {data_units[index]}"
 
         return converted_size
-    
+
     @staticmethod
     def MB_KB_to_Bytes(value: str) -> str:
         if value.endswith("MB"):

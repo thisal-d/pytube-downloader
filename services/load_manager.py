@@ -1,7 +1,8 @@
-import threading
 import queue
+import threading
+from collections.abc import Callable
+
 from settings.general_settings import GeneralSettings
-from typing import Callable, List
 
 
 class LoadManager:
@@ -12,8 +13,8 @@ class LoadManager:
     # Class variables to keep track of active and queued loads
     active_load_count: int = 0
     queued_load_count: int = 0
-    queued_loads: List = []
-    active_loads: List = []
+    queued_loads: list = []
+    active_loads: list = []
     status_change_callback: Callable = None
 
     # Queue used to signal the manager thread when the queue state changes
@@ -31,8 +32,10 @@ class LoadManager:
             # Block until signalled (no busy-wait)
             LoadManager._signal_queue.get()
 
-            if (GeneralSettings.settings["max_simultaneous_loads"] > LoadManager.active_load_count and
-                    LoadManager.queued_load_count > 0):
+            if (
+                GeneralSettings.settings["max_simultaneous_loads"] > LoadManager.active_load_count
+                and LoadManager.queued_load_count > 0
+            ):
                 try:
                     # Dequeue a video, initiate loading, and update counts
                     LoadManager.queued_load_count -= 1

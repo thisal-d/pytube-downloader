@@ -1,5 +1,6 @@
-import time
 import threading
+import time
+
 from settings import GeneralSettings
 
 

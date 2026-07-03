@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+
 from utils.logger import get_logger
 
 _log = get_logger(__name__)
@@ -128,7 +128,7 @@ class FileUtility:
         return str(candidate)
 
     @staticmethod
-    def delete_files(directory: str, files_to_keep: List[str] = None) -> None:
+    def delete_files(directory: str, files_to_keep: list[str] = None) -> None:
         """
         Delete files in the specified directory, except those listed in files_to_keep.
 

@@ -3,16 +3,17 @@ import customtkinter as ctk
 
 class AccentColorButton(ctk.CTkButton):
     def __init__(
-            self,
-            master=None,
-            width=1,
-            height=1,
-            border_width=0,
-            corner_radius=0,
-            text="",
-            hover_color=None,
-            fg_color=None,
-            size_change=0):
+        self,
+        master=None,
+        width=1,
+        height=1,
+        border_width=0,
+        corner_radius=0,
+        text="",
+        hover_color=None,
+        fg_color=None,
+        size_change=0,
+    ):
 
         super().__init__(
             master=master,
@@ -34,23 +35,17 @@ class AccentColorButton(ctk.CTkButton):
         self.configure(
             width=self.cget("width") + self.size_change,
             height=self.cget("height") + self.size_change,
-            fg_color=self.hover_color
+            fg_color=self.hover_color,
         )
-        self.grid(
-            padx=self.grid_info()["padx"] - self.size_change,
-            pady=self.grid_info()["pady"] - self.size_change
-        )
+        self.grid(padx=self.grid_info()["padx"] - self.size_change, pady=self.grid_info()["pady"] - self.size_change)
 
     def on_mouse_leave_self(self, _event):
         self.configure(
             width=self.cget("width") - self.size_change,
             height=self.cget("height") - self.size_change,
-            fg_color=self.fg_color
+            fg_color=self.fg_color,
         )
-        self.grid(
-            padx=self.grid_info()["padx"] + self.size_change,
-            pady=self.grid_info()["pady"] + self.size_change
-        )
+        self.grid(padx=self.grid_info()["padx"] + self.size_change, pady=self.grid_info()["pady"] + self.size_change)
 
     def set_pressed(self):
         self.pressed = True

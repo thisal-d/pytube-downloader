@@ -1,25 +1,21 @@
 import os
+
 from utils import JsonUtility
+
 
 class InformationManager:
     INFO = {
         "contributors": {},
         "explore_links": [
-            {
-                "name": "GitHub",
-                "url": "https://github.com/Thisal-D/PyTube-Downloader"
-            },
-            {
-                "name": "SourceForge",
-                "url": "https://sourceforge.net/projects/pytube-downloader/"
-            }
+            {"name": "GitHub", "url": "https://github.com/Thisal-D/PyTube-Downloader"},
+            {"name": "SourceForge", "url": "https://sourceforge.net/projects/pytube-downloader/"},
         ],
         "logo": "⚡",
         "name": "PyTube Downloader",
-        "version": "6.2.0"
+        "version": "6.2.0",
     }
     info = {}
-    default_info_directory = f"data"
+    default_info_directory = "data"
     default_info_file = default_info_directory + "\\info.json"
     user_info_directory = f"C:\\Users\\{os.getlogin()}\\AppData\\Local\\PyTube Downloader\\data"
     user_info_file = user_info_directory + "\\info.json"
@@ -36,8 +32,7 @@ class InformationManager:
 
     @staticmethod
     def initialize():
-        """
-        """
+        """ """
 
         if InformationManager.is_backup_exists():
             InformationManager.info = JsonUtility.read_from_file(InformationManager.user_info_file)
@@ -46,15 +41,13 @@ class InformationManager:
 
         if not InformationManager.are_all_keys_present():
             InformationManager.add_missing_keys()
-        
-        InformationManager.resolve_info_conflicts()
 
+        InformationManager.resolve_info_conflicts()
 
     @staticmethod
     def save_info():
         JsonUtility.write_to_file(InformationManager.user_info_file, InformationManager.info)
-    
-    
+
     @staticmethod
     def resolve_info_conflicts():
         InformationManager.info["version"] = InformationManager.INFO["version"]

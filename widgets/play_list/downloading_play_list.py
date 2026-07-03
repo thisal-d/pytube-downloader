@@ -1,60 +1,60 @@
+from collections.abc import Callable
+from typing import Literal
+
 import customtkinter as ctk
-from typing import List, Literal, Union, Callable
-from widgets.play_list import PlayList
-from widgets.video.downloading_video import DownloadingVideo
-from widgets.video.added_video import AddedVideo
-from utils import GuiUtils, ValueConvertUtility, DownloadInfoUtility
+
+from services import LanguageManager, NotificationManager, ThemeManager
 from settings import AppearanceSettings, GeneralSettings
-from services import (
-    LanguageManager,
-    NotificationManager,
-    ThemeManager
-)
+from utils import DownloadInfoUtility, GuiUtils, ValueConvertUtility
+from widgets.play_list import PlayList
+from widgets.video.added_video import AddedVideo
+from widgets.video.downloading_video import DownloadingVideo
 
 
 class DownloadingPlayList(PlayList):
     def __init__(
-            self,
-            root: ctk.CTk = None,
-            master: ctk.CTkScrollableFrame = None,
-            width: int = None,
-            height: int = None,
-            # playlist details
-            channel_url: str = None,
-            playlist_url: str = None,
-            playlist_title: str = "---------",
-            channel: str = "---------",
-            playlist_video_count: int = 0,
-            # videos of playlist
-            videos: List[AddedVideo] = None,
-            playlist_original_video_count: int = 0,
-            # playlist download completed callback utils
-            playlist_download_complete_callback: Callable = None):
+        self,
+        root: ctk.CTk = None,
+        master: ctk.CTkScrollableFrame = None,
+        width: int = None,
+        height: int = None,
+        # playlist details
+        channel_url: str = None,
+        playlist_url: str = None,
+        playlist_title: str = "---------",
+        channel: str = "---------",
+        playlist_video_count: int = 0,
+        # videos of playlist
+        videos: list[AddedVideo] = None,
+        playlist_original_video_count: int = 0,
+        # playlist download completed callback utils
+        playlist_download_complete_callback: Callable = None,
+    ):
 
         # widgets
-        self.sub_frame: Union[ctk.CTkFrame, None] = None
-        self.download_progress_bar: Union[ctk.CTkProgressBar, None] = None
-        self.download_percentage_label: Union[ctk.CTkLabel, None] = None
-        self.status_label: Union[ctk.CTkLabel, None] = None
-        self.re_download_btn: Union[ctk.CTkButton, None] = None
-        self.videos_status_counts_label: Union[ctk.CTkLabel, None] = None
-        self.total_download_size_progress_label: Union[ctk.CTkLabel, None] = None
-        self.time_taken_label: Union[ctk.CTkLabel, None] = None
-        self.estimated_remaining_time_label: Union[ctk.CTkLabel, None] = None                                                                                                                 
+        self.sub_frame: ctk.CTkFrame | None = None
+        self.download_progress_bar: ctk.CTkProgressBar | None = None
+        self.download_percentage_label: ctk.CTkLabel | None = None
+        self.status_label: ctk.CTkLabel | None = None
+        self.re_download_btn: ctk.CTkButton | None = None
+        self.videos_status_counts_label: ctk.CTkLabel | None = None
+        self.total_download_size_progress_label: ctk.CTkLabel | None = None
+        self.time_taken_label: ctk.CTkLabel | None = None
+        self.estimated_remaining_time_label: ctk.CTkLabel | None = None
 
         # callback utils
         self.playlist_download_complete_callback = playlist_download_complete_callback
-        self.added_videos: List[AddedVideo] = videos
+        self.added_videos: list[AddedVideo] = videos
 
         # vars for state track
-        self.waiting_videos: List[DownloadingVideo] = []
-        self.downloading_videos: List[DownloadingVideo] = []
-        self.paused_videos: List[DownloadingVideo] = []
-        self.failed_videos: List[DownloadingVideo] = []
-        self.downloaded_videos: List[DownloadingVideo] = []
-        self.converting_videos: List[DownloadingVideo] = []
+        self.waiting_videos: list[DownloadingVideo] = []
+        self.downloading_videos: list[DownloadingVideo] = []
+        self.paused_videos: list[DownloadingVideo] = []
+        self.failed_videos: list[DownloadingVideo] = []
+        self.downloaded_videos: list[DownloadingVideo] = []
+        self.converting_videos: list[DownloadingVideo] = []
         self.download_state: Literal["waiting", "downloading", "downloaded", "failed", "converting"] = "waiting"
-        
+
         self.total_download_size: int = 0
         self.current_download_size: int = 0
         self.current_taken_time: float = 0.0
@@ -69,7 +69,7 @@ class DownloadingPlayList(PlayList):
             playlist_title=playlist_title,
             channel=channel,
             playlist_video_count=playlist_video_count,
-            playlist_original_video_count=playlist_original_video_count
+            playlist_original_video_count=playlist_original_video_count,
         )
 
         self.channel_btn.configure(state="normal")
@@ -112,14 +112,15 @@ class DownloadingPlayList(PlayList):
                 video.pack(fill="x", padx=(20, 0), pady=(1, 0))
                 self.last_viewed_index += 1
             self.videos.append(video)
-            
+
         self.configure_videos_tab_view()
         self.view_btn.configure(state="normal")
 
     def videos_status_track(
-            self,
-            video: DownloadingVideo,
-            state: Literal["waiting", "downloading", "paused", "downloaded", "failed", "removed", "converting"]):
+        self,
+        video: DownloadingVideo,
+        state: Literal["waiting", "downloading", "paused", "downloaded", "failed", "removed", "converting"],
+    ):
         if state == "removed":
             self.videos.remove(video)
             self.configure_videos_tab_view()
@@ -148,7 +149,7 @@ class DownloadingPlayList(PlayList):
             if video in self.waiting_videos:
                 self.waiting_videos.remove(video)
             if video in self.converting_videos:
-                self.converting_videos.remove(video)        
+                self.converting_videos.remove(video)
             self.show_notification(self.failed_videos[-1])
         elif state == "downloading":
             self.downloading_videos.append(video)
@@ -159,7 +160,7 @@ class DownloadingPlayList(PlayList):
             if video in self.paused_videos:
                 self.paused_videos.remove(video)
             if video in self.converting_videos:
-                self.converting_videos.remove(video)        
+                self.converting_videos.remove(video)
         elif state == "paused":
             self.paused_videos.append(video)
             if video in self.downloading_videos:
@@ -179,30 +180,28 @@ class DownloadingPlayList(PlayList):
             if video in self.waiting_videos:
                 self.waiting_videos.remove(video)
             if video in self.downloading_videos:
-                self.downloading_videos.remove(video)    
+                self.downloading_videos.remove(video)
         elif state == "downloaded":
             self.downloaded_videos.append(video)
             if video in self.downloading_videos:
                 self.downloading_videos.remove(video)
             if video in self.converting_videos:
-                self.converting_videos.remove(video)        
+                self.converting_videos.remove(video)
             self.show_notification(self.downloaded_videos[-1])
             if video in self.waiting_videos:
-                self.waiting_videos.remove(video)       
+                self.waiting_videos.remove(video)
 
         # if len is 0 that means all videos are remove :D
         if len(self.videos) != 0:
             self.videos_status_counts_label.configure(
                 text=f"{LanguageManager.data['failed']} : {len(self.failed_videos)} |   "
-                     f"{LanguageManager.data['waiting']} : {len(self.waiting_videos)} |   "
-                     f"{LanguageManager.data['downloading']} : {len(self.downloading_videos)} |   "
-                     f"{LanguageManager.data['converting']} : {len(self.converting_videos)} |   "
-                     f"{LanguageManager.data['paused']} : {len(self.paused_videos)} |   "
-                     f"{LanguageManager.data['downloaded']} : {len(self.downloaded_videos)}",
-                )
-            self.playlist_video_count_label.configure(
-                text=self.playlist_video_count
+                f"{LanguageManager.data['waiting']} : {len(self.waiting_videos)} |   "
+                f"{LanguageManager.data['downloading']} : {len(self.downloading_videos)} |   "
+                f"{LanguageManager.data['converting']} : {len(self.converting_videos)} |   "
+                f"{LanguageManager.data['paused']} : {len(self.paused_videos)} |   "
+                f"{LanguageManager.data['downloaded']} : {len(self.downloaded_videos)}",
             )
+            self.playlist_video_count_label.configure(text=self.playlist_video_count)
 
             if len(self.failed_videos) != 0:
                 self.indicate_downloading_failure()
@@ -212,10 +211,15 @@ class DownloadingPlayList(PlayList):
                     self.indicate_waiting()
                 else:
                     self.indicate_downloading()
-            if len(self.downloading_videos) == 0 and len(self.waiting_videos) == 0 and \
-                    len(self.failed_videos) == 0 and len(self.paused_videos) == 0 and len(self.converting_videos) == 0:
+            if (
+                len(self.downloading_videos) == 0
+                and len(self.waiting_videos) == 0
+                and len(self.failed_videos) == 0
+                and len(self.paused_videos) == 0
+                and len(self.converting_videos) == 0
+            ):
                 self.set_downloading_completed()
-                
+
     def videos_progress_track(self):
         total_completion: float = 0
         total_bytes_downloaded: float = 0
@@ -230,7 +234,7 @@ class DownloadingPlayList(PlayList):
         avg_completion = total_completion / self.playlist_video_count
         self.set_playlist_download_progress(avg_completion, total_bytes_downloaded, total_bytes_to_download)
         self.set_estimated_time(total_bytes_to_download, total_download_time, total_bytes_downloaded)
-        
+
         self.total_download_size = total_bytes_to_download
         self.current_download_size = total_bytes_downloaded
         self.current_taken_time = total_download_time
@@ -250,7 +254,8 @@ class DownloadingPlayList(PlayList):
 
     def set_playlist_download_progress(self, progress, total_bytes_downloaded, total_bytes_to_download):
         self.total_download_size_progress_label.configure(
-            text=f"{ValueConvertUtility.convert_size(total_bytes_downloaded, decimal_points=2)} / {ValueConvertUtility.convert_size(total_bytes_to_download, decimal_points=2)}")
+            text=f"{ValueConvertUtility.convert_size(total_bytes_downloaded, decimal_points=2)} / {ValueConvertUtility.convert_size(total_bytes_to_download, decimal_points=2)}"
+        )
         self.download_progress_bar.set(progress)
         self.download_percentage_label.configure(text=f"{round(progress * 100, 2)} %")
 
@@ -262,7 +267,7 @@ class DownloadingPlayList(PlayList):
         video: DownloadingVideo = None
         for video in self.videos:
             if video.download_state == "failed":
-                #video.re_download_video()
+                # video.re_download_video()
                 video.re_download_btn.cget("command")()
 
     def indicate_waiting(self):
@@ -270,20 +275,14 @@ class DownloadingPlayList(PlayList):
         self.re_download_btn.place_forget()
         self.estimated_remaining_time_label.place_forget()
         self.status_label.configure(
-            text=LanguageManager.data['waiting'],
-            text_color=ThemeManager.get_color_based_on_theme("text_normal")
+            text=LanguageManager.data["waiting"], text_color=ThemeManager.get_color_based_on_theme("text_normal")
         )
 
     def indicate_downloading_failure(self):
         self.download_state = "failed"
-        self.re_download_btn.place(
-            relx=1,
-            rely=0.5,
-            anchor="w",
-            x=-80 * AppearanceSettings.get_scale("decimal"))
+        self.re_download_btn.place(relx=1, rely=0.5, anchor="w", x=-80 * AppearanceSettings.get_scale("decimal"))
         self.status_label.configure(
-            text=LanguageManager.data['failed'],
-            text_color=ThemeManager.get_color_based_on_theme("text_warning")
+            text=LanguageManager.data["failed"], text_color=ThemeManager.get_color_based_on_theme("text_warning")
         )
 
     def indicate_downloading(self):
@@ -291,26 +290,24 @@ class DownloadingPlayList(PlayList):
         self.re_download_btn.place_forget()
         self.estimated_remaining_time_label.place(rely=0.15, relx=0.775, anchor="n")
         self.status_label.configure(
-            text=LanguageManager.data['downloading'],
-            text_color=ThemeManager.get_color_based_on_theme("text_normal")
+            text=LanguageManager.data["downloading"], text_color=ThemeManager.get_color_based_on_theme("text_normal")
         )
 
     def set_downloading_completed(self):
         self.download_state = "downloaded"
         self.status_label.configure(
-            text=LanguageManager.data['downloaded'],
-            text_color=ThemeManager.get_color_based_on_theme("text_normal")
+            text=LanguageManager.data["downloaded"], text_color=ThemeManager.get_color_based_on_theme("text_normal")
         )
         self.playlist_download_complete_callback(self)
         self.kill()
-        
+
     def show_notification(self, video: DownloadingVideo):
         if GeneralSettings.settings["alerts"]:
             if video.download_state == "downloaded":
                 if self.playlist_video_count == len(self.downloaded_videos):
                     status_message = LanguageManager.data["download_completed_notifi"]
                 else:
-                   status_message = LanguageManager.data["downloading_notifi"]
+                    status_message = LanguageManager.data["downloading_notifi"]
             elif video.download_state == "failed":
                 status_message = LanguageManager.data["download_failed_notifi"]
             # Show Notification
@@ -326,7 +323,7 @@ class DownloadingPlayList(PlayList):
                 downloaded_file_size=video.total_bytes_downloaded,
                 download_mode=video.mode,
                 download_status=video.download_state,
-                thumbnail_path=video.notification_thumbnail_image_path
+                thumbnail_path=video.notification_thumbnail_image_path,
             )
 
     # create widgets
@@ -339,39 +336,34 @@ class DownloadingPlayList(PlayList):
         self.estimated_remaining_time_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.status_label = ctk.CTkLabel(master=self.sub_frame)
         self.re_download_btn = ctk.CTkButton(
-            self.playlist_main_frame,
-            text="⟳",
-            command=self.re_download_videos, hover=False
+            self.playlist_main_frame, text="⟳", command=self.re_download_videos, hover=False
         )
         self.videos_status_counts_label = ctk.CTkLabel(master=self.sub_frame)
         self.total_download_size_progress_label = ctk.CTkLabel(master=self.sub_frame, anchor="w", text="11.00GB")
-
 
     def set_widgets_texts(self):
         super().set_widgets_texts()
         self.status_label.configure(text=LanguageManager.data[self.download_state])
         self.videos_status_counts_label.configure(
             text=f"{LanguageManager.data['failed']} : {len(self.failed_videos)} |   "
-                 f"{LanguageManager.data['waiting']} : {len(self.waiting_videos)} |   "
-                 f"{LanguageManager.data['downloading']} : {len(self.downloading_videos)} |   "
-                 f"{LanguageManager.data['paused']} : {len(self.paused_videos)} |   "
-                 f"{LanguageManager.data['downloaded']} : {len(self.downloaded_videos)}",
+            f"{LanguageManager.data['waiting']} : {len(self.waiting_videos)} |   "
+            f"{LanguageManager.data['downloading']} : {len(self.downloading_videos)} |   "
+            f"{LanguageManager.data['paused']} : {len(self.paused_videos)} |   "
+            f"{LanguageManager.data['downloaded']} : {len(self.downloaded_videos)}",
         )
 
         total_download_size = ValueConvertUtility.convert_size(self.get_total_download_size(), decimal_points=2)
-        self.total_download_size_progress_label.configure(
-            text=f"0.0 B / {total_download_size}"
-        )
+        self.total_download_size_progress_label.configure(text=f"0.0 B / {total_download_size}")
 
         if not self.get_total_download_size():
-            self.estimated_remaining_time_label.configure(
-                text=f"{LanguageManager.data['calculating']}"
-            )
+            self.estimated_remaining_time_label.configure(text=f"{LanguageManager.data['calculating']}")
         else:
             self.set_estimated_time(self.total_download_size, self.current_taken_time, self.current_download_size)
 
     def set_estimated_time(self, total_download_size, current_taken_time, current_download_size):
-        eta_time = DownloadInfoUtility.get_estimated_time(total_download_size, current_taken_time, current_download_size)
+        eta_time = DownloadInfoUtility.get_estimated_time(
+            total_download_size, current_taken_time, current_download_size
+        )
         self.estimated_remaining_time_label.configure(
             text=f"{LanguageManager.data['eta']}: {ValueConvertUtility.convert_time(eta_time)}"
         )
@@ -405,29 +397,25 @@ class DownloadingPlayList(PlayList):
     # configure widgets colors depend on root width
     def set_widgets_accent_color(self):
         super().set_widgets_accent_color()
-        self.download_progress_bar.configure(
-            progress_color=ThemeManager.get_accent_color("normal")
-        )
-        self.re_download_btn.configure(
-            text_color=ThemeManager.get_accent_color("normal")
-        )
-    
+        self.download_progress_bar.configure(progress_color=ThemeManager.get_accent_color("normal"))
+        self.re_download_btn.configure(text_color=ThemeManager.get_accent_color("normal"))
+
     def set_widgets_colors(self):
         super().set_widgets_colors()
 
         self.sub_frame.configure(
             fg_color=ThemeManager.get_color_based_on_theme("primary"),
-            bg_color=ThemeManager.get_color_based_on_theme("primary")
+            bg_color=ThemeManager.get_color_based_on_theme("primary"),
         )
-        self.download_percentage_label.configure(
-            text_color=ThemeManager.get_color_based_on_theme("text_muted")
-        )
+        self.download_percentage_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
         self.status_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
         self.re_download_btn.configure(fg_color=ThemeManager.get_color_based_on_theme("primary"))
         self.download_progress_bar.configure(fg_color=ThemeManager.get_color_based_on_theme("secondary"))
-        self.total_download_size_progress_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
+        self.total_download_size_progress_label.configure(
+            text_color=ThemeManager.get_color_based_on_theme("text_muted")
+        )
         self.estimated_remaining_time_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
-        
+
     def on_mouse_enter_self(self, _event):
         # super().on_mouse_enter_self(_event)
 
@@ -443,20 +431,17 @@ class DownloadingPlayList(PlayList):
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
         self.re_download_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal".++0])
         """
-        
+
     def bind_widgets_events(self):
         super().bind_widgets_events()
 
         def on_mouse_enter_re_download_btn(_event):
-            self.re_download_btn.configure(
-                text_color=ThemeManager.get_accent_color("hover")
-            )
+            self.re_download_btn.configure(text_color=ThemeManager.get_accent_color("hover"))
             # self.on_mouse_enter_self(_event)
 
         def on_mouse_leave_download_btn(_event):
-            self.re_download_btn.configure(
-                text_color=ThemeManager.get_accent_color("normal")
-            )
+            self.re_download_btn.configure(text_color=ThemeManager.get_accent_color("normal"))
+
         self.re_download_btn.bind("<Enter>", on_mouse_enter_re_download_btn)
         self.re_download_btn.bind("<Leave>", on_mouse_leave_download_btn)
 
@@ -475,11 +460,8 @@ class DownloadingPlayList(PlayList):
     # configure widgets sizes and place location depend on root width
     def configure_widget_sizes(self, _event):
         scale = AppearanceSettings.get_scale("decimal")
-        self.info_frame.configure(
-            width=self.master_frame.winfo_width() / 2 - (50 * scale + 15 * scale) - (20 * scale)
-        )
+        self.info_frame.configure(width=self.master_frame.winfo_width() / 2 - (50 * scale + 15 * scale) - (20 * scale))
         self.sub_frame.configure(width=(self.winfo_width() / 2) - (110 * scale))
-
 
     def __del__(self):
         """Clear the Memory."""
@@ -489,10 +471,10 @@ class DownloadingPlayList(PlayList):
         del self.status_label
         del self.re_download_btn
         del self.videos_status_counts_label
-        
+
         del self.playlist_download_complete_callback
         del self.added_videos
-        
+
         del self.waiting_videos
         del self.downloading_videos
         del self.paused_videos
@@ -502,7 +484,7 @@ class DownloadingPlayList(PlayList):
         del self.total_download_size_progress_label
 
         super().__del__()
-        
+
     def destroy_widgets(self):
         """Destroy the child widget."""
         self.sub_frame.destroy()
@@ -512,15 +494,14 @@ class DownloadingPlayList(PlayList):
         self.re_download_btn.destroy()
         self.videos_status_counts_label.destroy()
         self.total_download_size_progress_label.destroy()
-        
+
         super().destroy_widgets()
-    
+
     def kill(self):
         self.pack_forget()
-        
+
         for video in self.videos:
             video.video_download_status_callback = GuiUtils.do_nothing
             video.kill()
-        
+
         super().kill()
-        

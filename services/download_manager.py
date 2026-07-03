@@ -1,8 +1,10 @@
-import threading
 import queue
-from settings.general_settings import GeneralSettings
-from typing import Callable, List
+import threading
+from collections.abc import Callable
+
 from pytubefix import request as pytubefix_request
+
+from settings.general_settings import GeneralSettings
 
 
 class DownloadManager:
@@ -13,26 +15,26 @@ class DownloadManager:
     # Class variables to keep track of active and queued loads
     active_download_count: int = 0
     queued_download_count: int = 0
-    queued_downloads: List = []
-    active_downloads: List = []
+    queued_downloads: list = []
+    active_downloads: list = []
     status_change_callback: Callable = None
 
     # Queue used to signal the manager thread when the queue state changes
     _signal_queue: queue.Queue = queue.Queue()
 
-    resolutions: List = [
-        'Audio Only',
-        '144p',
-        '240p',
-        '360p',
-        '480p',
-        '720p',
-        '1080p',
-        '1440p',
-        '2160p',
-        '4320p',
-        '8640p',
-        '17280p'
+    resolutions: list = [
+        "Audio Only",
+        "144p",
+        "240p",
+        "360p",
+        "480p",
+        "720p",
+        "1080p",
+        "1440p",
+        "2160p",
+        "4320p",
+        "8640p",
+        "17280p",
     ]
 
     default_chunk_size: int = 2097152
@@ -49,8 +51,10 @@ class DownloadManager:
             # Block until signalled (no busy-wait)
             DownloadManager._signal_queue.get()
 
-            if (GeneralSettings.settings["max_simultaneous_downloads"] > DownloadManager.active_download_count and
-                    DownloadManager.queued_download_count > 0):
+            if (
+                GeneralSettings.settings["max_simultaneous_downloads"] > DownloadManager.active_download_count
+                and DownloadManager.queued_download_count > 0
+            ):
                 try:
                     DownloadManager.queued_download_count -= 1
                     DownloadManager.queued_downloads[0].download_video()

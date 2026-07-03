@@ -1,33 +1,32 @@
+import threading
+import time
 import tkinter as tk
-from widgets.video import Video
+from collections.abc import Callable
+from typing import Literal
+
 import customtkinter as ctk
 import pytubefix as pytube
-import threading
-from typing import Literal, Union, List, Callable, Tuple, Dict
 from PIL import Image
-import time
+
 from services import (
+    LanguageManager,
     LoadManager,
     ThemeManager,
-    LanguageManager,
     VideoCountTracker,
 )
 from settings import (
     AppearanceSettings,
     GeneralSettings,
 )
-from utils import (
-    ImageUtility,
-    DownloadInfoUtility,
-    FileUtility
-)
+from utils import DownloadInfoUtility, FileUtility, ImageUtility
 from utils.logger import get_logger
+from widgets.video import Video
 
 _log = get_logger(__name__)
 
 
 class AddedVideo(Video):
-    PYTUBE_CLIENTS: List[str] = [
+    PYTUBE_CLIENTS: list[str] = [
         "WEB",
         "WEB_EMBED",
         "WEB_MUSIC",
@@ -50,56 +49,51 @@ class AddedVideo(Video):
         "IOS_KIDS",
         "TV",
         "TV_EMBED",
-        "MEDIA_CONNECT"
+        "MEDIA_CONNECT",
     ]
-    
+
     def __init__(
-            self,
-            root: ctk.CTk,
-            master: Union[ctk.CTkFrame, ctk.CTkScrollableFrame],
-            width: int = 0,
-            height: int = 0,
-            # video url
-            video_url: str = "",
-            # callback functions for buttons
-            video_download_button_click_callback: Callable = None,
-            # state callbacks only use if mode is play list
-            mode: Literal["video", "playlist"] = "video",
-            video_load_status_callback: callable = None):
+        self,
+        root: ctk.CTk,
+        master: ctk.CTkFrame | ctk.CTkScrollableFrame,
+        width: int = 0,
+        height: int = 0,
+        # video url
+        video_url: str = "",
+        # callback functions for buttons
+        video_download_button_click_callback: Callable = None,
+        # state callbacks only use if mode is play list
+        mode: Literal["video", "playlist"] = "video",
+        video_load_status_callback: callable = None,
+    ):
 
         # video info
         self.video_stream_data: pytube.YouTube.streams = None
-        self.support_download_types: Union[List[Dict[str, int]], None] = None
+        self.support_download_types: list[dict[str, int]] | None = None
         # download info
         self.download_quality: Literal["128kbps", "360p", "720p"] = "720p"
         self.download_type: Literal["Audio", "Video"] = "Video"
-        self.selected_download_type_info: Dict = None
+        self.selected_download_type_info: dict = None
         # callback utils
         self.video_download_button_click_callback: Callable = video_download_button_click_callback
         self.video_load_status_callback: Callable = video_load_status_callback
         # state
         self.load_state: Literal["waiting", "loading", "failed", "loaded", "removed"] = "waiting"
         # widgets
-        self.sub_frame: Union[ctk.CTkFrame, None] = None
-        self.resolution_select_menu: Union[ctk.CTkComboBox, None] = None
-        self.download_btn: Union[ctk.CTkButton, None] = None
-        self.status_label: Union[ctk.CTkLabel, None] = None
-        self.reload_btn: Union[ctk.CTkButton, None] = None
+        self.sub_frame: ctk.CTkFrame | None = None
+        self.resolution_select_menu: ctk.CTkComboBox | None = None
+        self.download_btn: ctk.CTkButton | None = None
+        self.status_label: ctk.CTkLabel | None = None
+        self.reload_btn: ctk.CTkButton | None = None
         # video object
-        self.video: Union[pytube.YouTube, None] = None
+        self.video: pytube.YouTube | None = None
 
         self.mode: Literal["video", "playlist"] = mode
         # Track automatically reload count
         self.automatically_reload_count: int = 0
         self.pytube_client_index: int = -1
-        
-        super().__init__(
-            root=root,
-            master=master,
-            width=width,
-            height=height,
-            video_url=video_url
-        )
+
+        super().__init__(root=root, master=master, width=width, height=height, video_url=video_url)
 
         self.set_waiting()
         LoadManager.register(self)
@@ -108,9 +102,7 @@ class AddedVideo(Video):
     def reload_video(self):
         self.load_state = None
         self.reload_btn.place_forget()
-        self.thumbnail_btn.configure(
-            disabledforeground=ThemeManager.get_color_based_on_theme("text_muted")
-        )
+        self.thumbnail_btn.configure(disabledforeground=ThemeManager.get_color_based_on_theme("text_muted"))
         self.set_waiting()
         LoadManager.register(self)
 
@@ -123,15 +115,15 @@ class AddedVideo(Video):
         load_thread.daemon = True
         load_thread.start()
 
-    def get_video_thumbnails(self) -> Tuple[tk.PhotoImage, tk.PhotoImage]:
+    def get_video_thumbnails(self) -> tuple[tk.PhotoImage, tk.PhotoImage]:
         thumbnail_size_for_video_object = (
             int(117 * AppearanceSettings.get_scale("decimal")),
-            int(66 * AppearanceSettings.get_scale("decimal"))
+            int(66 * AppearanceSettings.get_scale("decimal")),
         )
 
         thumbnail_for_video_object_save_directory = "temp/thumbnails/"
         thumbnail_for_video_history_object_save_directory = "history/thumbnails/"
-        
+
         thumbnail_url = self.video.thumbnail_url
         # Generate download path to thumbnail based on url
         file_name = FileUtility.sanitize_filename(thumbnail_url)
@@ -141,17 +133,21 @@ class AddedVideo(Video):
         ImageUtility.download_image(image_url=thumbnail_url, output_image_path=self.original_thumbnail_image_path)
         # Open downloaded thumbnail as Image
         thumbnail = Image.open(self.original_thumbnail_image_path)
-        
+
         # getting downloaded thumbnail width and height
         image_height = thumbnail.height
         image_width = thumbnail.width
-        
+
         # save og thumbnail for notifications
         ignore_pos = int(image_height * 0.4 / 2)
         start_pos = (0, ignore_pos)
         end_pos = (image_width, image_height - ignore_pos)
-        self.notification_thumbnail_image_path = FileUtility.get_available_file_name(thumbnail_for_video_object_save_directory + file_name + "-normal-notify-changed.png")
-        ImageUtility.crop_image(thumbnail, start_position=start_pos, end_position=end_pos).save(self.notification_thumbnail_image_path)
+        self.notification_thumbnail_image_path = FileUtility.get_available_file_name(
+            thumbnail_for_video_object_save_directory + file_name + "-normal-notify-changed.png"
+        )
+        ImageUtility.crop_image(thumbnail, start_position=start_pos, end_position=end_pos).save(
+            self.notification_thumbnail_image_path
+        )
 
         if round(image_width / 4 * 3) <= image_height:
             is_thumbnail_need_to_crop = True
@@ -169,7 +165,7 @@ class AddedVideo(Video):
         corner_radius = int(image_width / 18)
         thumbnail = ImageUtility.create_image_with_rounded_corners(thumbnail, radius=corner_radius)
         thumbnail_hover = ImageUtility.create_image_with_rounded_corners(thumbnail_hover, radius=corner_radius)
-        
+
         ######################################################################################################################
         self.history_normal_thumbnail_image_path = FileUtility.get_available_file_name(
             thumbnail_for_video_history_object_save_directory + file_name + "-normal-changed.png"
@@ -177,10 +173,10 @@ class AddedVideo(Video):
         self.history_hover_thumbnail_image_path = FileUtility.get_available_file_name(
             thumbnail_for_video_history_object_save_directory + file_name + "-hover-changed.png"
         )
-        
+
         thumbnail.save(self.history_normal_thumbnail_image_path)
         thumbnail_hover.save(self.history_hover_thumbnail_image_path)
-        
+
         ######################################################################################################################
 
         thumbnail = ImageUtility.resize_image(image=thumbnail, new_size=thumbnail_size_for_video_object)
@@ -205,7 +201,7 @@ class AddedVideo(Video):
         if AddedVideo.default_thumbnails == (None, None):
             thumbnail_size_for_video_object = (
                 int(117 * AppearanceSettings.get_scale("decimal")),
-                int(66 * AppearanceSettings.get_scale("decimal"))
+                int(66 * AppearanceSettings.get_scale("decimal")),
             )
             thumbnail_for_video_object_save_directory = "temp/thumbnails/"
             file_name = "default-thumbnail"
@@ -246,26 +242,24 @@ class AddedVideo(Video):
                 self.thumbnails = self.get_video_thumbnails()
             else:
                 self.thumbnails = self.get_default_thumbnails()
-            self.support_download_types = (
-                DownloadInfoUtility.sort_download_qualities(
-                    DownloadInfoUtility.get_supported_download_types(self.video_stream_data)
-                )
+            self.support_download_types = DownloadInfoUtility.sort_download_qualities(
+                DownloadInfoUtility.get_supported_download_types(self.video_stream_data)
             )
             self.set_video_data()
             self.set_loading_completed()
             self.download_automatically()
-            
+
         # except pytube.exceptions.BotDetection as error:
         #     print(f"added_video.py L-231 : {error}")
         #    self.load_video()
-        except pytube.exceptions.AgeRestrictedError as error:
+        except pytube.exceptions.AgeRestrictedError:
             self.pytube_client_index = -1
             self.set_loading_failed()
-            
-        except pytube.exceptions.RegexMatchError as error:
+
+        except pytube.exceptions.RegexMatchError:
             self.pytube_client_index = -1
             self.set_loading_failed()
-        
+
         except Exception as error:
             _log.error("retrieve_video_data failed: %s", error)
             if self.pytube_client_index + 1 < len(AddedVideo.PYTUBE_CLIENTS):
@@ -273,7 +267,7 @@ class AddedVideo(Video):
             else:
                 self.pytube_client_index = -1
                 self.set_loading_failed()
-           
+
     def download_video(self):
         self.root.fade_effect()
         self.video_download_button_click_callback(self)
@@ -284,47 +278,51 @@ class AddedVideo(Video):
             self.download_type = "Audio"
         elif "p" in self.download_quality:
             self.download_type = "Video"
-        
+
         selected_download_index = self.resolution_select_menu.cget("values").index(selected_quality)
         self.selected_download_type_info = self.support_download_types[selected_download_index]
         # print("selected_download_type_info", self.selected_download_type_info)
 
     def set_waiting(self):
         self.thumbnail_btn.run_loading_animation()
-        self.status_label.configure(
-            text_color=ThemeManager.get_color_based_on_theme("text_normal")
-        )
+        self.status_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
         self.load_state = "waiting"
         if self.mode == "playlist":
             self.video_load_status_callback(self, self.load_state)
         self.status_label.configure(text=LanguageManager.data["waiting"])
-        
+
     def is_available_resolution(self, resolution: str):
-        for available_resolution in [res.split(" | ")[0].replace(" ", "") for res in self.resolution_select_menu.cget("values")]:
-                if available_resolution == resolution:
-                    return True
+        for available_resolution in [
+            res.split(" | ")[0].replace(" ", "") for res in self.resolution_select_menu.cget("values")
+        ]:
+            if available_resolution == resolution:
+                return True
         return False
-        
+
     def select_download_resolution(self, selected_quality: str):
         if "Audio Only" in selected_quality:
             index = -1
         elif self.is_available_resolution(selected_quality):
-           index = [res.split(" | ")[0].replace(" ", "") for res in self.resolution_select_menu.cget("values")].index(selected_quality)
+            index = [res.split(" | ")[0].replace(" ", "") for res in self.resolution_select_menu.cget("values")].index(
+                selected_quality
+            )
         else:
             available_resolutions_int = [
-                   int(reso.split(" | ")[0].replace(" ", "")[0:-1]) for reso in self.resolution_select_menu.cget("values") if "kbps" not in reso
-                ]
-            
+                int(reso.split(" | ")[0].replace(" ", "")[0:-1])
+                for reso in self.resolution_select_menu.cget("values")
+                if "kbps" not in reso
+            ]
+
             selected_quality_int = int(selected_quality.split(" | ")[0][0:-1])
             for index, available_resolution_int in enumerate(available_resolutions_int):
                 if available_resolution_int <= selected_quality_int:
                     break
-            
+
         self.resolution_select_menu.set(self.resolution_select_menu.cget("values")[index])
-        
+
     def select_download_quality_automatic(self):
         self.select_download_resolution(GeneralSettings.settings["automatic_download"]["quality"])
-        
+
     def download_automatically(self):
         if GeneralSettings.settings["automatic_download"]["status"] == "enable":
             self.select_download_quality_automatic()
@@ -343,30 +341,22 @@ class AddedVideo(Video):
     def set_loading_failed(self):
         if self.load_state == "removed":
             return
-        
+
         self.load_state = "failed"
         if self.mode == "playlist":
             self.video_load_status_callback(self, self.load_state)
-            
+
         if GeneralSettings.settings["reload_automatically"] and self.automatically_reload_count < 5:
             time.sleep(1)
             self.automatically_reload_count += 1
             self.load_video()
         else:
             self.status_label.configure(
-                text_color=ThemeManager.get_color_based_on_theme("text_warning"),
-                text=LanguageManager.data["failed"]
+                text_color=ThemeManager.get_color_based_on_theme("text_warning"), text=LanguageManager.data["failed"]
             )
             LoadManager.unregister_from_active(self)
-            self.thumbnail_btn.show_failure_indicator(
-                text_color=ThemeManager.get_color_based_on_theme("text_warning")
-            )
-            self.reload_btn.place(
-                relx=1,
-                rely=0.5,
-                anchor="w",
-                x=-80 * AppearanceSettings.get_scale("decimal")
-                )
+            self.thumbnail_btn.show_failure_indicator(text_color=ThemeManager.get_color_based_on_theme("text_warning"))
+            self.reload_btn.place(relx=1, rely=0.5, anchor="w", x=-80 * AppearanceSettings.get_scale("decimal"))
 
     def set_video_data(self):
         if self.load_state != "removed":
@@ -396,7 +386,7 @@ class AddedVideo(Video):
             master=self.sub_frame,
             state="disabled",
             # hover=False,
-            command=self.download_video
+            command=self.download_video,
         )
         self.status_label = ctk.CTkLabel(master=self.sub_frame, text="")
         self.reload_btn = ctk.CTkButton(master=self, text="⟳", command=self.reload_video, hover=False)
@@ -404,12 +394,8 @@ class AddedVideo(Video):
     def set_widgets_texts(self):
         super().set_widgets_texts()
 
-        self.download_btn.configure(
-            text=LanguageManager.data["download"]
-        )
-        self.status_label.configure(
-            text=LanguageManager.data[self.load_state]
-        )
+        self.download_btn.configure(text=LanguageManager.data["download"])
+        self.status_label.configure(text=LanguageManager.data[self.load_state])
 
     def set_widgets_fonts(self):
         super().set_widgets_fonts()
@@ -417,8 +403,7 @@ class AddedVideo(Video):
         scale = AppearanceSettings.get_scale("decimal")
 
         self.resolution_select_menu.configure(
-            font=("Segoe UI", 13 * scale, "normal"),
-            dropdown_font=("Segoe UI", 13 * scale, "normal")
+            font=("Segoe UI", 13 * scale, "normal"), dropdown_font=("Segoe UI", 13 * scale, "normal")
         )
         self.download_btn.configure(font=("Segoe UI", 12 * scale, "bold"))
         self.status_label.configure(font=("Segoe UI", 12 * scale, "bold"))
@@ -440,36 +425,27 @@ class AddedVideo(Video):
         super().set_widgets_accent_color()
 
         self.download_btn.configure(
-            fg_color=ThemeManager.get_accent_color("normal"),
-            hover_color=ThemeManager.get_accent_color("hover")
+            fg_color=ThemeManager.get_accent_color("normal"), hover_color=ThemeManager.get_accent_color("hover")
         )
         self.reload_btn.configure(text_color=ThemeManager.get_accent_color("normal"))
-        self.resolution_select_menu.configure(
-            dropdown_hover_color=ThemeManager.get_accent_color("hover")
-        )
+        self.resolution_select_menu.configure(dropdown_hover_color=ThemeManager.get_accent_color("hover"))
 
     def set_widgets_colors(self):
         super().set_widgets_colors()
 
-        self.reload_btn.configure(
-            fg_color=ThemeManager.get_color_based_on_theme("primary")
-        )
+        self.reload_btn.configure(fg_color=ThemeManager.get_color_based_on_theme("primary"))
         self.download_btn.configure(
             text_color=ThemeManager.get_color_based_on_theme("background"),
         )
-        self.sub_frame.configure(
-            fg_color=ThemeManager.get_color_based_on_theme("primary")
-        )
-        self.status_label.configure(
-            text_color=ThemeManager.get_color_based_on_theme("text_normal")
-        )
+        self.sub_frame.configure(fg_color=ThemeManager.get_color_based_on_theme("primary"))
+        self.status_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
         self.resolution_select_menu.configure(
             button_color=ThemeManager.get_color_based_on_theme("secondary"),
             border_color=ThemeManager.get_color_based_on_theme("border"),
             dropdown_fg_color=ThemeManager.get_color_based_on_theme("primary"),
             text_color=ThemeManager.get_color_based_on_theme("text_normal"),
             fg_color=ThemeManager.get_color_based_on_theme("primary"),
-            dropdown_text_color=ThemeManager.get_color_based_on_theme("text_muted")
+            dropdown_text_color=ThemeManager.get_color_based_on_theme("text_muted"),
         )
 
     def on_mouse_enter_self(self, event):
@@ -478,14 +454,14 @@ class AddedVideo(Video):
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
         self.reload_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
         """
-        
+
     def on_mouse_leave_self(self, event):
         # super().on_mouse_leave_self(event)
         """
         self.sub_frame.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
         self.reload_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["normal"])
         """
-        
+
     def bind_widgets_events(self):
         super().bind_widgets_events()
 
@@ -515,6 +491,7 @@ class AddedVideo(Video):
                 fg_color=ThemeManager.get_color_based_on_theme("primary_hover"),
                 button_color=ThemeManager.get_color_based_on_theme("secondary_hover"),
             )
+
         def on_mouse_leave_resolution_select_menu(event_):
             self.resolution_select_menu.configure(
                 fg_color=ThemeManager.get_color_based_on_theme("primary"),
@@ -523,7 +500,6 @@ class AddedVideo(Video):
 
         self.resolution_select_menu.bind("<Enter>", on_mouse_enter_resolution_select_menu)
         self.resolution_select_menu.bind("<Leave>", on_mouse_leave_resolution_select_menu)
-
 
         def on_mouse_enter_reload_btn(_event):
             # self.on_mouse_enter_self(event)
@@ -552,9 +528,11 @@ class AddedVideo(Video):
         scale = AppearanceSettings.get_scale("decimal")
         self.info_frame.configure(
             width=(
-                self.master_frame.winfo_width() - (370 * scale) -
-                (self.thumbnail_btn.winfo_width() + 5) - (10 * scale) -
-                (20 * scale)
+                self.master_frame.winfo_width()
+                - (370 * scale)
+                - (self.thumbnail_btn.winfo_width() + 5)
+                - (10 * scale)
+                - (20 * scale)
             )
         )
 
@@ -582,7 +560,7 @@ class AddedVideo(Video):
         del self.mode
         # Track automatically reload count
         del self.automatically_reload_count
-        
+
         super().__del__()
 
     def destroy_widgets(self):

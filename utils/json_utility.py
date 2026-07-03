@@ -1,4 +1,5 @@
 import json
+
 from utils.logger import get_logger
 
 _log = get_logger(__name__)
@@ -20,7 +21,7 @@ class JsonUtility:
         Returns:
             dict: The JSON data read from the file.
         """
-        with open(file_path, "r", encoding='utf-8') as json_file:
+        with open(file_path, encoding="utf-8") as json_file:
             json_data = json.load(json_file)
         return json_data
 
@@ -33,13 +34,12 @@ class JsonUtility:
             file_path (str): The path to the JSON file.
             data (dict): The JSON data to be written.
         """
-        with open(file_path, "w", encoding='utf-8') as json_file:
+        with open(file_path, "w", encoding="utf-8") as json_file:
             try:
                 json.dump(obj=data, fp=json_file, indent=4, sort_keys=True)
             except Exception as error:
                 _log.warning("json.dump with sort_keys failed, retrying without sort: %s", error)
                 json.dump(obj=data, fp=json_file, indent=4, sort_keys=False)
-                
 
     @staticmethod
     def convert_lists_to_tuples(data: dict) -> dict:

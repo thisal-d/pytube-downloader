@@ -1,13 +1,13 @@
-from .download_manager import DownloadManager
-import time    
-from typing import Callable
 import threading
-from utils import ValueConvertUtility
+import time
+from collections.abc import Callable
 
-    
+from .download_manager import DownloadManager
+
+
 class DownloadSpeedTracker:
     callback = None
-    
+
     @staticmethod
     def track_total_download_speed():
         while True:
@@ -26,9 +26,8 @@ class DownloadSpeedTracker:
                 except Exception as error:
                     print("download_speed_tracker.py L-24 : ", error)
             time.sleep(2)
-        
+
     def initialize(callback: Callable = None):
-        DownloadSpeedTracker.callback = callback      
+        DownloadSpeedTracker.callback = callback
         thread = threading.Thread(target=DownloadSpeedTracker.track_total_download_speed, daemon=True)
         thread.start()
-        

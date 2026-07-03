@@ -18,7 +18,6 @@ import logging
 import logging.handlers
 from pathlib import Path
 
-
 _LOG_DIR = Path("data") / "logs"
 _LOG_FILE = _LOG_DIR / "pytube.log"
 _LOG_FORMAT = "%(asctime)s [%(levelname)-8s] %(name)s: %(message)s"

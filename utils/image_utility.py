@@ -1,5 +1,5 @@
-from typing import Tuple
 from urllib import request
+
 from PIL import Image, ImageDraw
 
 
@@ -9,9 +9,7 @@ class ImageUtility:
     """
 
     @staticmethod
-    def crop_image(
-            image: Image,
-            start_position: Tuple[int, int], end_position: Tuple[int, int]) -> Image.Image:
+    def crop_image(image: Image, start_position: tuple[int, int], end_position: tuple[int, int]) -> Image.Image:
         """
         Crop the input image
 
@@ -27,7 +25,7 @@ class ImageUtility:
         return cropped_image
 
     @staticmethod
-    def resize_image(image: Image, new_size: Tuple[int, int]) -> Image.Image:
+    def resize_image(image: Image, new_size: tuple[int, int]) -> Image.Image:
         """
         Resize the input image to the specified size
 
@@ -54,10 +52,10 @@ class ImageUtility:
             Image: image with rounded corners.
         """
         rounded_corner_added_image = image
-        circle_mask = Image.new('L', (radius * 2, radius * 2), 0)
+        circle_mask = Image.new("L", (radius * 2, radius * 2), 0)
         draw_circle = ImageDraw.Draw(circle_mask)
         draw_circle.ellipse((0, 0, radius * 2 - 1, radius * 2 - 1), fill=255)
-        alpha_mask = Image.new('L', rounded_corner_added_image.size, 255)
+        alpha_mask = Image.new("L", rounded_corner_added_image.size, 255)
         w, h = rounded_corner_added_image.size
         alpha_mask.paste(circle_mask.crop((0, 0, radius, radius)), (0, 0))
         alpha_mask.paste(circle_mask.crop((0, radius, radius, radius * 2)), (0, h - radius))
@@ -91,7 +89,7 @@ class ImageUtility:
 
         image_with_hover_effect.putdata(modified_image_data)
         return image_with_hover_effect
-    
+
     @staticmethod
     def download_image(image_url: str = None, quality: int = None, output_image_path: str = None) -> str:
         """

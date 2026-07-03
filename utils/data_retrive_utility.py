@@ -1,6 +1,5 @@
-from urllib import request
 import requests
-from typing import List, Dict
+
 from .json_utility import JsonUtility
 
 
@@ -9,7 +8,7 @@ class DataRetrieveUtility:
     VERSION_FILE_URL = "https://raw.githubusercontent.com/Thisal-D/PyTube-Downloader/main/VERSION"
 
     @staticmethod
-    def get_contributors_data() -> List[Dict]:
+    def get_contributors_data() -> list[dict]:
         """
         Retrieve contributors data from a GitHub repository.
 
@@ -22,18 +21,20 @@ class DataRetrieveUtility:
             for contributor_data in data.split("\n"):
                 try:
                     profile_url, username = contributor_data.split("@%@")
-                    contributors.append({
-                        "profile_url": profile_url,
-                        "user_name": username,
-                    })
+                    contributors.append(
+                        {
+                            "profile_url": profile_url,
+                            "user_name": username,
+                        }
+                    )
                 except Exception as error:
                     print(f"data_retrieve_utility.py L54 : {error}")
         except Exception as error:
             print(f"data_retrieve_utility.py L43 : {error}")
             return None
-        
+
         return contributors
-    
+
     @staticmethod
     def get_latest_version():
         """
@@ -46,19 +47,19 @@ class DataRetrieveUtility:
             data = requests.get(DataRetrieveUtility.VERSION_FILE_URL, timeout=5).text.strip()
             # Extract the version number from the string "VERSION = '2.0.2'"
             # Split at "=" and remove extra characters like spaces and quotes
-            version = data.split('=')[1].strip().strip("'")
-        
+            version = data.split("=")[1].strip().strip("'")
+
         except Exception as error:
             print(f"data_retrive_utility.py L43 : {error}")
             return None
-        
+
         return version
 
     @staticmethod
     def get_current_version():
         """
         Read current version from info.json file.
-        
+
         return:
             string: current version
         """
