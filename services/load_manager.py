@@ -1,5 +1,5 @@
 import threading
-import time
+import queue
 from settings.general_settings import GeneralSettings
 from typing import Callable, List
 
@@ -16,15 +16,21 @@ class LoadManager:
     active_loads: List = []
     status_change_callback: Callable = None
 
+    # Queue used to signal the manager thread when the queue state changes
+    _signal_queue: queue.Queue = queue.Queue()
+
     @staticmethod
     def manage_load_queue() -> None:
         """
         Manages the load queue by initiating loads if conditions are met.
 
-        This method continuously checks the load queue and initiates loads if conditions permit.
-        Delay is 1 second (1000 milliseconds).
+        Blocks on a queue.Queue instead of polling with time.sleep, so it wakes
+        up immediately when a new item is registered or an active load finishes.
         """
         while True:
+            # Block until signalled (no busy-wait)
+            LoadManager._signal_queue.get()
+
             if (GeneralSettings.settings["max_simultaneous_loads"] > LoadManager.active_load_count and
                     LoadManager.queued_load_count > 0):
                 try:
@@ -34,23 +40,28 @@ class LoadManager:
                     LoadManager.active_load_count += 1
                     LoadManager.active_loads.append(LoadManager.queued_loads.pop(0))
                 except Exception as error:
-                    # Log the error for analysis
-                    print(f"load_manager.py L38 : {error}")
-                    pass
+                    print(f"load_manager.py : failed to start load: {error}")
+                    # Re-queue the item count so the queue stays consistent
+                    LoadManager.queued_load_count += 1
                 LoadManager.status_change_callback()
-            # wait 1 seconds (1000 milliseconds) before checking the queue again
-            time.sleep(1)
+
+    @staticmethod
+    def _signal() -> None:
+        """Puts a token into the internal signal queue to wake the manager thread."""
+        LoadManager._signal_queue.put(True)
 
     @staticmethod
     def register(video) -> None:
         """
         Registers a video to be loaded.
 
-        Adds the video to the load queue and updates the queued load count.
+        Adds the video to the load queue, updates the queued load count,
+        and signals the manager thread.
         """
         LoadManager.queued_loads.append(video)
         LoadManager.queued_load_count += 1
         LoadManager.status_change_callback()
+        LoadManager._signal()
 
     @staticmethod
     def unregister_from_queued(video) -> None:
@@ -69,12 +80,14 @@ class LoadManager:
         """
         Unregisters a video from the active load list.
 
-        Removes the video from the active load list and updates the active load count.
+        Removes the video from the active load list, updates the active load count,
+        and signals the manager thread so it can start the next queued item.
         """
         if video in LoadManager.active_loads:
             LoadManager.active_loads.remove(video)
             LoadManager.active_load_count -= 1
         LoadManager.status_change_callback()
+        LoadManager._signal()
 
     @staticmethod
     def initialize(status_change_callback: Callable) -> None:

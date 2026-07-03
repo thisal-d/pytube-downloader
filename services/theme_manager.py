@@ -42,14 +42,16 @@ class ThemeManager:
     def track_theme_mode_changes() -> None:
         """
         Periodically checks for changes in theme and updates registered widgets.
+        Uses threading.Event.wait() instead of time.sleep() to avoid busy-polling.
         """
-        while True:
+        stop_event = threading.Event()
+        while not stop_event.is_set():
             current_mode = ctk.get_appearance_mode()
             if current_mode != ThemeManager.current_theme_mode:
                 ThemeManager.current_theme_mode = current_mode
                 ThemeManager.update_widgets_colors()
-            # Wait 1 second before checking the theme mode again
-            time.sleep(1)
+            # Block for 1 second; can be interrupted cleanly by setting the event
+            stop_event.wait(timeout=1)
 
     @staticmethod
     def set_title_bar_style(window: ctk.CTk) -> None:
