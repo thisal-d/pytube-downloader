@@ -1,4 +1,5 @@
 import json
+from typing import Any, cast
 
 from utils.logger import get_logger
 
@@ -11,7 +12,7 @@ class JsonUtility:
     """
 
     @staticmethod
-    def read_from_file(file_path: str) -> dict:
+    def read_from_file(file_path: str) -> dict[str, Any]:
         """
         Read JSON data from a file.
 
@@ -22,11 +23,11 @@ class JsonUtility:
             dict: The JSON data read from the file.
         """
         with open(file_path, encoding="utf-8") as json_file:
-            json_data = json.load(json_file)
+            json_data: dict[str, Any] = cast("dict[str, Any]", json.load(json_file))
         return json_data
 
     @staticmethod
-    def write_to_file(file_path: str, data: dict) -> None:
+    def write_to_file(file_path: str, data: dict[str, Any]) -> None:
         """
         Write JSON data to a file.
 
@@ -42,7 +43,7 @@ class JsonUtility:
                 json.dump(obj=data, fp=json_file, indent=4, sort_keys=False)
 
     @staticmethod
-    def convert_lists_to_tuples(data: dict) -> dict:
+    def convert_lists_to_tuples(data: dict[str, Any]) -> dict[str, Any]:
         """
         Convert lists in a dictionary to tuples recursively.
 

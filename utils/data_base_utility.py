@@ -6,7 +6,7 @@ from utils.file_utility import FileUtility
 
 class DataBaseUtility:
     @staticmethod
-    def create_data_base(data_base_dir, data_base_name):
+    def create_data_base(data_base_dir: str, data_base_name: str) -> None:
         if not os.path.exists(data_base_dir):
             FileUtility.create_directory(data_base_dir)
 
@@ -15,7 +15,7 @@ class DataBaseUtility:
         connection.close()
 
     @staticmethod
-    def create_table(data_base_name, table_name, columns):
+    def create_table(data_base_name: str, table_name: str, columns: str) -> None:
         connection = sqlite3.connect(data_base_name)
         cursor = connection.cursor()
         cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} ({columns})")
@@ -24,7 +24,7 @@ class DataBaseUtility:
         connection.close()
 
     @staticmethod
-    def is_data_base_exists(data_base):
+    def is_data_base_exists(data_base: str) -> bool:
         if os.path.exists(data_base):
             try:
                 connection = sqlite3.connect(data_base)

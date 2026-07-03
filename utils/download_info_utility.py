@@ -1,11 +1,12 @@
 import pytubefix
+from typing import Any
 
 from .value_convert_utility import ValueConvertUtility
 
 
 class DownloadInfoUtility:
     @staticmethod
-    def sort_download_qualities(qualities_info: list[dict]) -> list[dict]:
+    def sort_download_qualities(qualities_info: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """
         Sort the list of download qualities information based on their keys.
 
@@ -43,7 +44,7 @@ class DownloadInfoUtility:
         return videos + audio
 
     @staticmethod
-    def to_dict(data) -> list[dict[str, str]]:
+    def to_dict(data: Any) -> list[dict[str, str]]:
         """
         Convert data to a list of dictionaries.
 
@@ -135,7 +136,7 @@ class DownloadInfoUtility:
         return supported_download_types
 
     @staticmethod
-    def generate_download_options(download_types: list[dict]) -> list[str]:
+    def generate_download_options(download_types: list[dict[str, Any]]) -> list[str]:
         """
         Generate download options for CTk combo box based on download types and their sizes.
 
@@ -180,4 +181,4 @@ class DownloadInfoUtility:
             print(f"download_info_utility.py L-156 : {error}")
             return 0
 
-        return estimated_remaining_time
+        return int(estimated_remaining_time)

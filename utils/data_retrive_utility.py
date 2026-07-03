@@ -1,3 +1,5 @@
+from typing import cast
+
 import requests
 
 from .json_utility import JsonUtility
@@ -8,7 +10,7 @@ class DataRetrieveUtility:
     VERSION_FILE_URL = "https://raw.githubusercontent.com/Thisal-D/PyTube-Downloader/main/VERSION"
 
     @staticmethod
-    def get_contributors_data() -> list[dict]:
+    def get_contributors_data() -> list[dict[str, str]] | None:
         """
         Retrieve contributors data from a GitHub repository.
 
@@ -36,7 +38,7 @@ class DataRetrieveUtility:
         return contributors
 
     @staticmethod
-    def get_latest_version():
+    def get_latest_version() -> str | None:
         """
         Retrieve latest version from a GitHub repository.
 
@@ -56,12 +58,12 @@ class DataRetrieveUtility:
         return version
 
     @staticmethod
-    def get_current_version():
+    def get_current_version() -> str:
         """
         Read current version from info.json file.
 
         return:
             string: current version
         """
-        version = JsonUtility.read_from_file("data\\info.json")["version"]
+        version: str = cast(str, JsonUtility.read_from_file("data\\info.json")["version"])
         return version

@@ -1,10 +1,12 @@
+from typing import Any
+
 class GuiUtils:
     """
     A utility class for common GUI-related functions.
     """
 
     @staticmethod
-    def do_nothing(*args):
+    def do_nothing(*args: Any) -> None:
         """
         A placeholder method that does nothing.
 

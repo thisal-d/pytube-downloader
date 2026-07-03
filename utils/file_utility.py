@@ -128,7 +128,7 @@ class FileUtility:
         return str(candidate)
 
     @staticmethod
-    def delete_files(directory: str, files_to_keep: list[str] = None) -> None:
+    def delete_files(directory: str, files_to_keep: list[str] | None = None) -> None:
         """
         Delete files in the specified directory, except those listed in files_to_keep.
 

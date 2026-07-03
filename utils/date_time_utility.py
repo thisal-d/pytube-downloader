@@ -3,7 +3,7 @@ import datetime
 
 class DateTimeUtility:
     @staticmethod
-    def get_current_date_time():
+    def get_current_date_time() -> str:
         # Get the current date and time
         current_time = datetime.datetime.now()
 

@@ -87,13 +87,12 @@ class SettingsValidateUtility:
         value = value[0:-1]
 
         try:
-            value = float(value)
+            num_value = int(float(value))
         except Exception as error:
             _log.debug("validate_scale_value: non-numeric value %r: %s", value, error)
             return False
 
-        value = int(value)
-        if value >= 100 and value <= 200:
+        if num_value >= 100 and num_value <= 200:
             return True
         return False
 
@@ -105,12 +104,12 @@ class SettingsValidateUtility:
         value = value[0:-1]
 
         try:
-            value = float(value)
+            num_value2 = float(value)
         except Exception as error:
             _log.debug("validate_opacity_value: non-numeric value %r: %s", value, error)
             return False
 
-        if value >= 60 and value <= 100:
+        if num_value2 >= 60 and num_value2 <= 100:
             return True
         return False
 
