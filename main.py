@@ -25,6 +25,20 @@ try:
     # just run the app        
     app.run()
 except Exception as error:
-    print("main.py L-27:", error)
+    import traceback
+    error_details = traceback.format_exc()
+    print(f"PyTube Downloader failed to start:\n{error_details}")
+    try:
+        import tkinter as tk
+        from tkinter import messagebox
+        _root = tk.Tk()
+        _root.withdraw()
+        messagebox.showerror(
+            "PyTube Downloader - Startup Error",
+            f"The application failed to start.\n\nReason: {error}\n\nCheck the console for full details."
+        )
+        _root.destroy()
+    except Exception:
+        pass  # If tkinter itself is unavailable the console message is sufficient
 
 # Codes under here will only execute when the app is closed

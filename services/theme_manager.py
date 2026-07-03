@@ -55,23 +55,28 @@ class ThemeManager:
 
     @staticmethod
     def set_title_bar_style(window: ctk.CTk) -> None:
-        while True:
+        _MAX_RETRIES = 5
+        _BACKOFF_BASE = 0.5  # seconds
+
+        for attempt in range(_MAX_RETRIES):
             try:
-                title_bar_color.set(window, ThemeManager.get_color_based_on_theme("background")) # sets the titlebar color to background color
+                title_bar_color.set(window, ThemeManager.get_color_based_on_theme("background"))
                 break
             except Exception as error:
-                print("Error on changin title bar color")
-                time.sleep(1)
-                continue
-        
-        while True:
+                delay = _BACKOFF_BASE * (2 ** attempt)
+                print(f"theme_manager: failed to set title bar color (attempt {attempt + 1}/{_MAX_RETRIES}): {error}")
+                if attempt < _MAX_RETRIES - 1:
+                    time.sleep(delay)
+
+        for attempt in range(_MAX_RETRIES):
             try:
-                title_bar_text_color.set(window, ThemeManager.get_color_based_on_theme("text_muted")) # sets the titlebar color to text color
+                title_bar_text_color.set(window, ThemeManager.get_color_based_on_theme("text_muted"))
                 break
             except Exception as error:
-                print("Error on changin title text color")
-                time.sleep(1)
-                continue
+                delay = _BACKOFF_BASE * (2 ** attempt)
+                print(f"theme_manager: failed to set title bar text color (attempt {attempt + 1}/{_MAX_RETRIES}): {error}")
+                if attempt < _MAX_RETRIES - 1:
+                    time.sleep(delay)
 
     @staticmethod
     def update_accent_color() -> None:
@@ -89,7 +94,7 @@ class ThemeManager:
             try:
                 widget.update_widgets_colors()
             except Exception as error:
-                print(f"theme_manager.py L51 : {error}")
+                print(f"theme_manager: update_widgets_colors failed for {widget!r}: {error}")
 
     @staticmethod
     def update_widgets_accent_color() -> None:
@@ -100,7 +105,7 @@ class ThemeManager:
             try:
                 widget.update_widgets_accent_color()
             except Exception as error:
-                print(f"theme_manager.py L62 : {error}")
+                print(f"theme_manager: update_widgets_accent_color failed for {widget!r}: {error}")
 
     @staticmethod
     def initialize() -> None:

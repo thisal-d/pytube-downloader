@@ -23,8 +23,8 @@ class FileUtility:
                     if not os.path.exists(sub_path):
                         os.mkdir(sub_path)
         except Exception as error:
-            print(f"file_utility.py L-26 : {error}")
-            raise Exception(error)
+            print(f"file_utility: create_directory failed for {path!r}: {error}")
+            raise
 
     @staticmethod
     def format_path(path: str) -> str:
@@ -65,12 +65,13 @@ class FileUtility:
             os.remove(file)
             return True
         except Exception as error:
-            print(f"file_utility.py L-68 : {error}")
+            print(f"file_utility: is_accessible check failed for {path!r}: {error}")
             return False
         
-    def is_readalble(path: str) -> bool:
+    @staticmethod
+    def is_readable(path: str) -> bool:
         """
-        Check if the file is readable
+        Check if the file is readable.
 
         Args:
             path (str): The file to be checked.
@@ -79,20 +80,17 @@ class FileUtility:
             bool: True if the path is readable, False otherwise.
         """
         try:
-            try:
-                with open(path, "r"):
-                    pass
-                return True
-            except Exception as error:
-                print(f"file_utility.py L-86 : {error}")
-                try:
-                    with open(path, "rb"):
-                        pass
-                    return True
-                except Exception as error:
-                    return False
+            with open(path, "r"):
+                pass
+            return True
+        except (OSError, UnicodeDecodeError):
+            pass
+        try:
+            with open(path, "rb"):
+                pass
+            return True
         except Exception as error:
-            print(f"file_utility.py L-95 : {error}")
+            print(f"file_utility: is_readable failed for {path!r}: {error}")
             return False
 
     @staticmethod
@@ -148,5 +146,4 @@ class FileUtility:
                 if files_to_keep is None or file_name not in files_to_keep:
                     os.remove(os.path.join(directory, file_name))
             except Exception as error:
-                print(f"file_utility.py L-124 : {error}")
-                pass
+                print(f"file_utility: delete_files could not remove {file_name!r} from {directory!r}: {error}")
