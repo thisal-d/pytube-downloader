@@ -1,3 +1,13 @@
-import os
+"""Install project dependencies.
 
-os.system("pip install -r requirements.txt")
+Usage:
+    python dependencies_installer.py          # core deps
+    python dependencies_installer.py windows  # + windows-specific
+    python dependencies_installer.py dev      # + dev tools
+"""
+import sys
+import subprocess
+
+extras = sys.argv[1] if len(sys.argv) > 1 else ""
+spec = f".[{extras}]" if extras else "."
+subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", spec])
