@@ -4,9 +4,13 @@ from pathlib import Path
 from typing import Any, Literal
 
 import customtkinter as ctk
-from hPyT import title_bar_color, title_bar_text_color
-
 from settings import AppearanceSettings
+
+try:
+    from hPyT import title_bar_color, title_bar_text_color
+    _HAS_HPYT = True
+except ImportError:
+    _HAS_HPYT = False
 from utils import JsonUtility
 
 
@@ -59,6 +63,8 @@ class ThemeManager:
 
     @staticmethod
     def set_title_bar_style(window: ctk.CTk) -> None:
+        if not _HAS_HPYT:
+            return
         _MAX_RETRIES = 5
         _BACKOFF_BASE = 0.5  # seconds
 

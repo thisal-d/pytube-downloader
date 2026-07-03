@@ -8,7 +8,7 @@ from services import LanguageManager, ThemeManager
 from settings import AppearanceSettings, GeneralSettings
 from utils import GuiUtils
 from utils.logger import get_logger
-from widgets import AddedVideo
+from widgets.video import AddedVideo
 
 from .play_list import PlayList
 

@@ -7,7 +7,7 @@ from services import ThemeManager
 from settings import (
     AppearanceSettings,
 )
-from widgets import AboutPanel, AppearancePanel, DownloadsPanel, GeneralPanel, NavigationPanel, NetworkPanel
+from widgets.setting_panels import AboutPanel, AppearancePanel, DownloadsPanel, GeneralPanel, NavigationPanel, NetworkPanel
 
 
 class SettingPanel(ctk.CTkFrame):

@@ -5,7 +5,7 @@ import customtkinter as ctk
 from services import HistoryManager
 from settings import AppearanceSettings
 from utils import GuiUtils
-from widgets.play_list import PlayList
+from widgets.play_list.play_list import PlayList
 from widgets.video.downloaded_video import DownloadedVideo
 from widgets.video.downloading_video import DownloadingVideo
 

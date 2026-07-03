@@ -24,7 +24,7 @@ from settings import (
 )
 from utils import DownloadInfoUtility, FileUtility, GuiUtils, ValueConvertUtility
 from utils.logger import get_logger
-from widgets.video import Video
+from widgets.video.video import Video
 
 _log = get_logger(__name__)
 

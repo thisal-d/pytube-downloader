@@ -1,10 +1,14 @@
-import os  # Library for interacting with the operating system
+import os
 import time
-from typing import Literal  # Used for type hinting specific values
+from typing import Literal
 
-import win11toast  # Library for Windows 11 toast notifications
+from utils.value_convert_utility import ValueConvertUtility
 
-from utils.value_convert_utility import ValueConvertUtility  # Utility for size conversion
+try:
+    import win11toast
+    _HAS_WIN11TOAST = True
+except ImportError:
+    _HAS_WIN11TOAST = False
 
 
 class NotificationManager:
@@ -29,7 +33,8 @@ class NotificationManager:
             # print(NotificationManager.queued_notifications[0])
             NotificationManager.show_advanced_notification(**NotificationManager.queued_notifications.pop(0))
             time.sleep(NotificationManager.notification_duration)
-            win11toast.clear_toast()
+            if _HAS_WIN11TOAST:
+                win11toast.clear_toast()
 
     @staticmethod
     def show_advanced_notification(
@@ -53,6 +58,8 @@ class NotificationManager:
         """
         Displays an advanced toast notification based on the provided parameters.
         """
+        if not _HAS_WIN11TOAST:
+            return
 
         # Get absolute paths for file and folder
         abs_file_path = os.path.abspath(download_file_name)

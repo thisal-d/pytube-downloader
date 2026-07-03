@@ -6,7 +6,7 @@ import customtkinter as ctk
 from services import LanguageManager, NotificationManager, ThemeManager
 from settings import AppearanceSettings, GeneralSettings
 from utils import DownloadInfoUtility, GuiUtils, ValueConvertUtility
-from widgets.play_list import PlayList
+from widgets.play_list.play_list import PlayList
 from widgets.video.added_video import AddedVideo
 from widgets.video.downloading_video import DownloadingVideo
 

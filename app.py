@@ -8,7 +8,12 @@ from typing import Literal
 
 import ctkchart
 import customtkinter as ctk
-import pyautogui
+
+try:
+    import pyautogui
+    _HAS_PYAUTOGUI = True
+except ImportError:
+    _HAS_PYAUTOGUI = False
 
 from services import (
     DownloadManager,
@@ -472,35 +477,35 @@ class App(ctk.CTk):
         self.logo_label = ctk.CTkLabel(master=self.logo_frame, text="⚡")
 
     def select_all_url(self) -> None:
-        """
-        Selects all text in the URL entry field.
-        """
         self.url_entry.focus()
-        pyautogui.hotkey("ctrl", "a")
+        if _HAS_PYAUTOGUI:
+            pyautogui.hotkey("ctrl", "a")
+        else:
+            self.url_entry.event_generate("<<SelectAll>>")
         self.context_menu.place_forget()
 
     def cut_url(self) -> None:
-        """
-        Cuts text from the URL entry field.
-        """
         self.url_entry.focus()
-        pyautogui.hotkey("ctrl", "x")
+        if _HAS_PYAUTOGUI:
+            pyautogui.hotkey("ctrl", "x")
+        else:
+            self.url_entry.event_generate("<<Cut>>")
         self.context_menu.place_forget()
 
     def copy_url(self) -> None:
-        """
-        Copies text from the URL entry field.
-        """
         self.url_entry.focus()
-        pyautogui.hotkey("ctrl", "c")
+        if _HAS_PYAUTOGUI:
+            pyautogui.hotkey("ctrl", "c")
+        else:
+            self.url_entry.event_generate("<<Copy>>")
         self.context_menu.place_forget()
 
     def paste_url(self) -> None:
-        """
-        Pastes text into the URL entry field.
-        """
         self.url_entry.focus()
-        pyautogui.hotkey("ctrl", "v")
+        if _HAS_PYAUTOGUI:
+            pyautogui.hotkey("ctrl", "v")
+        else:
+            self.url_entry.event_generate("<<Paste>>")
         self.context_menu.place_forget()
 
     def place_forget_nav_frames(

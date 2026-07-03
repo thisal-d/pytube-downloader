@@ -8,7 +8,7 @@ import customtkinter as ctk
 from services import HistoryManager, LanguageManager, ThemeManager, VideoCountTracker
 from settings import AppearanceSettings
 from utils import ValueConvertUtility
-from widgets.video import Video
+from widgets.video.video import Video
 
 
 class DownloadedVideo(Video):
