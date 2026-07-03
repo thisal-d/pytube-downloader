@@ -9,18 +9,18 @@ description = "A YouTube video/playlist downloader with a modern GUI"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
-    { name = "Thisal D.", url = "https://github.com/Thisal-D" }
+    { name = "Thisal D." }
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "customtkinter>=5.2.2",
-    "pillow>=10.0.0",
-    "pyautogui>=0.9.54",
-    "pystray>=1.0.0",
-    "pyperclip>=1.8.2",
-    "pytubefix>=6.2.0",
-    "ctkchart>=1.2.0",
-    "requests>=2.31.0",
+    "customtkinter",
+    "pillow",
+    "pyautogui",
+    "pystray",
+    "pyperclip",
+    "pytubefix",
+    "ctkchart",
+    "requests",
 ]
 
 [project.optional-dependencies]

@@ -3,11 +3,11 @@
 # For Windows notifications/titlebar: pip install -e ".[windows]"
 # For standard install: pip install -e .
 
-customtkinter>=5.2.2
-pillow>=10.0.0
-pyautogui>=0.9.54
-pystray>=1.0.0
-pyperclip>=1.8.2
-pytubefix>=6.2.0
-ctkchart>=1.2.0
-requests>=2.31.0
+customtkinter
+pillow
+pyautogui
+pystray
+pyperclip
+pytubefix
+ctkchart
+requests
