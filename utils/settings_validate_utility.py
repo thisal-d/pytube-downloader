@@ -1,5 +1,8 @@
 import os
 import tkinter as tk
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class SettingsValidateUtility:
@@ -69,10 +72,10 @@ class SettingsValidateUtility:
                 tk.Button(fg=normal_color, bg=hover_color)
                 return True
             except Exception as error:
-                print(f"validate_accent_color : {error}")
+                _log.debug("validate_accent_color: invalid color %r: %s", color, error)
                 return False
         except Exception as error:
-            print(f"validate_accent_color : {error}")
+            _log.debug("validate_accent_color: could not split color %r: %s", color, error)
             return False
         
     @staticmethod
@@ -85,7 +88,7 @@ class SettingsValidateUtility:
         try:
             value = float(value)
         except Exception as error:
-            print(f"validate_scale_value : {error}")
+            _log.debug("validate_scale_value: non-numeric value %r: %s", value, error)
             return False
         
         value = int(value)
@@ -103,7 +106,7 @@ class SettingsValidateUtility:
         try:
             value = float(value)
         except Exception as error:
-            print(f"validate_opacity_value : {error}")
+            _log.debug("validate_opacity_value: non-numeric value %r: %s", value, error)
             return False
 
         if value >= 60 and value <= 100:
@@ -120,7 +123,7 @@ class SettingsValidateUtility:
             # Extract the numeric part and convert it to float
             numeric_value = float(value[:-2])
         except ValueError as error:
-            print(f"validate_chunk_size_value : {error}")
+            _log.debug("validate_chunk_size_value: non-numeric value %r: %s", value, error)
             return False
         
         # Convert the value to bytes for consistent comparison

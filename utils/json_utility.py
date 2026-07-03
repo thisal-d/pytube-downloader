@@ -1,4 +1,7 @@
 import json
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class JsonUtility:
@@ -34,7 +37,7 @@ class JsonUtility:
             try:
                 json.dump(obj=data, fp=json_file, indent=4, sort_keys=True)
             except Exception as error:
-                print(f"json_utility.py L-37 : {error}")
+                _log.warning("json.dump with sort_keys failed, retrying without sort: %s", error)
                 json.dump(obj=data, fp=json_file, indent=4, sort_keys=False)
                 
 

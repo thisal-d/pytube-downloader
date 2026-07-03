@@ -1,5 +1,8 @@
 from pathlib import Path
 from typing import List
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class FileUtility:
@@ -19,7 +22,7 @@ class FileUtility:
         try:
             Path(path).mkdir(parents=True, exist_ok=True)
         except Exception as error:
-            print(f"file_utility: create_directory failed for {path!r}: {error}")
+            _log.warning("create_directory failed for %r: %s", path, error)
             raise
 
     @staticmethod
@@ -56,7 +59,7 @@ class FileUtility:
             probe.unlink()
             return True
         except Exception as error:
-            print(f"file_utility: is_accessible check failed for {path!r}: {error}")
+            _log.warning("is_accessible check failed for %r: %s", path, error)
             return False
 
     @staticmethod
@@ -80,7 +83,7 @@ class FileUtility:
             p.open("rb").close()
             return True
         except Exception as error:
-            print(f"file_utility: is_readable failed for {path!r}: {error}")
+            _log.warning("is_readable failed for %r: %s", path, error)
             return False
 
     @staticmethod
@@ -138,4 +141,4 @@ class FileUtility:
                 if files_to_keep is None or file_path.name not in files_to_keep:
                     file_path.unlink()
             except Exception as error:
-                print(f"file_utility: delete_files could not remove {file_path.name!r} from {directory!r}: {error}")
+                _log.warning("delete_files could not remove %r from %r: %s", file_path.name, directory, error)
