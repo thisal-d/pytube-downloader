@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import customtkinter as ctk
 import tkinter as tk
 import threading
@@ -256,7 +257,7 @@ class App(ctk.CTk):
         # configure alpha
         self.attributes("-alpha", AppearanceSettings.get_opacity("decimal"))
         # set the title icon
-        self.iconbitmap("assets\\main icon\\512x512.ico")
+        self.iconbitmap(str(Path("assets") / "main icon" / "512x512.ico"))
         
         ctk.deactivate_automatic_dpi_awareness()
         

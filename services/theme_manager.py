@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import time
+from pathlib import Path
 from typing import List, Tuple, Any, Literal
 import threading
 from settings import AppearanceSettings
@@ -112,8 +113,8 @@ class ThemeManager:
         """
         Starts the theme tracking system in a separate thread.
         """
-        lang_file = f"data\\themes\\{AppearanceSettings.settings["theme"]["name"]}.json"
-        ThemeManager.theme_colors = JsonUtility.read_from_file(lang_file)
+        lang_file = Path("data") / "themes" / f"{AppearanceSettings.settings['theme']['name']}.json"
+        ThemeManager.theme_colors = JsonUtility.read_from_file(str(lang_file))
 
         """"""
         theme_tracking_thread = threading.Thread(target=ThemeManager.track_theme_mode_changes)

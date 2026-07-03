@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from typing import List
 
 
@@ -7,8 +7,9 @@ class FileUtility:
     A utility class for handling file-related operations such as directory creation, path formatting,
     checking accessibility, sanitizing filenames, and obtaining available file names.
     """
+
     @staticmethod
-    def create_directory(path: str):
+    def create_directory(path: str) -> None:
         """
         Create the directory structure if it doesn't exist.
 
@@ -16,12 +17,7 @@ class FileUtility:
             path (str): The path where the directory structure should be created.
         """
         try:
-            if not os.path.exists(path):
-                sub_paths = path.split("\\")
-                for i in range(0, len(sub_paths)):
-                    sub_path = "\\".join(sub_paths[0:i + 1])
-                    if not os.path.exists(sub_path):
-                        os.mkdir(sub_path)
+            Path(path).mkdir(parents=True, exist_ok=True)
         except Exception as error:
             print(f"file_utility: create_directory failed for {path!r}: {error}")
             raise
@@ -29,22 +25,18 @@ class FileUtility:
     @staticmethod
     def format_path(path: str) -> str:
         """
-        Format the given path to replace forward slashes with backward slashes and remove redundant slashes.
+        Normalize the given path using pathlib, removing redundant separators.
+
+        This replaces the legacy Windows-only backslash-forcing implementation.
+        The returned string uses the OS-native separator.
 
         Args:
             path (str): The path to be formatted.
 
         Returns:
-            str: The formatted path.
+            str: The normalized path string.
         """
-        path = path.strip().replace("/", "\\")
-        while "\\\\" in path:
-            path = path.replace("\\\\", "\\")
-        paths = [p for p in path.split("\\") if p.strip()]
-        path = "\\".join(paths)
-        if path.endswith("\\"):
-            path = path[:-1]
-        return path
+        return str(Path(path.strip()))
 
     @staticmethod
     def is_accessible(path: str) -> bool:
@@ -57,17 +49,16 @@ class FileUtility:
         Returns:
             bool: True if the path is accessible, False otherwise.
         """
-        file = os.path.join(path, "pytube.pytube")
+        probe = Path(path) / "pytube.pytube"
         try:
             FileUtility.create_directory(path)
-            with open(file, "w"):
-                pass
-            os.remove(file)
+            probe.write_text("")
+            probe.unlink()
             return True
         except Exception as error:
             print(f"file_utility: is_accessible check failed for {path!r}: {error}")
             return False
-        
+
     @staticmethod
     def is_readable(path: str) -> bool:
         """
@@ -79,15 +70,14 @@ class FileUtility:
         Returns:
             bool: True if the path is readable, False otherwise.
         """
+        p = Path(path)
         try:
-            with open(path, "r"):
-                pass
+            p.open("r").close()
             return True
         except (OSError, UnicodeDecodeError):
             pass
         try:
-            with open(path, "rb"):
-                pass
+            p.open("rb").close()
             return True
         except Exception as error:
             print(f"file_utility: is_readable failed for {path!r}: {error}")
@@ -109,7 +99,7 @@ class FileUtility:
         for char in replaces:
             filename = filename.replace(char, "~")
         return filename
-    
+
     @staticmethod
     def get_available_file_name(original_file_name: str) -> str:
         """
@@ -121,17 +111,19 @@ class FileUtility:
         Returns:
             str: The available file name.
         """
-        if os.path.exists(original_file_name):
-            split_path = original_file_name.split(".")
-            base_name, extension = ".".join(split_path[0:-1]), split_path[-1]
-            counter = 0
-            while os.path.exists(f"{base_name} ({counter}).{extension}"):
-                counter += 1
-
-            return f"{base_name} ({counter}).{extension}"
-        else:
+        p = Path(original_file_name)
+        if not p.exists():
             return original_file_name
-    
+
+        base_name = p.parent / p.stem
+        extension = p.suffix.lstrip(".")
+        counter = 0
+        candidate = Path(f"{base_name} ({counter}).{extension}")
+        while candidate.exists():
+            counter += 1
+            candidate = Path(f"{base_name} ({counter}).{extension}")
+        return str(candidate)
+
     @staticmethod
     def delete_files(directory: str, files_to_keep: List[str] = None) -> None:
         """
@@ -141,9 +133,9 @@ class FileUtility:
             directory (str): The path to the directory containing the files to delete.
             files_to_keep (List[str], optional): A list of file names to exclude from deletion. Default is None.
         """
-        for file_name in os.listdir(directory):
+        for file_path in Path(directory).iterdir():
             try:
-                if files_to_keep is None or file_name not in files_to_keep:
-                    os.remove(os.path.join(directory, file_name))
+                if files_to_keep is None or file_path.name not in files_to_keep:
+                    file_path.unlink()
             except Exception as error:
-                print(f"file_utility: delete_files could not remove {file_name!r} from {directory!r}: {error}")
+                print(f"file_utility: delete_files could not remove {file_path.name!r} from {directory!r}: {error}")
