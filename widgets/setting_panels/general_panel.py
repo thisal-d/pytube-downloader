@@ -21,7 +21,7 @@ class GeneralPanel(ctk.CTkFrame):
             text=":",
         )
 
-        self.language_data = JsonUtility.read_from_file("data\\languages.json")
+        self.language_data = JsonUtility.read_from_file("data/languages.json")
         self.language_names = [language_name for language_name in self.language_data.keys()]
         self.languages_combo_box = ctk.CTkComboBox(
             master=self,

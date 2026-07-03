@@ -44,7 +44,7 @@ class NotificationManager:
         status_message: str = "Status Message",  # Message indicating the status
         completed_videos_count: int = 1,  # Number of videos completed in the playlist
         total_videos_count: int = 10,  # Total videos in the playlist
-        thumbnail_path: str = "assets\\ui images\\default thumbnail.png",  # Path to the thumbnail image
+        thumbnail_path: str = "assets/ui images/default thumbnail.png",  # Path to the thumbnail image
         download_mode: Literal["video", "playlist"] = "video",  # Notification download_mode: 'video' or 'playlist'
         file_size: int = 1000,  # File size in bytes
         download_file_name: str = "",
@@ -141,7 +141,7 @@ class NotificationManager:
         status_message: str = "Status Message",  # Message indicating the status
         completed_videos_count: int = 1,  # Number of videos completed in the playlist
         total_videos_count: int = 10,  # Total videos in the playlist
-        thumbnail_path: str = "assets\\ui images\\default thumbnail.png",  # Path to the thumbnail image
+        thumbnail_path: str = "assets/ui images/default thumbnail.png",  # Path to the thumbnail image
         download_mode: Literal["video", "playlist"] = "video",  # Notification type: 'video' or 'playlist'
         file_size: int = 1000,  # File size in bytes
         download_file_name: str = "",

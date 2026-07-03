@@ -1,21 +1,26 @@
 import os
+import platform
 import sqlite3
 from collections.abc import Callable
+from pathlib import Path
 from typing import Literal
 
 from utils import DataBaseUtility, DateTimeUtility, FileUtility
-
-# from widgets.video import DownloadedVideo
-# from widgets.play_list import DownloadedPlayList
 
 
 class HistoryManager:
     videos_history_data = []
     playlists_history_data = []
-    data_base_dir = f"C:\\Users\\{os.getlogin()}\\AppData\\Local\\PyTube Downloader"
-    # data_base_dir = "history"
+    _data_base_dir = (
+        Path.home() / "Library" / "Application Support" / "PyTube Downloader"
+        if platform.system() == "Darwin"
+        else Path.home() / ".local" / "share" / "PyTube Downloader"
+        if platform.system() == "Linux"
+        else Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "PyTube Downloader"
+    )
+    data_base_dir = str(_data_base_dir)
     data_base_name = "history.db"
-    data_base = f"{data_base_dir}\\{data_base_name}"
+    data_base = str(_data_base_dir / data_base_name)
     connection = None
     cursor = None
     max_history = 40
@@ -250,4 +255,4 @@ class HistoryManager:
             required_thumbnails.append(thumbnail[0].split("/")[-1])
             required_thumbnails.append(thumbnail[1].split("/")[-1])
 
-        FileUtility.delete_files(directory="history\\thumbnails", files_to_keep=required_thumbnails)
+        FileUtility.delete_files(directory="history/thumbnails", files_to_keep=required_thumbnails)

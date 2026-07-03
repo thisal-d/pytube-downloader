@@ -259,7 +259,10 @@ class App(ctk.CTk):
         # configure alpha
         self.attributes("-alpha", AppearanceSettings.get_opacity("decimal"))
         # set the title icon
-        self.iconbitmap(str(Path("assets") / "main icon" / "512x512.ico"))
+        try:
+            self.iconbitmap(str(Path("assets") / "main icon" / "512x512.ico"))
+        except Exception:
+            pass  # iconbitmap not supported on this platform (Linux/macOS)
 
         ctk.deactivate_automatic_dpi_awareness()
 
@@ -2109,7 +2112,7 @@ class App(ctk.CTk):
         """
         Clears temporarily saved files, such as thumbnails.
         """
-        FileUtility.delete_files("temp\\thumbnails", ["this directory is necessary"])
+        FileUtility.delete_files("temp/thumbnails", ["this directory is necessary"])
 
     @staticmethod
     def maintain_history() -> None:

@@ -46,3 +46,6 @@ nuitka-crash-report.xml
 
 # Logs
 *.log
+
+# Local user data (created at runtime)
+PyTube Downloader/

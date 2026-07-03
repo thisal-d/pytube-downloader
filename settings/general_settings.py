@@ -1,4 +1,6 @@
 import os
+import platform
+from pathlib import Path
 
 from utils import FileUtility, JsonUtility
 
@@ -10,10 +12,16 @@ class GeneralSettings:
 
     settings: dict = {}
     default_settings_directory = "data"
-    default_settings_file = default_settings_directory + "\\general.json"
-    user_settings_directory = f"C:\\Users\\{os.getlogin()}\\AppData\\Local\\PyTube Downloader\\data"
-    user_settings_file = user_settings_directory + "\\general.json"
-    default_download_dir = f"C:\\users\\{os.getlogin()}\\downloads\\PyTube Downloader\\"
+    default_settings_file = str(Path("data") / "general.json")
+    user_settings_directory = (
+        str(Path.home() / "Library" / "Application Support" / "PyTube Downloader" / "data")
+        if platform.system() == "Darwin"
+        else str(Path.home() / ".local" / "share" / "PyTube Downloader" / "data")
+        if platform.system() == "Linux"
+        else str(Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "PyTube Downloader" / "data")
+    )
+    user_settings_file = str(Path(user_settings_directory) / "general.json")
+    default_download_dir = str(Path.home() / "Downloads" / "PyTube Downloader")
 
     SETTINGS = {
         "automatic_download": {"quality": "1080p", "status": "disable"},
@@ -117,4 +125,4 @@ class GeneralSettings:
     @staticmethod
     def create_backup() -> None:
         FileUtility.create_directory(GeneralSettings.user_settings_directory)
-        JsonUtility.write_to_file(GeneralSettings.user_settings_file, JsonUtility.read_from_file("data\\general.json"))
+        JsonUtility.write_to_file(GeneralSettings.user_settings_file, JsonUtility.read_from_file("data/general.json"))

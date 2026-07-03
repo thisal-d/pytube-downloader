@@ -1,4 +1,6 @@
 import os
+import platform
+from pathlib import Path
 
 from utils import JsonUtility
 
@@ -16,9 +18,16 @@ class InformationManager:
     }
     info = {}
     default_info_directory = "data"
-    default_info_file = default_info_directory + "\\info.json"
-    user_info_directory = f"C:\\Users\\{os.getlogin()}\\AppData\\Local\\PyTube Downloader\\data"
-    user_info_file = user_info_directory + "\\info.json"
+    default_info_file = str(Path("data") / "info.json")
+    _user_data_dir = (
+        Path.home() / "Library" / "Application Support" / "PyTube Downloader" / "data"
+        if platform.system() == "Darwin"
+        else Path.home() / ".local" / "share" / "PyTube Downloader" / "data"
+        if platform.system() == "Linux"
+        else Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "PyTube Downloader" / "data"
+    )
+    user_info_directory = str(_user_data_dir)
+    user_info_file = str(_user_data_dir / "info.json")
 
     @staticmethod
     def is_backup_exists() -> bool:

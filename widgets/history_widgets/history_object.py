@@ -79,7 +79,7 @@ class HistoryObject(ctk.CTkFrame):
             image=thumbnail_image, new_size=thumbnail_size_for_video_history_object
         )
 
-        thumbnail_path = FileUtility.get_available_file_name("temp\\thumbnails\\history.png")
+        thumbnail_path = FileUtility.get_available_file_name("temp/thumbnails/history.png")
         thumbnail_image.save(FileUtility.get_available_file_name(thumbnail_path))
 
         return thumbnail_path

@@ -65,5 +65,5 @@ class DataRetrieveUtility:
         return:
             string: current version
         """
-        version: str = cast(str, JsonUtility.read_from_file("data\\info.json")["version"])
+        version: str = cast(str, JsonUtility.read_from_file("data/info.json")["version"])
         return version

@@ -62,12 +62,15 @@ class AlertWindow(ctk.CTkToplevel):
         (self.configure(width=self.width),)
         self.configure(height=self.height)
         self.resizable(False, False)
-        self.iconbitmap("assets\\main icon\\512x512.ico")
+        try:
+            self.iconbitmap("assets/main icon/512x512.ico")
+        except Exception:
+            pass  # iconbitmap not supported on this platform
         self.title("Pytube Downloader")
         self.transient(master)
         self.grab_set()
 
-        self.info_image = ctk.CTkImage(Image.open("assets\\ui images\\info.png"), size=(70 * scale, 70 * scale))
+        self.info_image = ctk.CTkImage(Image.open("assets/ui images/info.png"), size=(70 * scale, 70 * scale))
         self.info_image_label = ctk.CTkLabel(
             master=self, text="", image=self.info_image, width=70 * scale, height=70 * scale
         )
@@ -212,7 +215,7 @@ class AlertWindow(ctk.CTkToplevel):
     def set_widgets_texts(self):
         scale = AppearanceSettings.get_scale("decimal")
 
-        self.info_image = ctk.CTkImage(Image.open("assets\\ui images\\info.png"), size=(70 * scale, 70 * scale))
+        self.info_image = ctk.CTkImage(Image.open("assets/ui images/info.png"), size=(70 * scale, 70 * scale))
         self.info_image_label.configure(image=self.info_image)
 
         self.error_msg_label.configure(text=LanguageManager.data[self.alert_msg])

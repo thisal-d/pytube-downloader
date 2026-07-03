@@ -17,8 +17,8 @@ class HistoryVideo(HistoryObject):
     default_thumbnail_light_normal: PhotoImage = None
     default_thumbnail_light_hover: PhotoImage = None
 
-    default_thumbnail_path_light = "assets\\ui images\\video-light.png"
-    default_thumbnail_path_dark = "assets\\ui images\\video-dark.png"
+    default_thumbnail_path_light = "assets/ui images/video-light.png"
+    default_thumbnail_path_dark = "assets/ui images/video-dark.png"
 
     def __init__(self, length, **kwargs):
         self.length = length
@@ -67,16 +67,16 @@ class HistoryVideo(HistoryObject):
                 image=thumbnail_image_dark_hover, new_size=thumbnail_size_for_video_history_object
             )
 
-            thumbnail_image_path_light_normal = FileUtility.get_available_file_name("temp\\thumbnails\\history.png")
+            thumbnail_image_path_light_normal = FileUtility.get_available_file_name("temp/thumbnails/history.png")
             thumbnail_image_light_normal.save(thumbnail_image_path_light_normal)
 
-            thumbnail_image_path_dark_normal = FileUtility.get_available_file_name("temp\\thumbnails\\history.png")
+            thumbnail_image_path_dark_normal = FileUtility.get_available_file_name("temp/thumbnails/history.png")
             thumbnail_image_dark_normal.save(thumbnail_image_path_dark_normal)
 
-            thumbnail_image_path_light_hover = FileUtility.get_available_file_name("temp\\thumbnails\\history.png")
+            thumbnail_image_path_light_hover = FileUtility.get_available_file_name("temp/thumbnails/history.png")
             thumbnail_image_light_hover.save(thumbnail_image_path_light_hover)
 
-            thumbnail_image_path_dark_hover = FileUtility.get_available_file_name("temp\\thumbnails\\history.png")
+            thumbnail_image_path_dark_hover = FileUtility.get_available_file_name("temp/thumbnails/history.png")
             thumbnail_image_dark_hover.save(thumbnail_image_path_dark_hover)
 
             HistoryVideo.default_thumbnail_dark_normal = PhotoImage(file=thumbnail_image_path_dark_normal)

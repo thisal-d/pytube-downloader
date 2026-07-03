@@ -26,7 +26,7 @@ class LanguageManager:
 
     @staticmethod
     def initialize() -> None:
-        lang_file = f"data\\languages\\{GeneralSettings.settings['lang_code']}.json"
+        lang_file = f"data/languages/{GeneralSettings.settings['lang_code']}.json"
         LanguageManager.data = JsonUtility.read_from_file(lang_file)
 
     @staticmethod

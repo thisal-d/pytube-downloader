@@ -1,4 +1,6 @@
 import os
+import platform
+from pathlib import Path
 from typing import Literal
 
 from utils import FileUtility, JsonUtility
@@ -11,9 +13,16 @@ class AppearanceSettings:
 
     settings: dict = {}
     default_settings_directory = "data"
-    default_settings_file = default_settings_directory + "\\appearance.json"
-    user_settings_directory = f"C:\\Users\\{os.getlogin()}\\AppData\\Local\\PyTube Downloader\\data"
-    user_settings_file = user_settings_directory + "\\appearance.json"
+    default_settings_file = str(Path("data") / "appearance.json")
+    _user_data_dir = (
+        Path.home() / "Library" / "Application Support" / "PyTube Downloader" / "data"
+        if platform.system() == "Darwin"
+        else Path.home() / ".local" / "share" / "PyTube Downloader" / "data"
+        if platform.system() == "Linux"
+        else Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "PyTube Downloader" / "data"
+    )
+    user_settings_directory = str(_user_data_dir)
+    user_settings_file = str(_user_data_dir / "appearance.json")
 
     SETTINGS = {
         "accent": {
@@ -167,5 +176,5 @@ class AppearanceSettings:
     def create_backup() -> None:
         FileUtility.create_directory(AppearanceSettings.user_settings_directory)
         JsonUtility.write_to_file(
-            AppearanceSettings.user_settings_file, JsonUtility.read_from_file("data\\appearance.json")
+            AppearanceSettings.user_settings_file, JsonUtility.read_from_file("data/appearance.json")
         )
