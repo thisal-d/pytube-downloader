@@ -36,6 +36,9 @@ dev = [
     "mypy>=1.10.0",
 ]
 
+[project.scripts]
+pytube-downloader = "main:main"
+
 [project.urls]
 Homepage = "https://github.com/Thisal-D/PyTube-Downloader"
 Repository = "https://github.com/Thisal-D/PyTube-Downloader"
