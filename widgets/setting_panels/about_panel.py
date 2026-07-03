@@ -11,11 +11,14 @@ from utils import (
     FileUtility,
     ImageUtility,
 )
+from utils.logger import get_logger
 from services import ThemeManager, LanguageManager, InformationManager
 from settings import (
     AppearanceSettings,
 )
 from ..components.contributor_profile_widget import ContributorProfileWidget
+
+_log = get_logger(__name__)
 
 
 class AboutPanel(ctk.CTkFrame):
@@ -204,7 +207,7 @@ class AboutPanel(ctk.CTkFrame):
                     profile_image.save(profile_images_paths[0])
                     profile_image.close()
                 except Exception as error:
-                    print(f"about_panel.py : {error}")
+                    _log.warning("profile image generation failed: %s", error)
             # check if  hover profile image is already generated if not generate
             if not os.path.exists(profile_images_paths[1]) and os.path.exists(profile_images_paths[0]):
                 profile_image = Image.open(profile_images_paths[0])

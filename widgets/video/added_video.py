@@ -21,6 +21,9 @@ from utils import (
     DownloadInfoUtility,
     FileUtility
 )
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class AddedVideo(Video):
@@ -264,7 +267,7 @@ class AddedVideo(Video):
             self.set_loading_failed()
         
         except Exception as error:
-            print(f"added_video.py L-235 : {error}")
+            _log.error("retrieve_video_data failed: %s", error)
             if self.pytube_client_index + 1 < len(AddedVideo.PYTUBE_CLIENTS):
                 self.retrieve_video_data()
             else:

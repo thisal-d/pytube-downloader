@@ -4,7 +4,10 @@ from typing import Union, List
 from services import ThemeManager, LanguageManager
 from settings import AppearanceSettings
 from widgets.video.video import Video
+from utils.logger import get_logger
 import math
+
+_log = get_logger(__name__)
 
 
 class PlayList(ctk.CTkFrame):
@@ -173,7 +176,7 @@ class PlayList(ctk.CTkFrame):
             try:
                 self.videos[i].pack_forget()
             except Exception as error:
-                print(f"play_list.py L165 : {error}")
+                _log.debug("pack_forgot_videos: index %d out of range: %s", i, error)
         """print("Place Forgets Start:",self.last_viewed_index, end="")
         self.last_viewed_index -= PlayList.max_videos_per_page
         for i in range(self.last_viewed_index, self.last_viewed_index + PlayList.max_videos_per_page , 1):
@@ -221,7 +224,7 @@ class PlayList(ctk.CTkFrame):
             try:
                 self.videos[i].pack(fill="x", padx=(20, 0), pady=(1, 0))
             except Exception as error:
-                print(f"play_list.py L202 : {error}")
+                _log.debug("view_next_videos: index %d out of range: %s", i, error)
         
         self.tab_info_label.configure(text=f"{self.current_viewing_page + 1} | {self.total_videos_tab_count + 1}")
          
@@ -250,7 +253,7 @@ class PlayList(ctk.CTkFrame):
             try:
                 self.videos[i].pack(fill="x", padx=(20, 0), pady=(1, 0))
             except Exception as error:
-                print(f"play_list.py L227 : {error}")
+                _log.debug("view_previous_videos: index %d out of range: %s", i, error)
         
         self.tab_info_label.configure(text=f"{self.current_viewing_page + 1} | {self.total_videos_tab_count + 1}")
         

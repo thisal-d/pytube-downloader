@@ -4,9 +4,12 @@ from typing import Literal, Union, List
 from .play_list import PlayList
 from widgets import AddedVideo
 from utils import GuiUtils
+from utils.logger import get_logger
 from settings import AppearanceSettings, GeneralSettings
 from services import LanguageManager, ThemeManager
 import pytubefix
+
+_log = get_logger(__name__)
 
 
 class AddedPlayList(PlayList):
@@ -72,7 +75,7 @@ class AddedPlayList(PlayList):
             self.set_playlist_data()
             self.load_videos()
         except Exception as error:
-            print(f"added_play_list.py L-74 : {error}")
+            _log.error("retrieve_playlist_data failed: %s", error)
             self.indicate_loading_failure()
 
     def load_videos(self):

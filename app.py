@@ -43,6 +43,9 @@ from utils import (
     DataRetrieveUtility,
     ValueConvertUtility
 )
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class App(ctk.CTk):
@@ -1629,11 +1632,11 @@ class App(ctk.CTk):
                                     sub_sub_sub_widget.update()
                                     sub_widget.focus_set()
                             except Exception as error:
-                                print(f"app.py L-657 : {error}")
+                                _log.error("widget update loop (depth 3) failed: %s", error)
                     except Exception as error:
-                        print(f"app.py L-659 : {error}")
+                        _log.error("widget update loop (depth 2) failed: %s", error)
             except Exception as error:
-                print(f"app.py L-661 : {error}")
+                _log.error("widget update loop (depth 1) failed: %s", error)
         self.update()
         self.focus_set()
 
@@ -1665,7 +1668,7 @@ class App(ctk.CTk):
                 self.hide_app_logo()
             self.is_geometry_changes_tracker_running = False
         except Exception as error:
-            print(f"geometry_changes_tracker L-1219 : {error}")
+            _log.error("geometry_changes_tracker failed: %s", error)
 
     def run_geometry_changes_tracker(self, _event: tk.Event | str) -> None:
         """
@@ -2079,7 +2082,7 @@ class App(ctk.CTk):
                 self.clear_temporally_saved_files()
                 App.maintain_history()
             except Exception as error:
-                print("app.py L-1577 : ", error)
+                _log.error("close_app: failed to save settings or clean up: %s", error)
         self.destroy()
         self.is_app_running = False
         if not restart:
@@ -2135,7 +2138,7 @@ class App(ctk.CTk):
         self.tray_menu.stop()
         self.deiconify()
 
-        print("Run here")
+        _log.debug("restore_from_tray: window restored")
 
     def minimize_to_tray(self) -> None:
         """

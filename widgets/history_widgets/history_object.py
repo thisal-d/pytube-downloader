@@ -4,10 +4,13 @@ import tkinter as tk
 from settings import AppearanceSettings
 from services import ThemeManager, LanguageManager
 from utils import ImageUtility, FileUtility
+from utils.logger import get_logger
 from typing import Callable
 from PIL import Image
 import webbrowser
 import os
+
+_log = get_logger(__name__)
 
 
 class HistoryObject(ctk.CTkFrame):
@@ -300,5 +303,5 @@ class HistoryObject(ctk.CTkFrame):
             self.__del__()
             return super().destroy()
         except Exception as error:
-            print("history_object.py L-284", error)
+            _log.error("destroy failed: %s", error)
         

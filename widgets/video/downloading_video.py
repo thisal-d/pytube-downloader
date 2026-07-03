@@ -27,6 +27,9 @@ from utils import (
     FileUtility,
     DownloadInfoUtility
 )
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class DownloadingVideo(Video):
@@ -211,7 +214,7 @@ class DownloadingVideo(Video):
                 try:
                     FileUtility.create_directory(self.download_directory)
                 except Exception as error:
-                    print(f"downloading_video.py L-213 : {error}")
+                    _log.error("create_directory failed: %s", error)
                     self.set_downloading_failed()
                     return
 
@@ -223,7 +226,7 @@ class DownloadingVideo(Video):
             while (self.download_state == "downloading"):
                 self.set_download_files_info()
         except Exception as error:
-            print("downloading_video.py L-220 : ", error)
+            _log.error("configure_downloading loop error: %s", error)
                 
     def set_for_converting(self):
         self.estimated_remaining_time_label.place_forget()
@@ -267,7 +270,7 @@ class DownloadingVideo(Video):
                 current_download_type = "audio"
         
         except Exception as error:
-            print(f"downloading_video.py L-261 : {error}")
+            _log.error("set_download_files_info failed: %s", error)
             self.set_downloading_failed()
             return
     
@@ -354,14 +357,14 @@ class DownloadingVideo(Video):
                                 break
                             
                     except Exception as error:
-                        print(f"downloading_video.py L-332 : {error}")
+                        _log.error("chunk write error: %s", error)
                         self.total_bytes_downloaded -= self.bytes_downloaded
                         self.total_download_time -= self.download_time
                         self.set_downloading_failed()
                         break
                     
         except Exception as error:
-            print(f"downloading_video.py L-336 : {error}")
+            _log.error("download_file open/stream error: %s", error)
             self.set_downloading_failed()
     
     
@@ -425,7 +428,7 @@ class DownloadingVideo(Video):
             else:
                 self.set_converting_failed()
         except Exception as error:
-            print("downloading_video.py L-400 : ", error)
+            _log.error("converting subprocess error: %s", error)
             self.set_converting_failed()
     
     def convert_video(self):
@@ -531,7 +534,7 @@ class DownloadingVideo(Video):
             if self.mode == "video":
                 self.show_notification()
         except Exception as error:
-            print("downloading_video.py L-540 : ", error)
+            _log.error("set_downloading_failed error: %s", error)
             
     def set_converting_failed(self):
         VideoConvertManager.unregister_from_active(self)
@@ -575,7 +578,7 @@ class DownloadingVideo(Video):
             try:
                 self.show_notification()
             except Exception as error:
-                print("downloading_video.py L-562 : ", error)
+                _log.error("show_notification error: %s", error)
             self.kill()
     
     def rename_to_original_name(self):
@@ -586,12 +589,12 @@ class DownloadingVideo(Video):
         try:
             os.remove(self.audio_only_file_name)
         except Exception as error:
-            print("downloading_video.py L-573 : ", error)
+            _log.warning("remove audio temp file failed: %s", error)
             
         try:
             os.remove(self.video_only_file_name)
         except Exception as error:
-            print("downloading_video.py L-578 : ", error)
+            _log.warning("remove video temp file failed: %s", error)
     
     def set_converting_completed(self):
         self.set_convert_progress(100)
