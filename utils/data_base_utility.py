@@ -1,7 +1,7 @@
 import os
 import sqlite3
 
-from utils import FileUtility
+from utils.file_utility import FileUtility
 
 
 class DataBaseUtility:
