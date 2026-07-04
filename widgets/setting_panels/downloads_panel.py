@@ -617,4 +617,3 @@ class DownloadsPanel(ctk.CTkFrame):
         button_font = ("Segoe UI", 11 * scale, "bold")
         self.apply_changes_button.configure(font=button_font)
         self.settings_reset_button.configure(font=button_font)
-

@@ -519,4 +519,3 @@ class HistoryPanel(ctk.CTkFrame):
         self.playlists_history_frame_info_label.configure(
             text=LanguageManager.data["downloaded_playlists_history_will_be_display_here"]
         )
-

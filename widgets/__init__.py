@@ -6,10 +6,24 @@ from .setting_panels import AboutPanel, AppearancePanel, DownloadsPanel, General
 from .video import AddedVideo, DownloadedVideo, DownloadingVideo
 
 __all__ = [
-    "AccentColorButton", "ContributorProfileWidget",
-    "AlertWindow", "ContextMenu", "SettingPanel", "TrayMenu",
-    "HistoryPanel", "HistoryVideo",
-    "AddedPlayList", "DownloadedPlayList", "DownloadingPlayList",
-    "AboutPanel", "AppearancePanel", "DownloadsPanel", "GeneralPanel", "NavigationPanel", "NetworkPanel",
-    "AddedVideo", "DownloadedVideo", "DownloadingVideo"
+    "AccentColorButton",
+    "ContributorProfileWidget",
+    "AlertWindow",
+    "ContextMenu",
+    "SettingPanel",
+    "TrayMenu",
+    "HistoryPanel",
+    "HistoryVideo",
+    "AddedPlayList",
+    "DownloadedPlayList",
+    "DownloadingPlayList",
+    "AboutPanel",
+    "AppearancePanel",
+    "DownloadsPanel",
+    "GeneralPanel",
+    "NavigationPanel",
+    "NetworkPanel",
+    "AddedVideo",
+    "DownloadedVideo",
+    "DownloadingVideo",
 ]

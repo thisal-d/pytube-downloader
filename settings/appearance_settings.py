@@ -62,7 +62,6 @@ class AppearanceSettings:
         return AppearanceSettings.settings["window"]["opacity"][type]
 
     @staticmethod
-
     def get_scale(self: Literal["decimal", "percentage"]) -> float | int:
         """
         Get the global window opacity setting.
@@ -80,7 +79,6 @@ class AppearanceSettings:
         AppearanceSettings.settings["window"]["opacity"][type] = value
 
     @staticmethod
-
     def set_scale(self: Literal["decimal", "percentage"], value: int | float) -> None:
         """
         Set the global window opacity setting.
@@ -145,7 +143,10 @@ class AppearanceSettings:
             if key not in initialized:
                 return False
             # If the value is a dictionary, recursively check nested keys
-            if isinstance(value, dict) and (not isinstance(initialized[key], dict) or not AppearanceSettings.are_all_keys_present(value, initialized[key])):  # noqa: E501
+            if isinstance(value, dict) and (
+                not isinstance(initialized[key], dict)
+                or not AppearanceSettings.are_all_keys_present(value, initialized[key])
+            ):  # noqa: E501
                 return False
         return True
 

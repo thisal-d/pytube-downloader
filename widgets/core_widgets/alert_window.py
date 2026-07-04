@@ -63,6 +63,7 @@ class AlertWindow(ctk.CTkToplevel):
         self.configure(height=self.height)
         self.resizable(False, False)
         import contextlib
+
         with contextlib.suppress(Exception):
             self.iconbitmap("assets/main icon/512x512.ico")
         self.title("Pytube Downloader")

@@ -265,6 +265,7 @@ class App(ctk.CTk):
         self.attributes("-alpha", AppearanceSettings.get_opacity("decimal"))
         # set the title icon
         import contextlib
+
         with contextlib.suppress(Exception):
             self.iconbitmap(str(Path("assets") / "main icon" / "512x512.ico"))
 
