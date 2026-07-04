@@ -1,5 +1,5 @@
-import os
 from collections.abc import Callable
+from pathlib import Path
 from tkinter import PhotoImage
 from typing import Literal
 
@@ -7,7 +7,7 @@ import customtkinter as ctk
 
 from services import HistoryManager, LanguageManager, ThemeManager, VideoCountTracker
 from settings import AppearanceSettings
-from utils import ValueConvertUtility
+from utils import GuiUtils, ValueConvertUtility
 from widgets.video.video import Video
 
 
@@ -86,12 +86,13 @@ class DownloadedVideo(Video):
             master=self,
             text="📂",
             cursor="hand2",
-            command=lambda: os.startfile("\\".join(self.downloaded_file_name.split("\\")[0:-1])),
+            command=lambda: GuiUtils.open_file(Path(self.downloaded_file_name).parent),
             hover=False,
         )
 
         self.play_video_btn = ctk.CTkButton(
-            master=self, text="▶", cursor="hand2", command=lambda: os.startfile(self.downloaded_file_name), hover=False
+            master=self, text="▶", cursor="hand2", hover=False,
+            command=lambda: GuiUtils.open_file(self.downloaded_file_name),
         )
 
     def set_widgets_texts(self):

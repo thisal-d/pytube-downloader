@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 import threading
 import time
 import tkinter as tk
@@ -2050,10 +2052,7 @@ class App(ctk.CTk):
 
         """
         self.on_app_closing(restart=True)
-        if os.path.exists("main.py"):
-            os.startfile("main.py")
-        if os.path.exists("PyTube Downloader.exe"):
-            os.startfile("PyTube Downloader.exe")
+        subprocess.Popen([sys.executable, "main.py"])
         os._exit(0)
 
     def confirm_quit(self):
