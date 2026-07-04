@@ -84,20 +84,20 @@ class DownloadInfoUtility:
 
         for stream_type in data[0::]:
             if stream_type["type"] == "video" and stream_type["progressive"] == "True":
-                    try:
-                        file_size = video_streams.get_by_itag(stream_type["itag"]).filesize
-                        download_info = {
-                            "itag": stream_type["itag"],
-                            "type": "video",
-                            "reso": stream_type["res"],
-                            "size": file_size,
-                            "inbuilt_audio": True,
-                        }
-                        if stream_type["res"] not in supported_download_resos and stream_type["res"] != "None":
-                            supported_download_types.append(download_info)
-                            supported_download_resos.append(stream_type["res"])
-                    except Exception:
-                        _log.exception("failed to get progressive video file size")
+                try:
+                    file_size = video_streams.get_by_itag(stream_type["itag"]).filesize
+                    download_info = {
+                        "itag": stream_type["itag"],
+                        "type": "video",
+                        "reso": stream_type["res"],
+                        "size": file_size,
+                        "inbuilt_audio": True,
+                    }
+                    if stream_type["res"] not in supported_download_resos and stream_type["res"] != "None":
+                        supported_download_types.append(download_info)
+                        supported_download_resos.append(stream_type["res"])
+                except Exception:
+                    _log.exception("failed to get progressive video file size")
 
         for stream_type in data[0::]:
             if stream_type["progressive"] == "False" and stream_type["type"] == "video":

@@ -106,14 +106,14 @@ class HistoryObject(ctk.CTkFrame):
             try:
                 self.configure(border_color=ThemeManager.get_accent_color("hover"))
                 self.thumbnail_button.configure(image=self.thumbnail_hover)
-            except:
+            except Exception:
                 pass
 
         def on_mouse_leave_self(event):
             try:
                 self.configure(border_color=ThemeManager.get_accent_color("normal"))
                 self.thumbnail_button.configure(image=self.thumbnail_normal)
-            except:
+            except Exception:
                 pass
 
         self.bind("<Enter>", on_mouse_enter_self)

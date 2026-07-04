@@ -341,6 +341,7 @@ class DownloadsPanel(ctk.CTkFrame):
 
     def bind_widgets_events(self):
         self.download_path_entry.bind("<KeyRelease>", self.download_path_validate)
+        self.chunk_size_value_entry.bind("<KeyRelease>", self.validate_chunk_size_value)
 
         def on_mouse_enter_download_path_entry(event_):
             self.download_path_entry.configure(
@@ -617,8 +618,3 @@ class DownloadsPanel(ctk.CTkFrame):
         self.apply_changes_button.configure(font=button_font)
         self.settings_reset_button.configure(font=button_font)
 
-    def bind_widgets_events(self):
-        """
-        Bind events to widgets.
-        """
-        self.chunk_size_value_entry.bind("<KeyRelease>", self.validate_chunk_size_value)

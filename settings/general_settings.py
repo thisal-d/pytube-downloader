@@ -16,18 +16,12 @@ class GeneralSettings:
     default_settings_file = str(Path("data") / "general.json")
 
     if platform.system() == "Darwin":
-        user_settings_directory = str(
-            Path.home() / "Library" / "Application Support" / "PyTube Downloader" / "data"
-        )
+        user_settings_directory = str(Path.home() / "Library" / "Application Support" / "PyTube Downloader" / "data")
     elif platform.system() == "Linux":
-        user_settings_directory = str(
-            Path.home() / ".local" / "share" / "PyTube Downloader" / "data"
-        )
+        user_settings_directory = str(Path.home() / ".local" / "share" / "PyTube Downloader" / "data")
     else:
         user_settings_directory = str(
-            Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming"))
-            / "PyTube Downloader"
-            / "data"
+            Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "PyTube Downloader" / "data"
         )
     user_settings_file = str(Path(user_settings_directory) / "general.json")
 
@@ -43,7 +37,10 @@ class GeneralSettings:
             try:
                 result = subprocess.run(
                     ["xdg-user-dir", "DOWNLOAD"],
-                    capture_output=True, text=True, check=True, timeout=5,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    timeout=5,
                 )
                 path = result.stdout.strip()
                 if path and Path(path).exists():

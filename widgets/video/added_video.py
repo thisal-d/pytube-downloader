@@ -311,7 +311,7 @@ class AddedVideo(Video):
             ]
 
             selected_quality_int = int(selected_quality.split(" | ")[0][0:-1])
-            for index, available_resolution_int in enumerate(available_resolutions_int):
+            for index, available_resolution_int in enumerate(available_resolutions_int):  # noqa: B007
                 if available_resolution_int <= selected_quality_int:
                     break
 

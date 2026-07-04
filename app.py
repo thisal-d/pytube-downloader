@@ -264,10 +264,9 @@ class App(ctk.CTk):
         # configure alpha
         self.attributes("-alpha", AppearanceSettings.get_opacity("decimal"))
         # set the title icon
-        try:
+        import contextlib
+        with contextlib.suppress(Exception):
             self.iconbitmap(str(Path("assets") / "main icon" / "512x512.ico"))
-        except Exception:
-            pass  # iconbitmap not supported on this platform (Linux/macOS)
 
         ctk.deactivate_automatic_dpi_awareness()
 
@@ -800,25 +799,21 @@ class App(ctk.CTk):
         self.videos_status_count_label.configure(
             text=f"{LanguageManager.data['loading']} : {LoadManager.queued_load_count + LoadManager.active_load_count}"
             f" | "
-            f"{LanguageManager.data['downloading']} : {
-                DownloadManager.queued_download_count + DownloadManager.active_download_count
-            }"
+            f"{LanguageManager.data['downloading']} : {DownloadManager.queued_download_count + DownloadManager.active_download_count}"  # noqa: E501
             f" | "
-            f" {LanguageManager.data['converting']} : {
-                VideoConvertManager.active_convert_count + VideoConvertManager.queued_convert_count
-            }"
+            f" {LanguageManager.data['converting']} : {VideoConvertManager.active_convert_count + VideoConvertManager.queued_convert_count}"  # noqa: E501
         )
         self.net_speed_label.configure(
-            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(self.current_download_speed_bytes, decimal_points=3)}/s"
+            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(self.current_download_speed_bytes, decimal_points=3)}/s"  # noqa: E501
         )
 
         self.net_speed_temp_label.configure(
-            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(self.current_download_speed_bytes, decimal_points=3)}/s"
+            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(self.current_download_speed_bytes, decimal_points=3)}/s"  # noqa: E501
         )
 
         self.net_speed_switch.configure(text=LanguageManager.data["more"])
         self.net_speed_chart.configure(
-            y_axis_data=f"{LanguageManager.data['peak']} : {ValueConvertUtility.convert_size(self.current_max_download_speed_bytes, decimal_points=2)}/s"
+            y_axis_data=f"{LanguageManager.data['peak']} : {ValueConvertUtility.convert_size(self.current_max_download_speed_bytes, decimal_points=2)}/s"  # noqa: E501
         )
 
     def update_widgets_text(self):
@@ -1647,13 +1642,9 @@ class App(ctk.CTk):
         self.videos_status_count_label.configure(
             text=f"{LanguageManager.data['loading']} : {LoadManager.queued_load_count + LoadManager.active_load_count}"
             f" | "
-            f"{LanguageManager.data['downloading']} : {
-                DownloadManager.queued_download_count + DownloadManager.active_download_count
-            }"
+            f"{LanguageManager.data['downloading']} : {DownloadManager.queued_download_count + DownloadManager.active_download_count}"  # noqa: E501
             f" | "
-            f" {LanguageManager.data['converting']} : {
-                VideoConvertManager.active_convert_count + VideoConvertManager.queued_convert_count
-            }"
+            f" {LanguageManager.data['converting']} : {VideoConvertManager.active_convert_count + VideoConvertManager.queued_convert_count}"  # noqa: E501
         )
 
     def update_total_videos_count_status(
@@ -1906,11 +1897,11 @@ class App(ctk.CTk):
         self.current_download_speed_bytes = download_speed_bytes_per_sec
 
         self.net_speed_label.configure(
-            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(download_speed_bytes_per_sec, decimal_points=3)}/s"
+            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(download_speed_bytes_per_sec, decimal_points=3)}/s"  # noqa: E501
         )
 
         self.net_speed_temp_label.configure(
-            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(download_speed_bytes_per_sec, decimal_points=3)}/s"
+            text=f"{LanguageManager.data['download_speed']} : {ValueConvertUtility.convert_size(download_speed_bytes_per_sec, decimal_points=3)}/s"  # noqa: E501
         )
 
         self.net_speed_chart.show_data(line=self.net_speed_line, data=[download_speed_bytes_per_sec])

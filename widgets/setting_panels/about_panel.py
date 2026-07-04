@@ -84,7 +84,7 @@ class AboutPanel(ctk.CTkFrame):
         self.logo_label.configure(text=InformationManager.info["logo"])
         self.name_label.configure(text=InformationManager.info["name"])
         self.version_label.configure(text=f"v{InformationManager.info['version']}")
-        # self.site_button.configure(text=InformationManager.info["site"], command=lambda: webbrowser.open(InformationManager.info["site"]))
+        # self.site_button.configure(text=InformationManager.info["site"], command=lambda: webbrowser.open(InformationManager.info["site"]))  # noqa: E501
         # self.after(100, self.configure_contributors_info)
         threading.Thread(target=self.configure_contributors_info, daemon=True).start()
 

@@ -125,7 +125,7 @@ class AddedPlayList(PlayList):
             if video in self.failed_videos:
                 self.failed_videos.remove(video)
             # Add this because if the video is already in the loading_videos list, it won't be added again
-            # New error This request was detected as a bot. Use `use_po_token=True` or switch to WEB client to view. See more details at https://github.com/JuanBindez/pytubefix/pull/209
+            # New error This request was detected as a bot. Use `use_po_token=True` or switch to WEB client to view. See more details at https://github.com/JuanBindez/pytubefix/pull/209  # noqa: E501
             if video not in self.loading_videos:
                 self.loading_videos.append(video)
         elif state == "waiting":
@@ -196,7 +196,7 @@ class AddedPlayList(PlayList):
             ]
 
             selected_quality_int = int(selected_quality.split(" | ")[0][0:-1])
-            for index, available_resolution_int in enumerate(available_resolutions_int):
+            for index, available_resolution_int in enumerate(available_resolutions_int):  # noqa: B007
                 if available_resolution_int <= selected_quality_int:
                     break
 

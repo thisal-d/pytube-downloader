@@ -547,7 +547,7 @@ class DownloadingVideo(Video):
             self.download_type_info["size"], self.total_download_time, self.total_bytes_downloaded
         ):
             self.estimated_remaining_time_label.configure(
-                text=f"{LanguageManager.data['eta']} : {ValueConvertUtility.convert_time(estimated_time) if estimated_time else LanguageManager.data['calculating']}"
+                text=f"{LanguageManager.data['eta']} : {ValueConvertUtility.convert_time(estimated_time) if estimated_time else LanguageManager.data['calculating']}"  # noqa: E501
             )
 
     def set_downloading_failed(self):
@@ -706,7 +706,7 @@ class DownloadingVideo(Video):
             self.estimated_remaining_time_label.configure(text=f"{LanguageManager.data['calculating']}")
         else:
             self.estimated_remaining_time_label.configure(
-                text=f"{LanguageManager.data['eta']} : {ValueConvertUtility.convert_time(DownloadInfoUtility.get_estimated_time(self.download_type_info['size'], self.total_download_time, self.total_bytes_downloaded))}"
+                text=f"{LanguageManager.data['eta']} : {ValueConvertUtility.convert_time(DownloadInfoUtility.get_estimated_time(self.download_type_info['size'], self.total_download_time, self.total_bytes_downloaded))}"  # noqa: E501
             )
 
         self.display_status()

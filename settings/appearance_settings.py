@@ -61,7 +61,7 @@ class AppearanceSettings:
         # print(AppearanceSettings.settings["window"]["opacity"])
         return AppearanceSettings.settings["window"]["opacity"][type]
 
-    staticmethod
+    @staticmethod
 
     def get_scale(self: Literal["decimal", "percentage"]) -> float | int:
         """
@@ -79,7 +79,7 @@ class AppearanceSettings:
         """
         AppearanceSettings.settings["window"]["opacity"][type] = value
 
-    staticmethod
+    @staticmethod
 
     def set_scale(self: Literal["decimal", "percentage"], value: int | float) -> None:
         """
@@ -145,11 +145,8 @@ class AppearanceSettings:
             if key not in initialized:
                 return False
             # If the value is a dictionary, recursively check nested keys
-            if isinstance(value, dict):
-                if not isinstance(initialized[key], dict) or not AppearanceSettings.are_all_keys_present(
-                    value, initialized[key]
-                ):
-                    return False
+            if isinstance(value, dict) and (not isinstance(initialized[key], dict) or not AppearanceSettings.are_all_keys_present(value, initialized[key])):  # noqa: E501
+                return False
         return True
 
     @staticmethod

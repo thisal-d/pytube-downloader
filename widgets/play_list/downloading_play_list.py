@@ -254,7 +254,7 @@ class DownloadingPlayList(PlayList):
 
     def set_playlist_download_progress(self, progress, total_bytes_downloaded, total_bytes_to_download):
         self.total_download_size_progress_label.configure(
-            text=f"{ValueConvertUtility.convert_size(total_bytes_downloaded, decimal_points=2)} / {ValueConvertUtility.convert_size(total_bytes_to_download, decimal_points=2)}"
+            text=f"{ValueConvertUtility.convert_size(total_bytes_downloaded, decimal_points=2)} / {ValueConvertUtility.convert_size(total_bytes_to_download, decimal_points=2)}"  # noqa: E501
         )
         self.download_progress_bar.set(progress)
         self.download_percentage_label.configure(text=f"{round(progress * 100, 2)} %")

@@ -91,7 +91,10 @@ class DownloadedVideo(Video):
         )
 
         self.play_video_btn = ctk.CTkButton(
-            master=self, text="▶", cursor="hand2", hover=False,
+            master=self,
+            text="▶",
+            cursor="hand2",
+            hover=False,
             command=lambda: GuiUtils.open_file(self.downloaded_file_name),
         )
 
