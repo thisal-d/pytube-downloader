@@ -20,7 +20,7 @@ class LoadingIndicateManager:
         This method continuously updates the dots_count to create a loading indicator effect.
         """
         while True:
-            for LoadingIndicateManager.dots_count in range(1, LoadingIndicateManager.max_dots_count + 1):
+            for LoadingIndicateManager.dots_count in range(1, LoadingIndicateManager.max_dots_count + 1):  # noqa: B020
                 time.sleep(GeneralSettings.settings["update_delay"])
 
     @staticmethod

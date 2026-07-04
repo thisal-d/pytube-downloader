@@ -1,8 +1,6 @@
 """Tests for utils/json_utility.py."""
 
 import json
-import os
-from pathlib import Path
 
 import pytest
 

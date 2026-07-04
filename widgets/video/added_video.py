@@ -149,10 +149,7 @@ class AddedVideo(Video):
             self.notification_thumbnail_image_path
         )
 
-        if round(image_width / 4 * 3) <= image_height:
-            is_thumbnail_need_to_crop = True
-        else:
-            is_thumbnail_need_to_crop = False
+        is_thumbnail_need_to_crop = round(image_width / 4 * 3) <= image_height
 
         if is_thumbnail_need_to_crop:
             ignore_pos = int(image_height * 0.25 / 2)
@@ -197,7 +194,7 @@ class AddedVideo(Video):
         return thumbnail_normal, thumbnail_hover
 
     @classmethod
-    def get_default_thumbnails(self):
+    def get_default_thumbnails(cls):
         if AddedVideo.default_thumbnails == (None, None):
             thumbnail_size_for_video_object = (
                 int(117 * AppearanceSettings.get_scale("decimal")),

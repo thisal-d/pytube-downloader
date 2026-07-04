@@ -35,9 +35,7 @@ class InformationManager:
         Check is backup info exists
         """
 
-        if os.path.exists(InformationManager.user_info_file):
-            return True
-        return False
+        return bool(os.path.exists(InformationManager.user_info_file))
 
     @staticmethod
     def initialize():
@@ -69,10 +67,7 @@ class InformationManager:
         Returns:
             bool: True if all keys exist, False otherwise.
         """
-        for key in InformationManager.INFO.keys():
-            if key not in InformationManager.info.keys():
-                return False
-        return True
+        return all(key in InformationManager.info for key in InformationManager.INFO)
 
     @staticmethod
     def add_missing_keys() -> None:
@@ -81,6 +76,6 @@ class InformationManager:
 
         This ensures that the info include all required keys with their default values.
         """
-        for key in InformationManager.INFO.keys():
-            if key not in InformationManager.info.keys():
+        for key in InformationManager.INFO:
+            if key not in InformationManager.info:
                 InformationManager.info[key] = InformationManager.INFO[key]

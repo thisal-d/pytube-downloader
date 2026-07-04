@@ -94,9 +94,7 @@ class GeneralSettings:
         """
         Check is backup settings exists
         """
-        if os.path.exists(GeneralSettings.user_settings_file):
-            return True
-        return False
+        return bool(os.path.exists(GeneralSettings.user_settings_file))
 
     @staticmethod
     def are_all_keys_present() -> bool:
@@ -106,10 +104,7 @@ class GeneralSettings:
         Returns:
             bool: True if all keys exist, False otherwise.
         """
-        for key in GeneralSettings.SETTINGS.keys():
-            if key not in GeneralSettings.settings.keys():
-                return False
-        return True
+        return all(key in GeneralSettings.settings for key in GeneralSettings.SETTINGS)
 
     @staticmethod
     def add_missing_keys() -> None:
@@ -118,8 +113,8 @@ class GeneralSettings:
 
         This ensures that the settings include all required keys with their default values.
         """
-        for key in GeneralSettings.SETTINGS.keys():
-            if key not in GeneralSettings.settings.keys():
+        for key in GeneralSettings.SETTINGS:
+            if key not in GeneralSettings.settings:
                 GeneralSettings.settings[key] = GeneralSettings.SETTINGS[key]
 
     @staticmethod

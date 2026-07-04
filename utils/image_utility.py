@@ -91,7 +91,9 @@ class ImageUtility:
         return image_with_hover_effect
 
     @staticmethod
-    def download_image(image_url: str | None = None, quality: int | None = None, output_image_path: str | None = None) -> str:
+    def download_image(
+        image_url: str | None = None, quality: int | None = None, output_image_path: str | None = None
+    ) -> str:
         """
         Download an image from the specified URL and save it locally.
 

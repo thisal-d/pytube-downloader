@@ -1,6 +1,5 @@
 """Tests for utils/file_utility.py."""
 
-import os
 from pathlib import Path
 
 import pytest

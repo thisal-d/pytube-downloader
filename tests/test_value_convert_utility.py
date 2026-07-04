@@ -1,7 +1,5 @@
 """Tests for utils/value_convert_utility.py."""
 
-import pytest
-
 from utils.value_convert_utility import ValueConvertUtility
 
 
@@ -37,7 +35,7 @@ class TestConvertSize:
         assert "MB" in result
 
     def test_gigabytes(self):
-        result = ValueConvertUtility.convert_size(1024 ** 3, 2)
+        result = ValueConvertUtility.convert_size(1024**3, 2)
         assert "GB" in result
 
     def test_decimal_points(self):

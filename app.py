@@ -11,9 +11,12 @@ import customtkinter as ctk
 
 try:
     import pyautogui
+
     _HAS_PYAUTOGUI = True
 except ImportError:
     _HAS_PYAUTOGUI = False
+
+import contextlib
 
 from services import (
     DownloadManager,
@@ -1452,10 +1455,8 @@ class App(ctk.CTk):
             if self.is_settings_open:
                 self.close_settings()
 
-        try:
+        with contextlib.suppress(Exception):
             self.bind("<Control-grave>", toggle_settings)
-        except Exception:
-            pass
         self.bind("<Escape>", close_settings)
 
         def choose_download_mode(_event):
@@ -1922,10 +1923,7 @@ class App(ctk.CTk):
 
     def confgiure_chart_x_axis_values(self):
         scale = AppearanceSettings.get_scale("decimal")
-        if self.net_speed_chart.cget("width") / 10 * scale >= 60:
-            x_axis_point_count = 61
-        else:
-            x_axis_point_count = 31
+        x_axis_point_count = 61 if self.net_speed_chart.cget("width") / 10 * scale >= 60 else 31
 
         style_type = (int(scale * 4), int(6 * scale))
         self.net_speed_chart.configure(
@@ -2111,7 +2109,7 @@ class App(ctk.CTk):
         self.mainloop()
 
     @classmethod
-    def clear_temporally_saved_files(self) -> None:
+    def clear_temporally_saved_files(cls) -> None:
         """
         Clears temporarily saved files, such as thumbnails.
         """
@@ -2129,20 +2127,19 @@ class App(ctk.CTk):
 
     def show_update_alert(self, latest_version, current_version) -> None:
         scale = AppearanceSettings.get_scale("decimal")
-        if latest_version is not None:
-            if latest_version != current_version:
-                AlertWindow(
-                    master=self,
-                    original_configure_callback=self.run_geometry_changes_tracker,
-                    alert_msg="update_alert",
-                    more_details=f"v{current_version} ➝ v{latest_version}",
-                    ok_button_display=True,
-                    ok_button_callback=self.open_update_download_page,
-                    cancel_button_display=True,
-                    wait_for_previous=True,
-                    width=int(450 * scale),
-                    height=int(150 * scale),
-                )
+        if latest_version is not None and latest_version != current_version:
+            AlertWindow(
+                master=self,
+                original_configure_callback=self.run_geometry_changes_tracker,
+                alert_msg="update_alert",
+                more_details=f"v{current_version} ➝ v{latest_version}",
+                ok_button_display=True,
+                ok_button_callback=self.open_update_download_page,
+                cancel_button_display=True,
+                wait_for_previous=True,
+                width=int(450 * scale),
+                height=int(150 * scale),
+            )
 
     def check_for_updates(self) -> None:
         """

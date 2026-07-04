@@ -31,7 +31,7 @@ class DownloadSpeedTracker:
                     _log.exception("failed to invoke download speed callback")
             time.sleep(2)
 
-    def initialize(callback: Callable = None):
-        DownloadSpeedTracker.callback = callback
+    def initialize(self: Callable = None):
+        DownloadSpeedTracker.callback = self
         thread = threading.Thread(target=DownloadSpeedTracker.track_total_download_speed, daemon=True)
         thread.start()

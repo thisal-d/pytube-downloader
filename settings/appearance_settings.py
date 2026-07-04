@@ -63,14 +63,14 @@ class AppearanceSettings:
 
     staticmethod
 
-    def get_scale(type: Literal["decimal", "percentage"]) -> float | int:
+    def get_scale(self: Literal["decimal", "percentage"]) -> float | int:
         """
         Get the global window opacity setting.
 
         Returns:
             float | int : The scale value as a float between 1.0 and 2.0 or 100 to 200.
         """
-        return AppearanceSettings.settings["window"]["scale"][type]
+        return AppearanceSettings.settings["window"]["scale"][self]
 
     @staticmethod
     def set_opacity(type: Literal["decimal", "percentage"], value: int | float) -> None:
@@ -81,11 +81,11 @@ class AppearanceSettings:
 
     staticmethod
 
-    def set_scale(type: Literal["decimal", "percentage"], value: int | float) -> None:
+    def set_scale(self: Literal["decimal", "percentage"], value: int | float) -> None:
         """
         Set the global window opacity setting.
         """
-        AppearanceSettings.settings["window"]["scale"][type] = value
+        AppearanceSettings.settings["window"]["scale"][self] = value
 
     @staticmethod
     def initialize() -> None:
@@ -127,9 +127,7 @@ class AppearanceSettings:
         """
         Check is backup settings exists
         """
-        if os.path.exists(AppearanceSettings.user_settings_file):
-            return True
-        return False
+        return bool(os.path.exists(AppearanceSettings.user_settings_file))
 
     @staticmethod
     def are_all_keys_present(required: dict, initialized: dict) -> bool:

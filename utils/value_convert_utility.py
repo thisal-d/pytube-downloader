@@ -14,10 +14,7 @@ class ValueConvertUtility:
         minutes = int((seconds - (hours * 3600)) / 60)
         seconds = seconds - (hours * 3600) - (minutes * 60)
 
-        if hours > 0:
-            converted_time = f"{hours}:{minutes:0>2}:{int(seconds):0>2}"
-        else:
-            converted_time = f"{minutes}:{int(seconds):0>2}"
+        converted_time = f"{hours}:{minutes:0>2}:{int(seconds):0>2}" if hours > 0 else f"{minutes}:{int(seconds):0>2}"
 
         return converted_time
 
@@ -47,7 +44,7 @@ class ValueConvertUtility:
         return converted_size
 
     @staticmethod
-    def MB_KB_to_Bytes(value: str) -> float:
+    def MB_KB_to_Bytes(value: str) -> float:  # noqa: N802
         if value.endswith("MB"):
             return float(value[:-2]) * 1024 * 1024
         elif value.endswith("KB"):

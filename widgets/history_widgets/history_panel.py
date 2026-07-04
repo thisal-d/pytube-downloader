@@ -90,10 +90,7 @@ class HistoryPanel(ctk.CTkFrame):
                 break
 
     def remove_history_video(self, history_video: HistoryVideo):
-        if history_video == self.histoy_videos_widgets[-1]:
-            is_last_video = True
-        else:
-            is_last_video = False
+        is_last_video = history_video == self.histoy_videos_widgets[-1]
         history_video.grid_forget()
         self.histoy_videos_widgets.remove(history_video)
         if not is_last_video:
@@ -210,10 +207,7 @@ class HistoryPanel(ctk.CTkFrame):
                 break
 
     def remove_history_playlist(self, history_playlist: HistoryPlaylist):
-        if history_playlist == self.histoy_playlists_widgets[-1]:
-            is_last_video = True
-        else:
-            is_last_video = False
+        is_last_video = history_playlist == self.histoy_playlists_widgets[-1]
         history_playlist.grid_forget()
         self.histoy_playlists_widgets.remove(history_playlist)
         if not is_last_video:

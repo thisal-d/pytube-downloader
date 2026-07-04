@@ -42,12 +42,14 @@ class HistoryManager:
             DataBaseUtility.create_table(
                 HistoryManager.data_base,
                 "videos",
-                "no INTEGER PRIMARY KEY AUTOINCREMENT, channel TEXT, title TEXT, url TEXT, thumbnail_normal_path TEXT, thumbnail_hover_path TEXT, video_length INTEGER, download_date TEXT",
+                "no INTEGER PRIMARY KEY AUTOINCREMENT, channel TEXT, title TEXT, url TEXT, "
+                "thumbnail_normal_path TEXT, thumbnail_hover_path TEXT, video_length INTEGER, download_date TEXT",
             )
             DataBaseUtility.create_table(
                 HistoryManager.data_base,
                 "playlists",
-                "no INTEGER PRIMARY KEY AUTOINCREMENT, channel TEXT, title TEXT, url TEXT, thumbnail_normal_path TEXT, thumbnail_hover_path TEXT, video_count INTEGER, download_date TEXT",
+                "no INTEGER PRIMARY KEY AUTOINCREMENT, channel TEXT, title TEXT, url TEXT, "
+                "thumbnail_normal_path TEXT, thumbnail_hover_path TEXT, video_count INTEGER, download_date TEXT",
             )
 
         HistoryManager.connection = sqlite3.connect(HistoryManager.data_base, check_same_thread=False)
@@ -121,10 +123,7 @@ class HistoryManager:
         sql = f"SELECT COUNT(*) FROM {table} WHERE url = ?"
         HistoryManager.cursor.execute(sql, (video_url,))
         data = HistoryManager.cursor.fetchone()
-        if data is not None and data[0] > 0:
-            return True
-        else:
-            return False
+        return bool(data is not None and data[0] > 0)
 
     @staticmethod
     def save_video_to_history(video):  #: DownloadedVideo):
@@ -142,13 +141,11 @@ class HistoryManager:
         else:
             is_duplicated = False
 
-        """
-        HistoryManager.videos_history_data.insert(0, (None, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date))
-        if len(HistoryManager.videos_history_data) > HistoryManager.max_history:
-             HistoryManager.videos_history_data =  HistoryManager.videos_history_data[0:HistoryManager.max_history]
-        """
         HistoryManager.video_no += 1
-        sql = "Insert into videos (no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_length, download_date) values (?, ?, ?, ?, ?, ?, ?, ?)"
+        sql = (
+            "Insert into videos (no, channel, title, url, thumbnail_normal_path, "
+            "thumbnail_hover_path, video_length, download_date) values (?, ?, ?, ?, ?, ?, ?, ?)"
+        )
         HistoryManager.cursor.execute(
             sql,
             (
@@ -192,13 +189,11 @@ class HistoryManager:
         else:
             is_duplicated = False
 
-        """
-        HistoryManager.playlists_history_data.insert(0, (None, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date))
-        if len(HistoryManager.playlists_history_data) > HistoryManager.max_history:
-             HistoryManager.playlists_history_data =  HistoryManager.playlists_history_data[0:HistoryManager.max_history]
-        """
         HistoryManager.playlist_no += 1
-        sql = "Insert into playlists (no, channel, title, url, thumbnail_normal_path, thumbnail_hover_path, video_count, download_date) values (?, ?, ?, ?, ?, ?, ?, ?)"
+        sql = (
+            "Insert into playlists (no, channel, title, url, thumbnail_normal_path, "
+            "thumbnail_hover_path, video_count, download_date) values (?, ?, ?, ?, ?, ?, ?, ?)"
+        )
         HistoryManager.cursor.execute(
             sql,
             (

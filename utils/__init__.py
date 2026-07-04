@@ -1,10 +1,10 @@
-from .data_base_utility import DataBaseUtility
-from .data_retrive_utility import DataRetrieveUtility
-from .date_time_utility import DateTimeUtility
-from .download_info_utility import DownloadInfoUtility
-from .file_utility import FileUtility
-from .gui_utils import GuiUtils
-from .image_utility import ImageUtility
-from .json_utility import JsonUtility
-from .settings_validate_utility import SettingsValidateUtility
-from .value_convert_utility import ValueConvertUtility
+from .data_base_utility import DataBaseUtility as DataBaseUtility
+from .data_retrive_utility import DataRetrieveUtility as DataRetrieveUtility
+from .date_time_utility import DateTimeUtility as DateTimeUtility
+from .download_info_utility import DownloadInfoUtility as DownloadInfoUtility
+from .file_utility import FileUtility as FileUtility
+from .gui_utils import GuiUtils as GuiUtils
+from .image_utility import ImageUtility as ImageUtility
+from .json_utility import JsonUtility as JsonUtility
+from .settings_validate_utility import SettingsValidateUtility as SettingsValidateUtility
+from .value_convert_utility import ValueConvertUtility as ValueConvertUtility

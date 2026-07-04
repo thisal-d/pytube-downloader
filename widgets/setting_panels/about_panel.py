@@ -151,7 +151,7 @@ class AboutPanel(ctk.CTkFrame):
         # iterate through contributors
         profile_images_directory = "assets//profile images//"
         row = 0
-        for i in InformationManager.info["contributors"].keys():
+        for i in InformationManager.info["contributors"]:
             contributor = InformationManager.info["contributors"][i]
             # check if profile image saved or if not create image path
             # check profile image is already downloaded if it's not download profile image right now

@@ -76,16 +76,14 @@ class DownloadInfoUtility:
         Returns:
             list[dict]: A list of supported download types.
         """
-        data = DownloadInfoUtility.to_dict(video_streams.all())
+        data = DownloadInfoUtility.to_dict(list(video_streams))
         supported_download_types = []
         supported_download_resos = []
 
         audio_stream_file_size = video_streams.get_audio_only().filesize
 
         for stream_type in data[0::]:
-            if stream_type["type"] == "video":
-                # Progressive True means video has inbuilt audio
-                if stream_type["progressive"] == "True":
+            if stream_type["type"] == "video" and stream_type["progressive"] == "True":
                     try:
                         file_size = video_streams.get_by_itag(stream_type["itag"]).filesize
                         download_info = {

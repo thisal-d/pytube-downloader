@@ -61,7 +61,7 @@ class ContextMenu(ctk.CTkFrame):
         self.is_open = False
 
     def create_widgets(self):
-        for i, option_text in enumerate(self.options_texts):
+        for i, _option_text in enumerate(self.options_texts):
             button = ctk.CTkButton(self, text="", command=self.options_commands[i])
             self.option_buttons.append(button)
 

@@ -1,7 +1,5 @@
 """Tests for utils/settings_validate_utility.py."""
 
-import pytest
-
 from utils.settings_validate_utility import SettingsValidateUtility
 
 

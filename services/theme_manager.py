@@ -9,6 +9,7 @@ from settings import AppearanceSettings
 
 try:
     from hPyT import title_bar_color, title_bar_text_color
+
     _HAS_HPYT = True
 except ImportError:
     _HAS_HPYT = False
@@ -69,27 +70,27 @@ class ThemeManager:
     def set_title_bar_style(window: ctk.CTk) -> None:
         if not _HAS_HPYT:
             return
-        _MAX_RETRIES = 5
-        _BACKOFF_BASE = 0.5  # seconds
+        max_retries = 5
+        backoff_base = 0.5
 
-        for attempt in range(_MAX_RETRIES):
+        for attempt in range(max_retries):
             try:
                 title_bar_color.set(window, ThemeManager.get_color_based_on_theme("background"))
                 break
             except Exception as error:
-                delay = _BACKOFF_BASE * (2**attempt)
-                _log.warning("failed to set title bar color (attempt %d/%d): %s", attempt + 1, _MAX_RETRIES, error)
-                if attempt < _MAX_RETRIES - 1:
+                delay = backoff_base * (2**attempt)
+                _log.warning("failed to set title bar color (attempt %d/%d): %s", attempt + 1, max_retries, error)
+                if attempt < max_retries - 1:
                     time.sleep(delay)
 
-        for attempt in range(_MAX_RETRIES):
+        for attempt in range(max_retries):
             try:
                 title_bar_text_color.set(window, ThemeManager.get_color_based_on_theme("text_muted"))
                 break
             except Exception as error:
-                delay = _BACKOFF_BASE * (2**attempt)
-                _log.warning("failed to set title bar text color (attempt %d/%d): %s", attempt + 1, _MAX_RETRIES, error)
-                if attempt < _MAX_RETRIES - 1:
+                delay = backoff_base * (2**attempt)
+                _log.warning("failed to set title bar text color (attempt %d/%d): %s", attempt + 1, max_retries, error)
+                if attempt < max_retries - 1:
                     time.sleep(delay)
 
     @staticmethod

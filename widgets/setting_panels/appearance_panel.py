@@ -27,7 +27,7 @@ class AppearancePanel(ctk.CTkFrame):
         )
 
         self.theme_data = JsonUtility.read_from_file("data/themes.json")
-        self.theme_names = [language_name for language_name in self.theme_data.keys()]
+        self.theme_names = [language_name for language_name in self.theme_data]
         self.theme_combo_box = ctk.CTkComboBox(
             master=self,
             values=self.theme_names,

@@ -22,7 +22,7 @@ class GeneralPanel(ctk.CTkFrame):
         )
 
         self.language_data = JsonUtility.read_from_file("data/languages.json")
-        self.language_names = [language_name for language_name in self.language_data.keys()]
+        self.language_names = [language_name for language_name in self.language_data]
         self.languages_combo_box = ctk.CTkComboBox(
             master=self,
             values=self.language_names,
@@ -171,7 +171,7 @@ class GeneralPanel(ctk.CTkFrame):
         self.shortcut_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
         self.dash2_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
 
-        for key, value in enumerate(self.shortcut_keys_widgets_info):
+        for _key, value in enumerate(self.shortcut_keys_widgets_info):
             value["label"].configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
             value["dash"].configure(text_color=ThemeManager.get_color_based_on_theme("text_normal"))
             for button in value["buttons"]:

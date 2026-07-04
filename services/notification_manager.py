@@ -6,6 +6,7 @@ from utils.value_convert_utility import ValueConvertUtility
 
 try:
     import win11toast
+
     _HAS_WIN11TOAST = True
 except ImportError:
     _HAS_WIN11TOAST = False
@@ -125,7 +126,7 @@ class NotificationManager:
                     "title": playlist_title,  # Playlist title
                     "status": status_message,  # Status message
                     "value": str(completed_videos_count / total_videos_count),  # Number of videos completed
-                    "valueStringOverride": f"{completed_videos_count}/{total_videos_count} Videos",  # Videos completed/total
+                    "valueStringOverride": f"{completed_videos_count}/{total_videos_count} Videos",
                 },
                 duration="short",
                 on_click=abs_file_path,  # Action on click

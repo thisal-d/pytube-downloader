@@ -21,10 +21,7 @@ class SettingsValidateUtility:
         try:
             count = int(count_str)
             if with_range:
-                if 0 < count < 11:
-                    return True
-                else:
-                    return False
+                return 0 < count < 11
             else:
                 return True
         except ValueError:
@@ -44,17 +41,11 @@ class SettingsValidateUtility:
         paths = path.split(":")
         if not os.path.exists(paths[0] + ":"):
             return False
-        if len(paths) != 2:
+        if len(paths) != 2 or paths[1] != "" and not paths[1].startswith("\\"):
             return False
-        elif paths[1] != "":
-            if not paths[1].startswith("\\"):
-                return False
         path = paths[1]
         invalid_characters = ["?", "%", "*", ":", "|", '"', "<", ">"]
-        for invalid_char in invalid_characters:
-            if invalid_char in path:
-                return False
-        return True
+        return all(invalid_char not in path for invalid_char in invalid_characters)
 
     @staticmethod
     def validate_accent_color(color: str) -> bool:
@@ -92,9 +83,7 @@ class SettingsValidateUtility:
             _log.debug("validate_scale_value: non-numeric value %r: %s", value, error)
             return False
 
-        if num_value >= 100 and num_value <= 200:
-            return True
-        return False
+        return bool(num_value >= 100 and num_value <= 200)
 
     @staticmethod
     def validate_opacity_value(value: str) -> bool:
@@ -109,9 +98,7 @@ class SettingsValidateUtility:
             _log.debug("validate_opacity_value: non-numeric value %r: %s", value, error)
             return False
 
-        if num_value2 >= 60 and num_value2 <= 100:
-            return True
-        return False
+        return bool(num_value2 >= 60 and num_value2 <= 100)
 
     @staticmethod
     def validate_chunk_size_value(value: str) -> bool:
