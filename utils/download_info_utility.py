@@ -161,17 +161,8 @@ class DownloadInfoUtility:
 
     @staticmethod
     def get_estimated_time(total_download_size: int, current_taken_time: int, current_download_size: int) -> int:
-        """
-        Estimate the total time required to download a file based on the current download progress.
-
-        Args:
-            total_download_size (int): The total size of the file to be downloaded in bytes.
-            current_taken_time (int): The time already taken to download the file in seconds.
-            current_download_size (int): The amount of data already downloaded in bytes.
-
-        Returns:
-            int: The estimated total time required to download the file in seconds.
-        """
+        if current_taken_time <= 0 or current_download_size <= 0:
+            return 0
         try:
             avg_download_speed = current_download_size / current_taken_time
             remaining_download_size = total_download_size - current_download_size

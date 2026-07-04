@@ -1,5 +1,6 @@
 import os
 import platform
+import subprocess
 from pathlib import Path
 
 from utils import FileUtility, JsonUtility
@@ -13,15 +14,51 @@ class GeneralSettings:
     settings: dict = {}
     default_settings_directory = "data"
     default_settings_file = str(Path("data") / "general.json")
-    user_settings_directory = (
-        str(Path.home() / "Library" / "Application Support" / "PyTube Downloader" / "data")
-        if platform.system() == "Darwin"
-        else str(Path.home() / ".local" / "share" / "PyTube Downloader" / "data")
-        if platform.system() == "Linux"
-        else str(Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "PyTube Downloader" / "data")
-    )
+
+    if platform.system() == "Darwin":
+        user_settings_directory = str(
+            Path.home() / "Library" / "Application Support" / "PyTube Downloader" / "data"
+        )
+    elif platform.system() == "Linux":
+        user_settings_directory = str(
+            Path.home() / ".local" / "share" / "PyTube Downloader" / "data"
+        )
+    else:
+        user_settings_directory = str(
+            Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming"))
+            / "PyTube Downloader"
+            / "data"
+        )
     user_settings_file = str(Path(user_settings_directory) / "general.json")
-    default_download_dir = str(Path.home() / "Downloads" / "PyTube Downloader")
+
+    @staticmethod
+    def get_default_download_dir() -> str:
+        base = GeneralSettings.get_system_downloads_dir()
+        return str(base / "PyTube Downloader")
+
+    @staticmethod
+    def get_system_downloads_dir() -> Path:
+        system = platform.system()
+        if system == "Linux":
+            try:
+                result = subprocess.run(
+                    ["xdg-user-dir", "DOWNLOAD"],
+                    capture_output=True, text=True, check=True, timeout=5,
+                )
+                path = result.stdout.strip()
+                if path and Path(path).exists():
+                    return Path(path)
+            except (FileNotFoundError, subprocess.CalledProcessError, TimeoutError):
+                pass
+            for candidate in ("Descargas", "Downloads"):
+                p = Path.home() / candidate
+                if p.exists():
+                    return p
+            return Path.home() / "Downloads"
+        elif system == "Darwin":
+            return Path.home() / "Downloads"
+        else:
+            return Path.home() / "Downloads"
 
     SETTINGS = {
         "automatic_download": {"quality": "1080p", "status": "disable"},
@@ -69,7 +106,7 @@ class GeneralSettings:
         GeneralSettings.restore_invalid_settings()
 
         if GeneralSettings.settings.get("download_directory") is False:
-            GeneralSettings.settings["download_directory"] = GeneralSettings.default_download_dir
+            GeneralSettings.settings["download_directory"] = GeneralSettings.get_default_download_dir()
 
     @staticmethod
     def save_settings() -> None:

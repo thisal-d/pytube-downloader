@@ -167,7 +167,7 @@ class DownloadsPanel(ctk.CTkFrame):
 
     def reset_settings(self):
         self.download_path_entry.delete(0, "end")
-        self.download_path_entry.insert("end", GeneralSettings.default_download_dir)
+        self.download_path_entry.insert("end", GeneralSettings.get_default_download_dir())
 
         self.create_sep_path_for_videos_audios_switch.deselect()
         self.create_sep_path_for_qualities_switch.deselect()
