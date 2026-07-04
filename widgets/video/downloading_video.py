@@ -197,20 +197,23 @@ class DownloadingVideo(Video):
         self.download_file_name = FileUtility.get_available_file_name(self.download_file_name)
         self.set_downloading_progress()
 
-        self.download_directory = f"{GeneralSettings.settings['download_directory']}\\"
+        self.download_directory = GeneralSettings.settings["download_directory"]
 
         if self.mode == "playlist" and GeneralSettings.settings["create_sep_path_for_playlists"]:
-            self.download_directory += (
+            self.download_directory = os.path.join(
+                self.download_directory,
                 f"{FileUtility.sanitize_filename(self.channel)} - "
-                f"{FileUtility.sanitize_filename(self.playlist_title)}\\"
+                f"{FileUtility.sanitize_filename(self.playlist_title)}"
             )
 
         else:
             if GeneralSettings.settings["create_sep_path_for_videos_audios"]:
-                self.download_directory += f"{self.download_type}s\\"
+                self.download_directory = os.path.join(self.download_directory, f"{self.download_type}s")
 
             if GeneralSettings.settings["create_sep_path_for_qualities"]:
-                self.download_directory += f"{self.download_quality}\\"
+                self.download_directory = os.path.join(self.download_directory, self.download_quality)
+
+        self.download_directory = self.download_directory.rstrip(os.path.sep) + os.path.sep
 
         if not os.path.exists(self.download_directory):
             try:
@@ -250,7 +253,7 @@ class DownloadingVideo(Video):
             if self.download_type_info["type"] == "video" and not self.video_download_completed:
                 if not self.download_type_info["inbuilt_audio"]:
                     self.video_only_file_name = FileUtility.get_available_file_name(
-                        f"{self.download_directory}\\video.pytubetemp"
+                        os.path.join(self.download_directory, "video.pytubetemp")
                     )
                     current_download_file_name = self.video_only_file_name
                     current_download_type = "video_only"
@@ -263,7 +266,7 @@ class DownloadingVideo(Video):
             elif self.download_type_info["type"] == "video" and self.video_download_completed:
                 if not self.audio_for_video_download_completed:
                     self.audio_only_file_name = FileUtility.get_available_file_name(
-                        f"{self.download_directory}\\audio.pytubetemp"
+                        os.path.join(self.download_directory, "audio.pytubetemp")
                     )
                     current_download_file_name = self.audio_only_file_name
                     current_stream = self.video_stream_data.get_audio_only()
@@ -401,7 +404,7 @@ class DownloadingVideo(Video):
         self.download_file_name = FileUtility.get_available_file_name(self.download_file_name + ".mp4")
 
         self.converted_file_name = FileUtility.get_available_file_name(
-            f"{GeneralSettings.settings['download_directory']}\\temp-converting.mp4"
+            os.path.join(GeneralSettings.settings['download_directory'], "temp-converting.mp4")
         )
 
         command = [

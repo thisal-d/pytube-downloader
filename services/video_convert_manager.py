@@ -14,7 +14,13 @@ class VideoConvertManager:
     Manages the convert queue and controls the convert process.
     """
 
-    FFMPEG_PATH = os.path.join("ffmpeg", "ffmpeg.exe")
+    import platform
+    import shutil
+
+    if platform.system() == "Windows":
+        FFMPEG_PATH = os.path.join("ffmpeg", "ffmpeg.exe")
+    else:
+        FFMPEG_PATH = shutil.which("ffmpeg") or os.path.join("ffmpeg", "ffmpeg")
 
     # Class variables to keep track of active and queued converts
     active_convert_count: int = 0

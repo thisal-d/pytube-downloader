@@ -1,9 +1,25 @@
 import threading
 
+from customtkinter import CTkScrollableFrame
+
 from app import App
 from services import InformationManager, LanguageManager, ThemeManager
 from settings import AppearanceSettings, GeneralSettings
 from utils.logger import get_logger
+
+# Patch CTkScrollableFrame._check_if_valid_scroll to handle string widgets
+# (e.g., when scrolling over ttk.Combobox dropdown which returns string)
+_original_check_if_valid_scroll = CTkScrollableFrame._check_if_valid_scroll
+
+def _patched_check_if_valid_scroll(self, widget):
+    if isinstance(widget, str):
+        try:
+            widget = self.nametowidget(widget)
+        except Exception:
+            return False
+    return _original_check_if_valid_scroll(self, widget)
+
+CTkScrollableFrame._check_if_valid_scroll = _patched_check_if_valid_scroll
 
 _log = get_logger(__name__)
 
