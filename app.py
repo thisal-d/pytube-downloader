@@ -1452,7 +1452,10 @@ class App(ctk.CTk):
             if self.is_settings_open:
                 self.close_settings()
 
-        self.bind("<Control-,>", toggle_settings)
+        try:
+            self.bind("<Control-grave>", toggle_settings)
+        except Exception:
+            pass
         self.bind("<Escape>", close_settings)
 
         def choose_download_mode(_event):

@@ -1,0 +1,22 @@
+{
+    "alerts": true,
+    "automatic_download": {
+        "quality": "1080p",
+        "status": "disable"
+    },
+    "create_sep_path_for_playlists": false,
+    "create_sep_path_for_qualities": false,
+    "create_sep_path_for_videos_audios": false,
+    "display_download_speed_info": false,
+    "download_directory": false,
+    "lang_code": "en",
+    "language": "English",
+    "load_thumbnail": true,
+    "max_simultaneous_converts": 1,
+    "max_simultaneous_downloads": 1,
+    "max_simultaneous_loads": 1,
+    "re_download_automatically": false,
+    "reload_automatically": false,
+    "update_delay": 0.5,
+    "window_geometry": "900x500+-7+0"
+}
