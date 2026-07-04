@@ -4,6 +4,9 @@ import subprocess
 from pathlib import Path
 
 from utils import FileUtility, JsonUtility
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class GeneralSettings:
@@ -45,8 +48,8 @@ class GeneralSettings:
                 path = result.stdout.strip()
                 if path and Path(path).exists():
                     return Path(path)
-            except (FileNotFoundError, subprocess.CalledProcessError, TimeoutError):
-                pass
+            except (FileNotFoundError, subprocess.CalledProcessError, subprocess.TimeoutExpired, TimeoutError):
+                _log.debug("xdg-user-dir DOWNLOAD failed, falling back to locale candidates")
             for candidate in ("Descargas", "Downloads"):
                 p = Path.home() / candidate
                 if p.exists():

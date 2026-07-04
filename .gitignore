@@ -49,3 +49,6 @@ nuitka-crash-report.xml
 
 # Local user data (created at runtime)
 PyTube Downloader/
+
+# Windows user data artefact from early cross-platform refactoring
+C:\

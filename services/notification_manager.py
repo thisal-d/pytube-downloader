@@ -99,6 +99,8 @@ class NotificationManager:
             # Convert file size for display
             converted_file_size = ValueConvertUtility.convert_size(file_size, decimal_points=2)
             converted_downloaded_file_size = ValueConvertUtility.convert_size(downloaded_file_size, decimal_points=2)
+            safe_file_size = max(file_size, 1)
+            safe_downloaded_file_size = max(downloaded_file_size, 0)
             # Display notification for a video download
             win11toast.notify(
                 title=video_title,  # Video title
@@ -107,7 +109,7 @@ class NotificationManager:
                 progress={  # Progress details
                     "title": status_message,  # Status message
                     "status": download_type,  # Download type
-                    "value": str(downloaded_file_size / file_size),  # Progress percentage (completed)
+                    "value": str(safe_downloaded_file_size / safe_file_size),  # Progress percentage (completed)
                     "valueStringOverride": f"{converted_downloaded_file_size}/{converted_file_size}",  # File size
                 },
                 duration="short",
@@ -118,6 +120,8 @@ class NotificationManager:
 
         else:
             # Handle playlist-specific notifications
+            safe_total = max(total_videos_count, 1)
+            safe_completed = max(completed_videos_count, 0)
             win11toast.notify(
                 title=video_title,  # Playlist's video title
                 body=channel_name,  # Channel name
@@ -125,7 +129,7 @@ class NotificationManager:
                 progress={  # Progress details for playlist
                     "title": playlist_title,  # Playlist title
                     "status": status_message,  # Status message
-                    "value": str(completed_videos_count / total_videos_count),  # Number of videos completed
+                    "value": str(safe_completed / safe_total),  # Number of videos completed
                     "valueStringOverride": f"{completed_videos_count}/{total_videos_count} Videos",
                 },
                 duration="short",

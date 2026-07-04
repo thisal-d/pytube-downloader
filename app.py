@@ -2044,7 +2044,7 @@ class App(ctk.CTk):
 
         """
         self.on_app_closing(restart=True)
-        subprocess.Popen([sys.executable, "main.py"])
+        subprocess.Popen([sys.executable, *sys.argv])
         os._exit(0)
 
     def confirm_quit(self):
