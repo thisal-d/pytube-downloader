@@ -599,7 +599,7 @@ class AppearancePanel(ctk.CTkFrame):
         set values for widgets using saved settings.
         """
         self.custom_accent_color_alert_text.bind("<Key>", lambda e: "break")
-        if AppearanceSettings.settings["accent"]["selected"]["is_custom"] == False:
+        if not AppearanceSettings.settings["accent"]["selected"]["is_custom"]:
             for button in self.accent_color_buttons:
                 if (
                     button.fg_color == AppearanceSettings.settings["accent"]["selected"]["color"][0]

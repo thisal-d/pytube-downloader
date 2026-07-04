@@ -2,6 +2,9 @@ from typing import Any
 
 from settings import GeneralSettings
 from utils import JsonUtility
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class LanguageManager:
@@ -21,8 +24,8 @@ class LanguageManager:
         for widget in LanguageManager.registered_widgets:
             try:
                 widget.update_widgets_text()
-            except Exception as error:
-                print(f"language_manager.py L-25 : {error}")
+            except Exception:
+                _log.exception("update_widgets_text failed for %r", widget)
 
     @staticmethod
     def initialize() -> None:

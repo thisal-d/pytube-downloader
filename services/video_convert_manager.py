@@ -4,6 +4,9 @@ import threading
 from collections.abc import Callable
 
 from settings.general_settings import GeneralSettings
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class VideoConvertManager:
@@ -44,8 +47,8 @@ class VideoConvertManager:
                     VideoConvertManager.queued_converts[0].convert_video()
                     VideoConvertManager.active_convert_count += 1
                     VideoConvertManager.active_converts.append(VideoConvertManager.queued_converts.pop(0))
-                except Exception as error:
-                    print(f"video_convert_manager.py : failed to start convert: {error}")
+                except Exception:
+                    _log.exception("failed to start convert")
                     # Re-queue the item count so the queue stays consistent
                     VideoConvertManager.queued_convert_count += 1
                 VideoConvertManager.status_change_callback()

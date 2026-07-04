@@ -129,7 +129,7 @@ class HistoryPlaylist(HistoryObject):
     def place_widgets(self):
         super().place_widgets()
 
-        scale = AppearanceSettings.get_scale("decimal")
+        AppearanceSettings.get_scale("decimal")
         y = (self.width) / 16 * 9 + 6
 
         self.videos_count_label.place(x=(self.width - 2), y=y, anchor="se")

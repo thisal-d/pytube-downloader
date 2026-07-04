@@ -3,6 +3,9 @@ import threading
 from app import App
 from services import InformationManager, LanguageManager, ThemeManager
 from settings import AppearanceSettings, GeneralSettings
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 def main() -> None:
@@ -25,7 +28,7 @@ def main() -> None:
         import traceback
 
         error_details = traceback.format_exc()
-        print(f"PyTube Downloader failed to start:\n{error_details}")
+        _log.critical("PyTube Downloader failed to start:\n%s", error_details)
         try:
             import tkinter as tk
             from tkinter import messagebox

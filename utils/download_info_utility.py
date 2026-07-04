@@ -1,7 +1,11 @@
-import pytubefix
 from typing import Any
 
+import pytubefix
+
+from .logger import get_logger
 from .value_convert_utility import ValueConvertUtility
+
+_log = get_logger(__name__)
 
 
 class DownloadInfoUtility:
@@ -37,8 +41,8 @@ class DownloadInfoUtility:
                     # Swap if the current video's resolution is less than the next one
                     if res1 < res2:
                         videos[j], videos[j + 1] = videos[j + 1], videos[j]
-                except Exception as error:
-                    print(f"download_info_utility.py L-44 : {error}")
+                except Exception:
+                    _log.exception("failed to sort download qualities")
 
         # Combine videos and audio, videos first
         return videos + audio
@@ -94,9 +98,8 @@ class DownloadInfoUtility:
                         if stream_type["res"] not in supported_download_resos and stream_type["res"] != "None":
                             supported_download_types.append(download_info)
                             supported_download_resos.append(stream_type["res"])
-                    except Exception as error:
-                        print(f"download_info_utility.py L-87 : {error}")
-                        pass
+                    except Exception:
+                        _log.exception("failed to get progressive video file size")
 
         for stream_type in data[0::]:
             if stream_type["progressive"] == "False" and stream_type["type"] == "video":
@@ -112,9 +115,8 @@ class DownloadInfoUtility:
                     if stream_type["res"] not in supported_download_resos and stream_type["res"] != "None":
                         supported_download_types.append(download_info)
                         supported_download_resos.append(stream_type["res"])
-                except Exception as error:
-                    print(f"download_info_utility.py L-99 : {error}")
-                    pass
+                except Exception:
+                    _log.exception("failed to get non-progressive video file size")
 
         try:
             audio_stream = video_streams.get_audio_only()
@@ -129,9 +131,8 @@ class DownloadInfoUtility:
                     "inbuilt_audio": True,
                 }
             )
-        except Exception as error:
-            print(f"download_info_utility.py  L-107 : {error}")
-            pass
+        except Exception:
+            _log.exception("failed to get audio stream info")
 
         return supported_download_types
 
@@ -177,8 +178,8 @@ class DownloadInfoUtility:
             avg_download_speed = current_download_size / current_taken_time
             remaining_download_size = total_download_size - current_download_size
             estimated_remaining_time = remaining_download_size / avg_download_speed
-        except Exception as error:
-            print(f"download_info_utility.py L-156 : {error}")
+        except Exception:
+            _log.exception("failed to estimate remaining download time")
             return 0
 
         return int(estimated_remaining_time)

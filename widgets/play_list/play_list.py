@@ -253,7 +253,7 @@ class PlayList(ctk.CTkFrame):
 
         """print("View before Start:",self.last_viewed_index, end="")
         for i in range(
-                self.last_viewed_index - PlayList.max_videos_per_page * 2, 
+                self.last_viewed_index - PlayList.max_videos_per_page * 2,
                 self.last_viewed_index - PlayList.max_videos_per_page * 2 + PlayList.max_videos_per_page):
             try:
                 self.videos[i].pack(fill="x", padx=(20, 0), pady=(1, 0))

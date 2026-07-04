@@ -96,7 +96,7 @@ class ContextMenu(ctk.CTkFrame):
         self.set_widgets_texts()
 
     def set_widgets_sizes(self):
-        scale = AppearanceSettings.get_scale("decimal")
+        AppearanceSettings.get_scale("decimal")
         super().configure(width=self.width, height=self.height, border_width=1)
         button_height = int((self.height - 2) / len(self.options_texts))
         for option_button in self.option_buttons:

@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 import customtkinter as ctk
+
 from settings import AppearanceSettings
 
 try:
@@ -12,6 +13,9 @@ try:
 except ImportError:
     _HAS_HPYT = False
 from utils import JsonUtility
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class ThemeManager:
@@ -74,7 +78,7 @@ class ThemeManager:
                 break
             except Exception as error:
                 delay = _BACKOFF_BASE * (2**attempt)
-                print(f"theme_manager: failed to set title bar color (attempt {attempt + 1}/{_MAX_RETRIES}): {error}")
+                _log.warning("failed to set title bar color (attempt %d/%d): %s", attempt + 1, _MAX_RETRIES, error)
                 if attempt < _MAX_RETRIES - 1:
                     time.sleep(delay)
 
@@ -84,9 +88,7 @@ class ThemeManager:
                 break
             except Exception as error:
                 delay = _BACKOFF_BASE * (2**attempt)
-                print(
-                    f"theme_manager: failed to set title bar text color (attempt {attempt + 1}/{_MAX_RETRIES}): {error}"
-                )
+                _log.warning("failed to set title bar text color (attempt %d/%d): %s", attempt + 1, _MAX_RETRIES, error)
                 if attempt < _MAX_RETRIES - 1:
                     time.sleep(delay)
 
@@ -105,8 +107,8 @@ class ThemeManager:
         for widget in ThemeManager.registered_widgets:
             try:
                 widget.update_widgets_colors()
-            except Exception as error:
-                print(f"theme_manager: update_widgets_colors failed for {widget!r}: {error}")
+            except Exception:
+                _log.exception("update_widgets_colors failed for %r", widget)
 
     @staticmethod
     def update_widgets_accent_color() -> None:
@@ -116,8 +118,8 @@ class ThemeManager:
         for widget in ThemeManager.registered_widgets:
             try:
                 widget.update_widgets_accent_color()
-            except Exception as error:
-                print(f"theme_manager: update_widgets_accent_color failed for {widget!r}: {error}")
+            except Exception:
+                _log.exception("update_widgets_accent_color failed for %r", widget)
 
     @staticmethod
     def initialize() -> None:

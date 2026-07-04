@@ -3,6 +3,9 @@ from typing import cast
 import requests
 
 from .json_utility import JsonUtility
+from .logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class DataRetrieveUtility:
@@ -29,10 +32,10 @@ class DataRetrieveUtility:
                             "user_name": username,
                         }
                     )
-                except Exception as error:
-                    print(f"data_retrieve_utility.py L54 : {error}")
-        except Exception as error:
-            print(f"data_retrieve_utility.py L43 : {error}")
+                except Exception:
+                    _log.exception("failed to parse contributor data")
+        except Exception:
+            _log.exception("failed to fetch contributors data")
             return None
 
         return contributors
@@ -51,8 +54,8 @@ class DataRetrieveUtility:
             # Split at "=" and remove extra characters like spaces and quotes
             version = data.split("=")[1].strip().strip("'")
 
-        except Exception as error:
-            print(f"data_retrive_utility.py L43 : {error}")
+        except Exception:
+            _log.exception("failed to fetch latest version")
             return None
 
         return version

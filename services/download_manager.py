@@ -5,6 +5,9 @@ from collections.abc import Callable
 from pytubefix import request as pytubefix_request
 
 from settings.general_settings import GeneralSettings
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class DownloadManager:
@@ -60,8 +63,8 @@ class DownloadManager:
                     DownloadManager.queued_downloads[0].download_video()
                     DownloadManager.active_download_count += 1
                     DownloadManager.active_downloads.append(DownloadManager.queued_downloads.pop(0))
-                except Exception as error:
-                    print(f"download_manager.py : failed to start download: {error}")
+                except Exception:
+                    _log.exception("failed to start download")
                     # Re-queue the item count so the queue stays consistent
                     DownloadManager.queued_download_count += 1
                 DownloadManager.status_change_callback()

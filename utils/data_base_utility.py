@@ -2,6 +2,9 @@ import os
 import sqlite3
 
 from utils.file_utility import FileUtility
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class DataBaseUtility:
@@ -36,7 +39,7 @@ class DataBaseUtility:
                 cursor.execute(sql_videos).fetchall()
                 cursor.execute(sql_playlists).fetchall()
                 return True
-            except Exception as e:
-                print("data_base_utility.py L23 :", e)
+            except Exception:
+                _log.exception("database check failed for %s", data_base)
                 return False
         return False
