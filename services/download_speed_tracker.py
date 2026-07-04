@@ -19,7 +19,7 @@ class DownloadSpeedTracker:
             if DownloadManager.active_download_count > 0:
                 for video in DownloadManager.active_downloads:
                     try:
-                        if video.download_state == "downloading":
+                        if video.download_state == "downloading" and video.total_download_time >= 1:
                             video_download_speed = video.total_bytes_downloaded / video.total_download_time
                             total_speed += video_download_speed
                     except Exception:

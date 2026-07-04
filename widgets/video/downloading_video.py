@@ -327,7 +327,8 @@ class DownloadingVideo(Video):
         download_type: Literal["audio", "video", "video_only", "audio_for_video"] = None,
     ):
         # store current download status if need to rollback to previous status
-        self.estimated_remaining_time_label.place(relx=0.8, anchor="center", rely=0.2)
+        if self.estimated_remaining_time_label is not None:
+            self.estimated_remaining_time_label.place(relx=0.8, anchor="center", rely=0.2)
 
         self.bytes_downloaded = 0
         self.download_time = 0
@@ -359,9 +360,10 @@ class DownloadingVideo(Video):
                             self.total_download_time += time_e - time_s
                             self.download_time += time_e - time_s
 
-                            self.net_speed_label.configure(
-                                text=ValueConvertUtility.convert_size(len(chunk) / (time_e - time_s), 1) + "/s"
-                            )
+                            if self.net_speed_label is not None:
+                                self.net_speed_label.configure(
+                                    text=ValueConvertUtility.convert_size(len(chunk) / (time_e - time_s), 1) + "/s"
+                                )
                             self.bytes_downloaded += len(chunk)
                             self.total_bytes_downloaded += len(chunk)
 
@@ -521,11 +523,14 @@ class DownloadingVideo(Video):
         """
 
         completed_percentage = self.total_bytes_downloaded / self.download_type_info["size"]
-        self.download_progress_bar.set(completed_percentage)
-        self.process_percentage_label.configure(text=f"{round(completed_percentage * 100, 2)} %")
-        self.download_progress_label.configure(
-            text=f"{ValueConvertUtility.convert_size(self.total_bytes_downloaded, 2)} / {self.converted_file_size}"
-        )
+        if self.download_progress_bar is not None:
+            self.download_progress_bar.set(completed_percentage)
+        if self.process_percentage_label is not None:
+            self.process_percentage_label.configure(text=f"{round(completed_percentage * 100, 2)} %")
+        if self.download_progress_label is not None:
+            self.download_progress_label.configure(
+                text=f"{ValueConvertUtility.convert_size(self.total_bytes_downloaded, 2)} / {self.converted_file_size}"
+            )
 
         self.set_eta_time()
 
@@ -533,6 +538,8 @@ class DownloadingVideo(Video):
             self.video_download_progress_callback()
 
     def set_eta_time(self):
+        if self.estimated_remaining_time_label is None:
+            return
         estimated_time = DownloadInfoUtility.get_estimated_time(
             self.download_type_info["size"], self.total_download_time, self.total_bytes_downloaded
         )
@@ -563,10 +570,12 @@ class DownloadingVideo(Video):
             else:
                 DownloadManager.unregister_from_active(self)
                 self.display_status()
-                self.pause_resume_btn.place_forget()
-                self.re_download_btn.place(
-                    rely=0.5, anchor="w", relx=1, x=-80 * AppearanceSettings.get_scale("decimal")
-                )
+                if self.pause_resume_btn is not None:
+                    self.pause_resume_btn.place_forget()
+                if self.re_download_btn is not None:
+                    self.re_download_btn.place(
+                        rely=0.5, anchor="w", relx=1, x=-80 * AppearanceSettings.get_scale("decimal")
+                    )
 
             if self.mode == "video":
                 self.show_notification()
@@ -588,14 +597,20 @@ class DownloadingVideo(Video):
         if self.mode == "playlist":
             self.video_download_status_callback(self, self.download_state)
         self.display_status()
-        self.pause_resume_btn.place_forget()
-        self.estimated_remaining_time_label.place_forget()
-        self.process_percentage_label.configure(text="")
-        self.download_progress_bar.set(0.5)
-        self.process_percentage_label.configure(text="")
-        self.net_speed_label.configure(text="")
-        self.download_progress_label.configure(text="")
-        self.download_type_label.configure(text="")
+        if self.pause_resume_btn is not None:
+            self.pause_resume_btn.place_forget()
+        if self.estimated_remaining_time_label is not None:
+            self.estimated_remaining_time_label.place_forget()
+        if self.process_percentage_label is not None:
+            self.process_percentage_label.configure(text="")
+        if self.download_progress_bar is not None:
+            self.download_progress_bar.set(0.5)
+        if self.net_speed_label is not None:
+            self.net_speed_label.configure(text="")
+        if self.download_progress_label is not None:
+            self.download_progress_label.configure(text="")
+        if self.download_type_label is not None:
+            self.download_type_label.configure(text="")
 
     def set_downloading_completed(self):
         """
@@ -853,39 +868,6 @@ class DownloadingVideo(Video):
         self.sub_frame.configure(width=(self.winfo_width() / 2) - (100 * scale))
 
     def __del__(self):
-        del self.download_state
-        del self.pause_requested
-        del self.pause_resume_btn_command
-        # status and progress callbacks
-        del self.video_download_complete_callback
-        del self.video_download_status_callback
-        del self.video_download_progress_callback
-        # download info
-        del self.download_quality
-        del self.download_type
-        del self.video_stream_data
-        # download mode
-        del self.playlist_title
-        del self.mode
-        # widgets
-        del self.sub_frame
-        del self.download_progress_bar
-        del self.download_progress_label
-        del self.process_percentage_label
-        del self.download_type_label
-        del self.net_speed_label
-        del self.status_label
-        del self.re_download_btn
-        del self.pause_resume_btn
-        # download file info
-        del self.bytes_downloaded
-        del self.file_size
-        del self.converted_file_size
-        del self.download_file_name
-        del self.download_directory
-        # Track automatically re download count
-        del self.automatically_re_download_count
-
         super().__del__()
 
     def destroy_widgets(self):
