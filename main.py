@@ -11,6 +11,7 @@ from utils.logger import get_logger
 # (e.g., when scrolling over ttk.Combobox dropdown which returns string)
 _original_check_if_valid_scroll = CTkScrollableFrame._check_if_valid_scroll
 
+
 def _patched_check_if_valid_scroll(self, widget):
     if isinstance(widget, str):
         try:
@@ -18,6 +19,7 @@ def _patched_check_if_valid_scroll(self, widget):
         except Exception:
             return False
     return _original_check_if_valid_scroll(self, widget)
+
 
 CTkScrollableFrame._check_if_valid_scroll = _patched_check_if_valid_scroll
 

@@ -202,8 +202,7 @@ class DownloadingVideo(Video):
         if self.mode == "playlist" and GeneralSettings.settings["create_sep_path_for_playlists"]:
             self.download_directory = os.path.join(
                 self.download_directory,
-                f"{FileUtility.sanitize_filename(self.channel)} - "
-                f"{FileUtility.sanitize_filename(self.playlist_title)}"
+                f"{FileUtility.sanitize_filename(self.channel)} - {FileUtility.sanitize_filename(self.playlist_title)}",
             )
 
         else:
@@ -404,7 +403,7 @@ class DownloadingVideo(Video):
         self.download_file_name = FileUtility.get_available_file_name(self.download_file_name + ".mp4")
 
         self.converted_file_name = FileUtility.get_available_file_name(
-            os.path.join(GeneralSettings.settings['download_directory'], "temp-converting.mp4")
+            os.path.join(GeneralSettings.settings["download_directory"], "temp-converting.mp4")
         )
 
         command = [
