@@ -1,6 +1,10 @@
 import os
 import tkinter as tk
 
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
+
 
 class SettingsValidateUtility:
     @staticmethod
@@ -17,10 +21,7 @@ class SettingsValidateUtility:
         try:
             count = int(count_str)
             if with_range:
-                if 0 < count < 11:
-                    return True
-                else:
-                    return False
+                return 0 < count < 11
             else:
                 return True
         except ValueError:
@@ -38,19 +39,13 @@ class SettingsValidateUtility:
             bool: True if the path is valid, False otherwise.
         """
         paths = path.split(":")
-        if not os.path.exists(paths[0] + ':'):
+        if not os.path.exists(paths[0] + ":"):
             return False
-        if len(paths) != 2:
+        if len(paths) != 2 or paths[1] != "" and not paths[1].startswith("\\"):
             return False
-        elif paths[1] != "":
-            if not paths[1].startswith("\\"):
-                return False
         path = paths[1]
-        invalid_characters = ['?', '%', '*', ':', '|', '"', '<', '>']
-        for invalid_char in invalid_characters:
-            if invalid_char in path:
-                return False
-        return True
+        invalid_characters = ["?", "%", "*", ":", "|", '"', "<", ">"]
+        return all(invalid_char not in path for invalid_char in invalid_characters)
 
     @staticmethod
     def validate_accent_color(color: str) -> bool:
@@ -69,60 +64,55 @@ class SettingsValidateUtility:
                 tk.Button(fg=normal_color, bg=hover_color)
                 return True
             except Exception as error:
-                print(f"validate_accent_color : {error}")
+                _log.debug("validate_accent_color: invalid color %r: %s", color, error)
                 return False
         except Exception as error:
-            print(f"validate_accent_color : {error}")
+            _log.debug("validate_accent_color: could not split color %r: %s", color, error)
             return False
-        
+
     @staticmethod
     def validate_scale_value(value: str) -> bool:
         if value[-1] != "%":
             return False
-        
+
         value = value[0:-1]
-        
+
         try:
-            value = float(value)
+            num_value = int(float(value))
         except Exception as error:
-            print(f"validate_scale_value : {error}")
+            _log.debug("validate_scale_value: non-numeric value %r: %s", value, error)
             return False
-        
-        value = int(value)
-        if value >= 100 and value <= 200:
-            return True
-        return False
-    
+
+        return bool(num_value >= 100 and num_value <= 200)
+
     @staticmethod
     def validate_opacity_value(value: str) -> bool:
         if value[-1] != "%":
             return False
-        
-        value = value[0: -1]
-        
+
+        value = value[0:-1]
+
         try:
-            value = float(value)
+            num_value2 = float(value)
         except Exception as error:
-            print(f"validate_opacity_value : {error}")
+            _log.debug("validate_opacity_value: non-numeric value %r: %s", value, error)
             return False
 
-        if value >= 60 and value <= 100:
-            return True
-        return False
-    
+        return bool(num_value2 >= 60 and num_value2 <= 100)
+
     @staticmethod
     def validate_chunk_size_value(value: str) -> bool:
         # Check if the input ends with KB or MB
         if not (value.endswith("KB") or value.endswith("MB")):
             return False
-        
+
         try:
             # Extract the numeric part and convert it to float
             numeric_value = float(value[:-2])
         except ValueError as error:
-            print(f"validate_chunk_size_value : {error}")
+            _log.debug("validate_chunk_size_value: non-numeric value %r: %s", value, error)
             return False
-        
+
         # Convert the value to bytes for consistent comparison
         if value.endswith("KB"):
             size_in_bytes = numeric_value * 1024  # 1 KB = 1024 bytes

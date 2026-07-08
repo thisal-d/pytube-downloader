@@ -1,7 +1,11 @@
-from urllib import request
+from typing import cast
+
 import requests
-from typing import List, Dict
+
 from .json_utility import JsonUtility
+from .logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class DataRetrieveUtility:
@@ -9,7 +13,7 @@ class DataRetrieveUtility:
     VERSION_FILE_URL = "https://raw.githubusercontent.com/Thisal-D/PyTube-Downloader/main/VERSION"
 
     @staticmethod
-    def get_contributors_data() -> List[Dict]:
+    def get_contributors_data() -> list[dict[str, str]] | None:
         """
         Retrieve contributors data from a GitHub repository.
 
@@ -22,20 +26,22 @@ class DataRetrieveUtility:
             for contributor_data in data.split("\n"):
                 try:
                     profile_url, username = contributor_data.split("@%@")
-                    contributors.append({
-                        "profile_url": profile_url,
-                        "user_name": username,
-                    })
-                except Exception as error:
-                    print(f"data_retrieve_utility.py L54 : {error}")
-        except Exception as error:
-            print(f"data_retrieve_utility.py L43 : {error}")
+                    contributors.append(
+                        {
+                            "profile_url": profile_url,
+                            "user_name": username,
+                        }
+                    )
+                except Exception:
+                    _log.exception("failed to parse contributor data")
+        except Exception:
+            _log.exception("failed to fetch contributors data")
             return None
-        
+
         return contributors
-    
+
     @staticmethod
-    def get_latest_version():
+    def get_latest_version() -> str | None:
         """
         Retrieve latest version from a GitHub repository.
 
@@ -46,21 +52,21 @@ class DataRetrieveUtility:
             data = requests.get(DataRetrieveUtility.VERSION_FILE_URL, timeout=5).text.strip()
             # Extract the version number from the string "VERSION = '2.0.2'"
             # Split at "=" and remove extra characters like spaces and quotes
-            version = data.split('=')[1].strip().strip("'")
-        
-        except Exception as error:
-            print(f"data_retrive_utility.py L43 : {error}")
+            version = data.split("=")[1].strip().strip("'")
+
+        except Exception:
+            _log.exception("failed to fetch latest version")
             return None
-        
+
         return version
 
     @staticmethod
-    def get_current_version():
+    def get_current_version() -> str:
         """
         Read current version from info.json file.
-        
+
         return:
             string: current version
         """
-        version = JsonUtility.read_from_file("data\\info.json")["version"]
+        version: str = cast(str, JsonUtility.read_from_file("data/info.json")["version"])
         return version

@@ -1,16 +1,54 @@
-/.idea/
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+.env
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Project-specific
+/PLAN.md
 /assets/profile images/*.png
-*.pyc
-ffmpeg/ffmpeg.exe
-temp/thumbnails/*.png
-history/thumbnails/*.png
-assets/profile images/*.png
-setup build.iss
-versioninfo-changed.txt
-build
+/ffmpeg/ffmpeg.exe
+/temp/thumbnails/*.png
+/history/thumbnails/*.png
+/history/*.json
+/setup build.iss
+/versioninfo-changed.txt
+
+# Build artifacts
 .sconsign-312.dblite
 @link_input.txt
 build_definitions.h
 scons-report.txt
 scons-error-report.pickle
 nuitka-crash-report.xml
+
+# Lint / Type check caches
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# Logs
+*.log
+
+# Local user data (created at runtime)
+PyTube Downloader/
+
+# Windows user data artefact from early cross-platform refactoring
+C:

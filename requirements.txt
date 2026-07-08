@@ -1,11 +1,13 @@
-# Project dependencies
-customtkinter==5.2.2 # for the ui
+# PyTube Downloader dependencies
+# For development: pip install -e ".[dev]"
+# For Windows notifications/titlebar: pip install -e ".[windows]"
+# For standard install: pip install -e .
+
+customtkinter
 pillow
 pyautogui
 pystray
 pyperclip
 pytubefix
-win11toast
 ctkchart
-hPyT
 requests

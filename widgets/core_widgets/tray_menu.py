@@ -1,6 +1,8 @@
-from PIL import Image
+from collections.abc import Callable
+
 import pystray
-from typing import Callable
+from PIL import Image
+
 from services import LanguageManager
 
 
@@ -14,10 +16,7 @@ class TrayMenu:
         tray_icon (pystray.Icon): The system tray icon object.
     """
 
-    def __init__(
-            self,
-            open_command: Callable = None,
-            quit_command: Callable = None):
+    def __init__(self, open_command: Callable = None, quit_command: Callable = None):
         """
         Initialize the TrayMenu object.
 
@@ -28,7 +27,7 @@ class TrayMenu:
         self.tray_image = Image.open("assets/main icon/512x512.ico")
         self.tray_menu = (
             pystray.MenuItem(LanguageManager.data["open"], open_command),
-            pystray.MenuItem(LanguageManager.data["quit"], quit_command)
+            pystray.MenuItem(LanguageManager.data["quit"], quit_command),
         )
         self.tray_icon = pystray.Icon("name", self.tray_image, "PyTube Downloader", self.tray_menu)
 

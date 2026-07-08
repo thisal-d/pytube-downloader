@@ -1,6 +1,3 @@
-from typing import Union
-
-
 class ValueConvertUtility:
     @staticmethod
     def convert_time(seconds: int) -> str:
@@ -17,15 +14,12 @@ class ValueConvertUtility:
         minutes = int((seconds - (hours * 3600)) / 60)
         seconds = seconds - (hours * 3600) - (minutes * 60)
 
-        if hours > 0:
-            converted_time = f"{hours}:{minutes:0>2}:{int(seconds):0>2}"
-        else:
-            converted_time = f"{minutes}:{int(seconds):0>2}"
+        converted_time = f"{hours}:{minutes:0>2}:{int(seconds):0>2}" if hours > 0 else f"{minutes}:{int(seconds):0>2}"
 
         return converted_time
 
     @staticmethod
-    def convert_size(size: Union[int, float], decimal_points: int) -> str:
+    def convert_size(size: int | float, decimal_points: int) -> str:
         """
         Convert size to a human-readable format (e.g., KB, MB, GB) with specified decimal points.
 
@@ -48,9 +42,9 @@ class ValueConvertUtility:
             converted_size = f"{int(size)} {data_units[index]}"
 
         return converted_size
-    
+
     @staticmethod
-    def MB_KB_to_Bytes(value: str) -> str:
+    def MB_KB_to_Bytes(value: str) -> float:  # noqa: N802
         if value.endswith("MB"):
             return float(value[:-2]) * 1024 * 1024
         elif value.endswith("KB"):

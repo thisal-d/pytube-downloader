@@ -1,11 +1,11 @@
-from .loading_indicate_manager import LoadingIndicateManager
-from .load_manager import LoadManager
-from .download_manager import DownloadManager
-from .theme_manager import ThemeManager
-from .language_manager import LanguageManager
-from .video_count_tracker import VideoCountTracker
-from .notification_manager import NotificationManager
-from .video_convert_manager import VideoConvertManager
-from .history_manager import HistoryManager
-from .download_speed_tracker import DownloadSpeedTracker
-from .information_manager import InformationManager
+from .download_manager import DownloadManager as DownloadManager
+from .download_speed_tracker import DownloadSpeedTracker as DownloadSpeedTracker
+from .history_manager import HistoryManager as HistoryManager
+from .information_manager import InformationManager as InformationManager
+from .language_manager import LanguageManager as LanguageManager
+from .load_manager import LoadManager as LoadManager
+from .loading_indicate_manager import LoadingIndicateManager as LoadingIndicateManager
+from .notification_manager import NotificationManager as NotificationManager
+from .theme_manager import ThemeManager as ThemeManager
+from .video_convert_manager import VideoConvertManager as VideoConvertManager
+from .video_count_tracker import VideoCountTracker as VideoCountTracker

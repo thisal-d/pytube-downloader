@@ -1,5 +1,5 @@
-from typing import Tuple
 from urllib import request
+
 from PIL import Image, ImageDraw
 
 
@@ -9,9 +9,7 @@ class ImageUtility:
     """
 
     @staticmethod
-    def crop_image(
-            image: Image,
-            start_position: Tuple[int, int], end_position: Tuple[int, int]) -> Image.Image:
+    def crop_image(image: Image.Image, start_position: tuple[int, int], end_position: tuple[int, int]) -> Image.Image:
         """
         Crop the input image
 
@@ -27,7 +25,7 @@ class ImageUtility:
         return cropped_image
 
     @staticmethod
-    def resize_image(image: Image, new_size: Tuple[int, int]) -> Image.Image:
+    def resize_image(image: Image.Image, new_size: tuple[int, int]) -> Image.Image:
         """
         Resize the input image to the specified size
 
@@ -42,7 +40,7 @@ class ImageUtility:
         return resized_image
 
     @staticmethod  # from stackoverflow
-    def create_image_with_rounded_corners(image: Image, radius: int) -> Image.Image:
+    def create_image_with_rounded_corners(image: Image.Image, radius: int) -> Image.Image:
         """
         Create a new image with rounded corners based on the input image.
 
@@ -54,10 +52,10 @@ class ImageUtility:
             Image: image with rounded corners.
         """
         rounded_corner_added_image = image
-        circle_mask = Image.new('L', (radius * 2, radius * 2), 0)
+        circle_mask = Image.new("L", (radius * 2, radius * 2), 0)
         draw_circle = ImageDraw.Draw(circle_mask)
         draw_circle.ellipse((0, 0, radius * 2 - 1, radius * 2 - 1), fill=255)
-        alpha_mask = Image.new('L', rounded_corner_added_image.size, 255)
+        alpha_mask = Image.new("L", rounded_corner_added_image.size, 255)
         w, h = rounded_corner_added_image.size
         alpha_mask.paste(circle_mask.crop((0, 0, radius, radius)), (0, 0))
         alpha_mask.paste(circle_mask.crop((0, radius, radius, radius * 2)), (0, h - radius))
@@ -67,7 +65,7 @@ class ImageUtility:
         return rounded_corner_added_image
 
     @staticmethod
-    def create_image_with_hover_effect(image: Image, intensity_increase: int) -> Image.Image:
+    def create_image_with_hover_effect(image: Image.Image, intensity_increase: int) -> Image.Image:
         """
         Create a new image with a hover effect based on the input image
 
@@ -82,7 +80,7 @@ class ImageUtility:
         image_data = image_with_hover_effect.getdata()
         modified_image_data = []
 
-        for pixel in image_data:
+        for pixel in image_data:  # type: ignore[attr-defined]
             modified_pixel = list(pixel)
             for index, channel_value in enumerate(modified_pixel):
                 new_channel_value = min(channel_value + intensity_increase, 255)
@@ -91,9 +89,11 @@ class ImageUtility:
 
         image_with_hover_effect.putdata(modified_image_data)
         return image_with_hover_effect
-    
+
     @staticmethod
-    def download_image(image_url: str = None, quality: int = None, output_image_path: str = None) -> str:
+    def download_image(
+        image_url: str | None = None, quality: int | None = None, output_image_path: str | None = None
+    ) -> str:
         """
         Download an image from the specified URL and save it locally.
 
@@ -105,6 +105,7 @@ class ImageUtility:
         Returns:
             str: Path to the downloaded image.
         """
+        assert image_url is not None and output_image_path is not None
         if quality is not None:
             image_url = f"{image_url}?size={quality}"
 
@@ -113,7 +114,7 @@ class ImageUtility:
         return output_image_path
 
     @staticmethod
-    def image_width(input_image_path: str = None) -> int:
+    def image_width(input_image_path: str | None = None) -> int:
         """
         Get a width of image
 
@@ -122,12 +123,13 @@ class ImageUtility:
         Returns:
             int: Width of the input image
         """
+        assert input_image_path is not None
         image = Image.open(input_image_path)
 
         return image.width
 
     @staticmethod
-    def image_height(input_image_path: str = None) -> int:
+    def image_height(input_image_path: str | None = None) -> int:
         """
         Get a height of image
 
@@ -136,6 +138,7 @@ class ImageUtility:
         Returns:
             int: Height of the input image
         """
+        assert input_image_path is not None
         image = Image.open(input_image_path)
 
         return image.height

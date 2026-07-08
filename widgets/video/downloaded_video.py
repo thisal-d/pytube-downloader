@@ -1,47 +1,44 @@
-from widgets.video import Video
-import customtkinter as ctk
+from collections.abc import Callable
+from pathlib import Path
 from tkinter import PhotoImage
-from typing import List, Literal, Union, Callable
-import os
-from utils import (
-    ValueConvertUtility
-)
-from services import (
-    LanguageManager, 
-    VideoCountTracker,
-    HistoryManager,
-    ThemeManager
-)
+from typing import Literal
+
+import customtkinter as ctk
+
+from services import HistoryManager, LanguageManager, ThemeManager, VideoCountTracker
 from settings import AppearanceSettings
+from utils import GuiUtils, ValueConvertUtility
+from widgets.video.video import Video
 
 
 class DownloadedVideo(Video):
     def __init__(
-            self,
-            root: ctk.CTk,
-            master: Union[ctk.CTkFrame, ctk.CTkScrollableFrame],
-            height: int = 0,
-            width: int = 0,
-            # video info
-            video_title: str = "",
-            channel: str = "",
-            video_url: str = "",
-            channel_url: str = "",
-            file_size: int = 0,
-            length: int = 0,
-            thumbnails: List[PhotoImage] = (None, None),
-            original_thumbnail_image_path: str = "",
-            # Hsitory thumbnail images
-            history_normal_thumbnail_image_path: str = "",
-            history_hover_thumbnail_image_path: str = "",
-            # download info
-            downloaded_file_name: str = "",
-            download_quality: Literal["128kbps", "360p", "720p"] = "720p",
-            download_type: Literal["Audio", "Video"] = "Video",
-            # download mode
-            mode: Literal["video", "playlist"] = 'video',
-            # state callbacks
-            video_status_callback: Callable = None):
+        self,
+        root: ctk.CTk,
+        master: ctk.CTkFrame | ctk.CTkScrollableFrame,
+        height: int = 0,
+        width: int = 0,
+        # video info
+        video_title: str = "",
+        channel: str = "",
+        video_url: str = "",
+        channel_url: str = "",
+        file_size: int = 0,
+        length: int = 0,
+        thumbnails: list[PhotoImage] = (None, None),
+        original_thumbnail_image_path: str = "",
+        # Hsitory thumbnail images
+        history_normal_thumbnail_image_path: str = "",
+        history_hover_thumbnail_image_path: str = "",
+        # download info
+        downloaded_file_name: str = "",
+        download_quality: Literal["128kbps", "360p", "720p"] = "720p",
+        download_type: Literal["Audio", "Video"] = "Video",
+        # download mode
+        mode: Literal["video", "playlist"] = "video",
+        # state callbacks
+        video_status_callback: Callable = None,
+    ):
 
         # video info
         self.file_size: int = file_size
@@ -50,10 +47,10 @@ class DownloadedVideo(Video):
         self.download_quality: Literal["128kbps", "360p", "720p"] = download_quality
         self.download_type: Literal["Audio", "Video"] = download_type
         # widgets
-        self.download_type_label: Union[ctk.CTkLabel, None] = None
-        self.file_size_label: Union[ctk.CTkLabel, None] = None
-        self.download_path_btn: Union[ctk.CTkButton, None] = None
-        self.play_video_btn: Union[ctk.CTkButton, None] = None
+        self.download_type_label: ctk.CTkLabel | None = None
+        self.file_size_label: ctk.CTkLabel | None = None
+        self.download_path_btn: ctk.CTkButton | None = None
+        self.play_video_btn: ctk.CTkButton | None = None
         # status callbacks
         self.video_status_callback = video_status_callback
         self.mode = mode
@@ -71,39 +68,34 @@ class DownloadedVideo(Video):
             video_url=video_url,
             original_thumbnail_image_path=original_thumbnail_image_path,
             history_normal_thumbnail_image_path=history_normal_thumbnail_image_path,
-            history_hover_thumbnail_image_path=history_hover_thumbnail_image_path
+            history_hover_thumbnail_image_path=history_hover_thumbnail_image_path,
         )
 
         if self.mode == "video":
             HistoryManager.save_video_to_history(self)
-            
+
         VideoCountTracker.add_downloaded_video()
         self.set_video_data()
 
     def create_widgets(self):
         super().create_widgets()
 
-        self.download_type_label = ctk.CTkLabel(
-            master=self
-        )
-        self.file_size_label = ctk.CTkLabel(
-            master=self,
-            text=ValueConvertUtility.convert_size(self.file_size, 2)
-        )
+        self.download_type_label = ctk.CTkLabel(master=self)
+        self.file_size_label = ctk.CTkLabel(master=self, text=ValueConvertUtility.convert_size(self.file_size, 2))
         self.download_path_btn = ctk.CTkButton(
             master=self,
             text="📂",
             cursor="hand2",
-            command=lambda: os.startfile("\\".join(self.downloaded_file_name.split("\\")[0:-1])),
-            hover=False
+            command=lambda: GuiUtils.open_file(Path(self.downloaded_file_name).parent),
+            hover=False,
         )
-        
+
         self.play_video_btn = ctk.CTkButton(
             master=self,
             text="▶",
             cursor="hand2",
-            command=lambda: os.startfile(self.downloaded_file_name),
-            hover=False
+            hover=False,
+            command=lambda: GuiUtils.open_file(self.downloaded_file_name),
         )
 
     def set_widgets_texts(self):
@@ -142,20 +134,18 @@ class DownloadedVideo(Video):
     def set_widgets_colors(self):
         super().set_widgets_colors()
 
-        self.download_type_label.configure(
-            text_color=ThemeManager.get_color_based_on_theme("text_muted")
-        )
+        self.download_type_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
         self.file_size_label.configure(text_color=ThemeManager.get_color_based_on_theme("text_muted"))
         self.download_path_btn.configure(fg_color=ThemeManager.get_color_based_on_theme("primary"))
         self.play_video_btn.configure(fg_color=ThemeManager.get_color_based_on_theme("primary"))
 
     def on_mouse_enter_self(self, event):
         # super().on_mouse_enter_self(event)
-        
+
         """
         self.download_path_btn.configure(fg_color=AppearanceSettings.settings["video_object"]["fg_color"]["hover"])
         """
-        
+
     def on_mouse_leave_self(self, event):
         super().on_mouse_leave_self(event)
 
@@ -171,7 +161,7 @@ class DownloadedVideo(Video):
 
         self.download_path_btn.bind("<Enter>", on_mouse_enter_download_path_btn)
         self.download_path_btn.bind("<Leave>", on_mouse_leave_download_path_btn)
-        
+
         def on_mouse_enter_play_video_btn(_event):
             self.play_video_btn.configure(text_color=ThemeManager.get_accent_color("hover"))
             # self.on_mouse_enter_self(event)
@@ -188,18 +178,20 @@ class DownloadedVideo(Video):
         scale = AppearanceSettings.get_scale("decimal")
 
         self.download_type_label.place(relx=1, x=-300 * scale, rely=0.3, anchor="w")
-        self.file_size_label.place(relx=1, x=-300 * scale, rely=0.7, anchor="w")    
+        self.file_size_label.place(relx=1, x=-300 * scale, rely=0.7, anchor="w")
 
         self.download_path_btn.place(relx=1, x=-170 * scale, rely=0.5, anchor="w")
         self.play_video_btn.place(relx=1, x=-90 * scale, rely=0.5, anchor="w")
-        
+
     def configure_widget_sizes(self, _event):
         scale = AppearanceSettings.get_scale("decimal")
         self.info_frame.configure(
             width=(
-                self.master_frame.winfo_width() - (300 * scale) -
-                (self.thumbnail_btn.winfo_width() + 5) - (10 * scale) -
-                (20 * scale)
+                self.master_frame.winfo_width()
+                - (300 * scale)
+                - (self.thumbnail_btn.winfo_width() + 5)
+                - (10 * scale)
+                - (20 * scale)
             )
         )
 
@@ -218,7 +210,7 @@ class DownloadedVideo(Video):
         # status callbacks
         del self.video_status_callback
         del self.mode
-        
+
         super().__del__()
 
     def destroy_widgets(self):
