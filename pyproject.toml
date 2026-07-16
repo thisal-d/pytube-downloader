@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pytube-downloader"
-version = "6.2.0"
+version = "6.3.0"
 description = "A YouTube video/playlist downloader with a modern GUI"
 readme = "README.md"
 license = { file = "LICENSE" }

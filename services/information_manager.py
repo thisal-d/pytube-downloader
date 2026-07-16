@@ -14,7 +14,7 @@ class InformationManager:
         ],
         "logo": "⚡",
         "name": "PyTube Downloader",
-        "version": "6.2.0",
+        "version": "6.3.0",
     }
     info = {}
     default_info_directory = "data"
