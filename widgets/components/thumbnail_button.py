@@ -1,23 +1,24 @@
-import tkinter as tk
-from tkinter import PhotoImage
 import threading
 import time
-from typing import Tuple, List, Literal, Any
+import tkinter as tk
+from tkinter import PhotoImage
+from typing import Any, Literal
+
 from services import LoadingIndicateManager
 from settings import GeneralSettings
 
 
 class ThumbnailButton(tk.Button):
     def __init__(
-            self,
-            master: Any = None,
-            font: Tuple[str, int, str] = ("Segoe UI", 14, "bold"),
-            command: callable = None,
-            height: int = 0,
-            width: int = 0,
-            thumbnails: List[PhotoImage] = None,
-            state: Literal["normal", "disabled"] = "normal",
-            ):
+        self,
+        master: Any = None,
+        font: tuple[str, int, str] = ("Segoe UI", 14, "bold"),
+        command: callable = None,
+        height: int = 0,
+        width: int = 0,
+        thumbnails: list[PhotoImage] = None,
+        state: Literal["normal", "disabled"] = "normal",
+    ):
 
         from widgets.video.added_video import AddedVideo
 
@@ -35,7 +36,7 @@ class ThumbnailButton(tk.Button):
             relief="sunken",
             state=state,
             cursor="hand2",
-            command=command
+            command=command,
         )
 
     def run_loading_animation_thread(self):
@@ -57,11 +58,11 @@ class ThumbnailButton(tk.Button):
         loading_animation_thread.start()
 
     def stop_loading_animation(self):
-        self.loading_animation_state = 'disabled'
+        self.loading_animation_state = "disabled"
         while self.loading_animation_running:
             time.sleep(GeneralSettings.settings["update_delay"])
 
-    def configure_thumbnail(self, thumbnails: List[PhotoImage]):
+    def configure_thumbnail(self, thumbnails: list[PhotoImage]):
         self.stop_loading_animation()
         self.thumbnails = thumbnails
         self.configure(image=thumbnails[0], text="")
@@ -79,10 +80,10 @@ class ThumbnailButton(tk.Button):
     def __del__(self):
         """Destructor"""
         self.stop_loading_animation()
-        
+
         del self.loading_animation_state
         del self.loading_animation_running
         del self.thumbnails
-        
+
         self.destroy()
         del self

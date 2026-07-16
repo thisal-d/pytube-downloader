@@ -16,7 +16,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![UI](https://img.shields.io/badge/UI-tkinter%2Bcustomtkinter-green)
-![Version](https://img.shields.io/badge/version-6.2.0-orange)
+![Version](https://img.shields.io/badge/version-6.3.0-orange)
+[![CI](https://github.com/Thisal-D/PyTube-Downloader/actions/workflows/ci.yml/badge.svg)](https://github.com/Thisal-D/PyTube-Downloader/actions/workflows/ci.yml)
 
 ---
 
@@ -52,19 +53,26 @@ With support for multiple formats, quality levels (144p–8K), and simultaneous 
   | 中文 (Chinese)    | [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu) |
   | සිංහල (Sinhala) | [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21)     |
   | தமிழ் (Tamil)   | [<img src="https://github.com/asma-mf.png?size=25" width="25">](https://github.com/asma-mf)   |
+  | Русский (Russian) | [<img src="https://github.com/sergdryg.png?size=25" width="25">](https://github.com/sergdryg) |
 
   💡 **Help us [improve existing translations](LANGUAGE_CONTRIBUTION_GUIDE_en.md/#improve-current-language-issues)** or [**add new ones**](LANGUAGE_CONTRIBUTION_GUIDE_en.md/#adding-a-new-language).
+* 🖥️ **Cross-Platform Support** — Runs on Windows, Linux, and macOS.
+* 📝 **Structured Logging** — Rotating file logs for easier debugging.
+* 🔄 **GitHub Actions CI/CD** — Automated linting (`ruff`), formatting, type checking (`mypy`), and testing (`pytest`) on every push and PR.
+* 🛡️ **Improved Error Handling & Performance** — Better resilience and reduced CPU usage via event-driven threading.
 * ⌨️ **Keyboard Shortcuts** — Control the app easily with quick-access shortcut keys.
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Category          | Technologies                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------ |
-| **Language**      | Python 3.10+                                                                                     |
-| **Libraries**     | `tkinter`, `customtkinter`, `pytubefix`, `pillow`, `pyautogui`, `pystray`, `pyperclip`, `hPyT`, `win11toast`, `ctkchart` |
-| **External Tool** | `FFmpeg` (for video/audio processing)                                                            |
+| Category            | Technologies                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------ |
+| **Language**        | Python 3.10+                                                                                     |
+| **Libraries**       | `tkinter`, `customtkinter`, `pytubefix`, `pillow`, `pyautogui`, `pystray`, `pyperclip`, `hPyT` (optional), `win11toast` (optional), `ctkchart` |
+| **Dev Tools**       | `ruff`, `mypy`, `pytest`, `pre-commit`                                                           |
+| **External Tool**   | `FFmpeg` (for video/audio processing)                                                            |
+| **Platform**        | Windows, Linux, macOS                                                                            |
 
 ---
 
@@ -77,29 +85,45 @@ git clone https://github.com/Thisal-D/PyTube-Downloader.git
 cd PyTube-Downloader
 ```
 
-### 2️⃣ Install FFmpeg
+### 2️⃣ Install Dependencies (Recommended)
 
-* Download from [FFmpeg.org](https://ffmpeg.org/download.html)
-* Extract and copy `ffmpeg.exe` into:
+```bash
+pip install -e .
+```
+
+This installs the app and creates the `pytube-downloader` CLI entry point.
+
+> Alternatively, run `python dependencies_installer.py && python dependencies_updater.py`.
+
+### 3️⃣ Install FFmpeg
+
+* **Linux/macOS**: FFmpeg is used automatically from your system PATH if available.
+* **Windows**: Download from [FFmpeg.org](https://ffmpeg.org/download.html), extract and copy `ffmpeg.exe` into:
 
   ```
   PyTube-Downloader/ffmpeg/
   ```
 
-### 3️⃣ Install Dependencies
+> [!NOTE]
+> Windows-only dependencies (`win11toast`, `hPyT`) are optional. The app runs on Linux/macOS without them.
 
-```bash
-python dependencies_installer.py
-python dependencies_updater.py
-```
+### 4️⃣ Configuration
 
-### 4️⃣ Run the Application
+Copy `.env.example` to `.env` and edit as needed.
+
+### 5️⃣ Run the Application
 
 ```bash
 python main.py
 ```
 
-### 5️⃣ Download Videos
+Or use the installed entry point:
+
+```bash
+pytube-downloader
+```
+
+### 6️⃣ Download Videos
 
 1. Paste a YouTube video or playlist URL.
 2. Choose **Single Video** or **Playlist Mode**.
@@ -196,6 +220,8 @@ Please respect **YouTube's Terms of Service** and content creators' rights when 
 | [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21)             | [Navindu Pahasara](https://github.com/Navindu21)       |
 | [<img src="https://github.com/sooryasuraweera.png?size=25" width="25">](https://github.com/sooryasuraweera) | [Soorya Suraweera](https://github.com/sooryasuraweera) |
 | [<img src="https://github.com/asma-mf.png?size=25" width="25">](https://github.com/asma-mf)           | [Fathima Asma](https://github.com/asma-mf)          |
+| [<img src="https://github.com/ZLostTK.png?size=25" width="25">](https://github.com/ZLostTK)           | [ZLostTK](https://github.com/ZLostTK)                |
+| [<img src="https://github.com/sergdryg.png?size=25" width="25">](https://github.com/sergdryg)           | [Sergdryg](https://github.com/sergdryg)              |
 
 ---
 

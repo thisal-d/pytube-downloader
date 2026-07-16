@@ -1,25 +1,38 @@
-import customtkinter as ctk
-import time
-from typing import List, Tuple, Any, Literal
 import threading
+import time
+from pathlib import Path
+from typing import Any, Literal
+
+import customtkinter as ctk
+
 from settings import AppearanceSettings
+
+try:
+    from hPyT import title_bar_color, title_bar_text_color
+
+    _HAS_HPYT = True
+except ImportError:
+    _HAS_HPYT = False
 from utils import JsonUtility
-from hPyT import title_bar_color, title_bar_text_color
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
+
 
 class ThemeManager:
     # List to keep track of all registered child objects
-    registered_widgets: List[Any] = []
+    registered_widgets: list[Any] = []
 
     # Variable to track current theme mode
     current_theme_mode: Literal["Dark", "Light", None] = None
 
     theme_colors: dict = None
-    
+
     @staticmethod
     def update_theme() -> None:
         ThemeManager.initialize()
         ThemeManager.update_widgets_colors()
-        
+
     @staticmethod
     def get_color_based_on_theme(color: str) -> str:
         """Returns appropriate color based on the current theme mode."""
@@ -42,34 +55,43 @@ class ThemeManager:
     def track_theme_mode_changes() -> None:
         """
         Periodically checks for changes in theme and updates registered widgets.
+        Uses threading.Event.wait() instead of time.sleep() to avoid busy-polling.
         """
-        while True:
+        stop_event = threading.Event()
+        while not stop_event.is_set():
             current_mode = ctk.get_appearance_mode()
             if current_mode != ThemeManager.current_theme_mode:
                 ThemeManager.current_theme_mode = current_mode
                 ThemeManager.update_widgets_colors()
-            # Wait 1 second before checking the theme mode again
-            time.sleep(1)
+            # Block for 1 second; can be interrupted cleanly by setting the event
+            stop_event.wait(timeout=1)
 
     @staticmethod
     def set_title_bar_style(window: ctk.CTk) -> None:
-        while True:
+        if not _HAS_HPYT:
+            return
+        max_retries = 5
+        backoff_base = 0.5
+
+        for attempt in range(max_retries):
             try:
-                title_bar_color.set(window, ThemeManager.get_color_based_on_theme("background")) # sets the titlebar color to background color
+                title_bar_color.set(window, ThemeManager.get_color_based_on_theme("background"))
                 break
             except Exception as error:
-                print("Error on changin title bar color")
-                time.sleep(1)
-                continue
-        
-        while True:
+                delay = backoff_base * (2**attempt)
+                _log.warning("failed to set title bar color (attempt %d/%d): %s", attempt + 1, max_retries, error)
+                if attempt < max_retries - 1:
+                    time.sleep(delay)
+
+        for attempt in range(max_retries):
             try:
-                title_bar_text_color.set(window, ThemeManager.get_color_based_on_theme("text_muted")) # sets the titlebar color to text color
+                title_bar_text_color.set(window, ThemeManager.get_color_based_on_theme("text_muted"))
                 break
             except Exception as error:
-                print("Error on changin title text color")
-                time.sleep(1)
-                continue
+                delay = backoff_base * (2**attempt)
+                _log.warning("failed to set title bar text color (attempt %d/%d): %s", attempt + 1, max_retries, error)
+                if attempt < max_retries - 1:
+                    time.sleep(delay)
 
     @staticmethod
     def update_accent_color() -> None:
@@ -86,8 +108,8 @@ class ThemeManager:
         for widget in ThemeManager.registered_widgets:
             try:
                 widget.update_widgets_colors()
-            except Exception as error:
-                print(f"theme_manager.py L51 : {error}")
+            except Exception:
+                _log.exception("update_widgets_colors failed for %r", widget)
 
     @staticmethod
     def update_widgets_accent_color() -> None:
@@ -97,16 +119,16 @@ class ThemeManager:
         for widget in ThemeManager.registered_widgets:
             try:
                 widget.update_widgets_accent_color()
-            except Exception as error:
-                print(f"theme_manager.py L62 : {error}")
+            except Exception:
+                _log.exception("update_widgets_accent_color failed for %r", widget)
 
     @staticmethod
     def initialize() -> None:
         """
         Starts the theme tracking system in a separate thread.
         """
-        lang_file = f"data\\themes\\{AppearanceSettings.settings["theme"]["name"]}.json"
-        ThemeManager.theme_colors = JsonUtility.read_from_file(lang_file)
+        lang_file = Path("data") / "themes" / f"{AppearanceSettings.settings['theme']['name']}.json"
+        ThemeManager.theme_colors = JsonUtility.read_from_file(str(lang_file))
 
         """"""
         theme_tracking_thread = threading.Thread(target=ThemeManager.track_theme_mode_changes)

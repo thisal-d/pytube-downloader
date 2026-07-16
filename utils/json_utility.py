@@ -1,4 +1,9 @@
 import json
+from typing import Any, cast
+
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
 
 
 class JsonUtility:
@@ -7,7 +12,7 @@ class JsonUtility:
     """
 
     @staticmethod
-    def read_from_file(file_path: str) -> dict:
+    def read_from_file(file_path: str) -> dict[str, Any]:
         """
         Read JSON data from a file.
 
@@ -17,12 +22,12 @@ class JsonUtility:
         Returns:
             dict: The JSON data read from the file.
         """
-        with open(file_path, "r", encoding='utf-8') as json_file:
-            json_data = json.load(json_file)
+        with open(file_path, encoding="utf-8") as json_file:
+            json_data: dict[str, Any] = cast("dict[str, Any]", json.load(json_file))
         return json_data
 
     @staticmethod
-    def write_to_file(file_path: str, data: dict) -> None:
+    def write_to_file(file_path: str, data: dict[str, Any]) -> None:
         """
         Write JSON data to a file.
 
@@ -30,16 +35,15 @@ class JsonUtility:
             file_path (str): The path to the JSON file.
             data (dict): The JSON data to be written.
         """
-        with open(file_path, "w", encoding='utf-8') as json_file:
+        with open(file_path, "w", encoding="utf-8") as json_file:
             try:
                 json.dump(obj=data, fp=json_file, indent=4, sort_keys=True)
             except Exception as error:
-                print(f"json_utility.py L-37 : {error}")
+                _log.warning("json.dump with sort_keys failed, retrying without sort: %s", error)
                 json.dump(obj=data, fp=json_file, indent=4, sort_keys=False)
-                
 
     @staticmethod
-    def convert_lists_to_tuples(data: dict) -> dict:
+    def convert_lists_to_tuples(data: dict[str, Any]) -> dict[str, Any]:
         """
         Convert lists in a dictionary to tuples recursively.
 

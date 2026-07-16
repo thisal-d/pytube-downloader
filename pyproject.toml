@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pytube-downloader"
+version = "6.3.0"
+description = "A YouTube video/playlist downloader with a modern GUI"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Thisal D." }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "customtkinter",
+    "pillow",
+    "pyautogui",
+    "pystray",
+    "pyperclip",
+    "pytubefix",
+    "ctkchart",
+    "requests",
+]
+
+[project.optional-dependencies]
+windows = [
+    "win11toast>=0.5",
+    "hPyT>=0.1.0",
+]
+dev = [
+    "pre-commit>=4.0.0",
+    "pytest>=8.0.0",
+    "pytest-mock>=3.12.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.5.0",
+    "mypy>=1.10.0",
+]
+
+[project.scripts]
+pytube-downloader = "main:main"
+
+[project.urls]
+Homepage = "https://github.com/Thisal-D/PyTube-Downloader"
+Repository = "https://github.com/Thisal-D/PyTube-Downloader"
+
+[tool.setuptools]
+packages = ["services", "settings", "utils", "widgets", "widgets.components", "widgets.core_widgets", "widgets.history_widgets", "widgets.play_list", "widgets.setting_panels", "widgets.video"]
+py-modules = ["app", "main"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "ARG"]
+ignore = ["ARG001", "ARG005"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+ignore_missing_imports = true
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"

@@ -1,8 +1,14 @@
+import queue
 import threading
-import time
-from settings.general_settings import GeneralSettings
-from typing import Callable, List, Dict
+from collections.abc import Callable
+
 from pytubefix import request as pytubefix_request
+
+from settings.general_settings import GeneralSettings
+from utils.logger import get_logger
+
+_log = get_logger(__name__)
+
 
 class DownloadManager:
     """
@@ -12,64 +18,77 @@ class DownloadManager:
     # Class variables to keep track of active and queued loads
     active_download_count: int = 0
     queued_download_count: int = 0
-    queued_downloads: List = []
-    active_downloads: List = []
+    queued_downloads: list = []
+    active_downloads: list = []
     status_change_callback: Callable = None
-  
-    resolutions: List = [
-        'Audio Only',
-        '144p',
-        '240p',
-        '360p',
-        '480p',
-        '720p',
-        '1080p',
-        '1440p',
-        '2160p',
-        '4320p',
-        '8640p',
-        '17280p'
+
+    # Queue used to signal the manager thread when the queue state changes
+    _signal_queue: queue.Queue = queue.Queue()
+
+    resolutions: list = [
+        "Audio Only",
+        "144p",
+        "240p",
+        "360p",
+        "480p",
+        "720p",
+        "1080p",
+        "1440p",
+        "2160p",
+        "4320p",
+        "8640p",
+        "17280p",
     ]
-    
+
     default_chunk_size: int = 2097152
 
     @staticmethod
-    def manage_download_queue():
+    def manage_download_queue() -> None:
         """
         Manages the download queue by starting downloads if conditions are met.
 
-        This method continuously checks the download queue and starts downloads if conditions permit.
-        Delay is 1 second (1000 milliseconds).
+        Blocks on a queue.Queue instead of polling with time.sleep, so it wakes
+        up immediately when a new item is registered or an active download finishes.
         """
         while True:
-            if (GeneralSettings.settings["max_simultaneous_downloads"] > DownloadManager.active_download_count and
-                    DownloadManager.queued_download_count > 0):
+            # Block until signalled (no busy-wait)
+            DownloadManager._signal_queue.get()
+
+            if (
+                GeneralSettings.settings["max_simultaneous_downloads"] > DownloadManager.active_download_count
+                and DownloadManager.queued_download_count > 0
+            ):
                 try:
                     DownloadManager.queued_download_count -= 1
                     DownloadManager.queued_downloads[0].download_video()
                     DownloadManager.active_download_count += 1
                     DownloadManager.active_downloads.append(DownloadManager.queued_downloads.pop(0))
-                except Exception as error:
-                    # Log the error for analysis
-                    print(f"download_manager.py L38 : {error}")
-                    pass
+                except Exception:
+                    _log.exception("failed to start download")
+                    # Re-queue the item count so the queue stays consistent
+                    DownloadManager.queued_download_count += 1
                 DownloadManager.status_change_callback()
-            # Wait 1 second (1000 milliseconds) before checking the queue again
-            time.sleep(1)
 
     @staticmethod
-    def register(video):
+    def _signal() -> None:
+        """Puts a token into the internal signal queue to wake the manager thread."""
+        DownloadManager._signal_queue.put(True)
+
+    @staticmethod
+    def register(video) -> None:
         """
         Registers a video to be downloaded.
 
-        Adds the video to the download queue and updates the queued download count.
+        Adds the video to the download queue, updates the queued download count,
+        and signals the manager thread.
         """
         DownloadManager.queued_downloads.append(video)
         DownloadManager.queued_download_count += 1
         DownloadManager.status_change_callback()
+        DownloadManager._signal()
 
     @staticmethod
-    def unregister_from_queued(video):
+    def unregister_from_queued(video) -> None:
         """
         Unregisters a video from the download queue.
 
@@ -81,16 +100,18 @@ class DownloadManager:
         DownloadManager.status_change_callback()
 
     @staticmethod
-    def unregister_from_active(video):
+    def unregister_from_active(video) -> None:
         """
         Unregisters a video from the active download list.
 
-        Removes the video from the active download list and updates the active download count.
+        Removes the video from the active download list, updates the active download
+        count, and signals the manager thread so it can start the next queued item.
         """
         if video in DownloadManager.active_downloads:
             DownloadManager.active_downloads.remove(video)
             DownloadManager.active_download_count -= 1
         DownloadManager.status_change_callback()
+        DownloadManager._signal()
 
     @staticmethod
     def initialize(status_change_callback: Callable = None) -> None:
@@ -105,8 +126,7 @@ class DownloadManager:
         downloading_manage_thread = threading.Thread(target=DownloadManager.manage_download_queue)
         downloading_manage_thread.daemon = True
         downloading_manage_thread.start()
-        
+
     @staticmethod
-    def configure_chunk_size():
+    def configure_chunk_size() -> None:
         pytubefix_request.default_range_size = GeneralSettings.settings["chunk_size"]
-        

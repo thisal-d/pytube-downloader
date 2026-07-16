@@ -1,25 +1,25 @@
+from collections.abc import Callable
+from typing import Any
+
 import customtkinter as ctk
-from typing import Any, List, Callable
-from services import ThemeManager, LanguageManager
-from settings import (
-    AppearanceSettings
-)
+
+from services import LanguageManager, ThemeManager
+from settings import AppearanceSettings
+
 from ..components.setting_navigate_button import SettingNavigateButton
 
 
 class NavigationPanel(ctk.CTkFrame):
     def __init__(
-            self,
-            master: Any = None,
-            navigation_panels: List[ctk.CTkFrame] = None,
-            navigation_button_on_click_callback: Callable = None,
-            navigation_buttons_texts: List[str] = None,
-            width: int = None):
+        self,
+        master: Any = None,
+        navigation_panels: list[ctk.CTkFrame] = None,
+        navigation_button_on_click_callback: Callable = None,
+        navigation_buttons_texts: list[str] = None,
+        width: int = None,
+    ):
 
-        super().__init__(
-            master=master,
-            width=width
-        )
+        super().__init__(master=master, width=width)
 
         self.navigation_buttons_texts = navigation_buttons_texts
         self.navigation_buttons = []
@@ -33,8 +33,9 @@ class NavigationPanel(ctk.CTkFrame):
                 )
             )
             self.navigation_buttons[-1].configure(
-                command=lambda panel=navigation_panels[i], button=self.navigation_buttons[-1]:
-                self.on_click_navigation_button(button, panel)
+                command=lambda panel=navigation_panels[i], button=self.navigation_buttons[-1]: (
+                    self.on_click_navigation_button(button, panel)
+                )
             )
 
         self.navigation_button_on_click_callback = navigation_button_on_click_callback
@@ -49,7 +50,7 @@ class NavigationPanel(ctk.CTkFrame):
         self.place_widgets()
         # place first panel @ startup
         self.on_click_navigation_button(self.navigation_buttons[0], navigation_panels[0])
-    
+
         ThemeManager.register_widget(self)
         LanguageManager.register_widget(self)
 
@@ -76,7 +77,7 @@ class NavigationPanel(ctk.CTkFrame):
     def set_widgets_texts(self):
         for i, button in enumerate(self.navigation_buttons):
             button.configure(text=LanguageManager.data[self.navigation_buttons_texts[i]])
-            
+
     def update_widgets_text(self):
         self.set_widgets_texts()
 
@@ -103,7 +104,7 @@ class NavigationPanel(ctk.CTkFrame):
                     fg_color=ThemeManager.get_color_based_on_theme("primary"),
                     text_color=ThemeManager.get_color_based_on_theme("text_muted"),
                 )
-        
+
         def on_enter(event, btn):
             if btn.is_clicked:
                 btn.configure(
@@ -112,9 +113,9 @@ class NavigationPanel(ctk.CTkFrame):
             else:
                 btn.configure(
                     fg_color=ThemeManager.get_color_based_on_theme("primary_hover"),
-                    text_color=ThemeManager.get_color_based_on_theme("text_normal")    
+                    text_color=ThemeManager.get_color_based_on_theme("text_normal"),
                 )
-        
+
         for navigation_button in self.navigation_buttons:
             navigation_button.bind("<Enter>", lambda event, btn=navigation_button: on_enter(event, btn))
             navigation_button.bind("<Leave>", lambda event, btn=navigation_button: on_leave(event, btn))
@@ -128,12 +129,10 @@ class NavigationPanel(ctk.CTkFrame):
                 navigation_button.configure(
                     fg_color=ThemeManager.get_accent_color("normal"),
                 )
- 
+
     def set_widgets_colors(self):
         """Set colors for the widgets."""
-        self.configure(
-            fg_color=ThemeManager.get_color_based_on_theme("background")
-        )
+        self.configure(fg_color=ThemeManager.get_color_based_on_theme("background"))
 
         for navigation_button in self.navigation_buttons:
             if navigation_button.is_clicked:
