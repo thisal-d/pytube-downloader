@@ -45,6 +45,7 @@
   | 中文 (Chinese) | [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu) |
   | සිංහල (僧加罗语) | [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21)     |
   | தமிழ் (泰米尔语) | [<img src="https://github.com/fathi-asma.png?size=25" width="25">](https://github.com/fathi-asma)   |
+  | Русский (俄语) | [<img src="https://github.com/sergdryg.png?size=25" width="25">](https://github.com/sergdryg) |
 
   💡 **帮助我们改进现有翻译** 或 **添加新语言**！
   查看：[改善现有语言贡献指南](LANGUAGE_CONTRIBUTION_GUIDE_zh.md/#improve-current-language-issues)
@@ -188,6 +189,8 @@ If you want, I can now **combine all your previous translations** (Language Guid
 | [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21)             | [Navindu Pahasara](https://github.com/Navindu21)       |
 | [<img src="https://github.com/sooryasuraweera.png?size=25" width="25">](https://github.com/sooryasuraweera) | [Soorya Suraweera](https://github.com/sooryasuraweera) |
 | [<img src="https://github.com/fathi-asma.png?size=25" width="25">](https://github.com/fathi-asma)           | [Fathima Asma](https://github.com/fathi-asma)          |
+| [<img src="https://github.com/ZLostTK.png?size=25" width="25">](https://github.com/ZLostTK)           | [ZLostTK](https://github.com/ZLostTK)                |
+| [<img src="https://github.com/sergdryg.png?size=25" width="25">](https://github.com/sergdryg)           | [Sergdryg](https://github.com/sergdryg)              |
 
 ---
 

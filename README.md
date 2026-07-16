@@ -53,6 +53,7 @@ With support for multiple formats, quality levels (144p–8K), and simultaneous 
   | 中文 (Chinese)    | [<img src="https://github.com/childeyouyu.png?size=25" width="25">](https://github.com/childeyouyu) |
   | සිංහල (Sinhala) | [<img src="https://github.com/Navindu21.png?size=25" width="25">](https://github.com/Navindu21)     |
   | தமிழ் (Tamil)   | [<img src="https://github.com/asma-mf.png?size=25" width="25">](https://github.com/asma-mf)   |
+  | Русский (Russian) | [<img src="https://github.com/sergdryg.png?size=25" width="25">](https://github.com/sergdryg) |
 
   💡 **Help us [improve existing translations](LANGUAGE_CONTRIBUTION_GUIDE_en.md/#improve-current-language-issues)** or [**add new ones**](LANGUAGE_CONTRIBUTION_GUIDE_en.md/#adding-a-new-language).
 * 🖥️ **Cross-Platform Support** — Runs on Windows, Linux, and macOS.
@@ -220,6 +221,7 @@ Please respect **YouTube's Terms of Service** and content creators' rights when 
 | [<img src="https://github.com/sooryasuraweera.png?size=25" width="25">](https://github.com/sooryasuraweera) | [Soorya Suraweera](https://github.com/sooryasuraweera) |
 | [<img src="https://github.com/asma-mf.png?size=25" width="25">](https://github.com/asma-mf)           | [Fathima Asma](https://github.com/asma-mf)          |
 | [<img src="https://github.com/ZLostTK.png?size=25" width="25">](https://github.com/ZLostTK)           | [ZLostTK](https://github.com/ZLostTK)                |
+| [<img src="https://github.com/sergdryg.png?size=25" width="25">](https://github.com/sergdryg)           | [Sergdryg](https://github.com/sergdryg)              |
 
 ---
 
