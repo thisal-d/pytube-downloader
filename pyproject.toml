@@ -30,7 +30,7 @@ windows = [
 ]
 dev = [
     "pre-commit>=4.6.0",
-    "pytest>=8.0.0",
+    "pytest>=9.1.1",
     "pytest-mock>=3.12.0",
     "pytest-cov>=5.0.0",
     "ruff>=0.5.0",
