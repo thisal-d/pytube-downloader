@@ -25,7 +25,7 @@ dependencies = [
 
 [project.optional-dependencies]
 windows = [
-    "win11toast>=0.5",
+    "win11toast>=0.36.3",
     "hPyT>=1.4.0",
 ]
 dev = [
