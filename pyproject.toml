@@ -34,7 +34,7 @@ dev = [
     "pytest-mock>=3.16.0",
     "pytest-cov>=7.1.0",
     "ruff>=0.17.1",
-    "mypy>=2.3.1"
+    "mypy>=2.4.0"
 ]
 
 [project.scripts]
