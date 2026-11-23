@@ -40,7 +40,7 @@ class DownloadManager:
         "17280p",
     ]
 
-    default_chunk_size: int = 2097152
+    default_chunk_size: int = 8388608
 
     @staticmethod
     def manage_download_queue() -> None:

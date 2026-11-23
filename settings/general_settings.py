@@ -77,7 +77,8 @@ class GeneralSettings:
         "update_delay": 0.5,
         "alerts": True,
         "window_geometry": "900x500-7+0",
-        "chunk_size": 2097152,
+        "chunk_size": 8388608,
+        "connections_per_download": 8,
         "display_download_speed_info": False,
     }
 
@@ -99,6 +100,14 @@ class GeneralSettings:
             GeneralSettings.settings = JsonUtility.read_from_file(GeneralSettings.user_settings_file)
         else:
             GeneralSettings.settings = JsonUtility.read_from_file(GeneralSettings.default_settings_file)
+
+        # Settings saved before parallel downloading existed still hold the old 2 MB default
+        # chunk size, which is slower with parallel connections; move those to the new default.
+        if (
+            "connections_per_download" not in GeneralSettings.settings
+            and GeneralSettings.settings.get("chunk_size") == 2097152
+        ):
+            GeneralSettings.settings["chunk_size"] = GeneralSettings.SETTINGS["chunk_size"]
 
         if not GeneralSettings.are_all_keys_present():
             GeneralSettings.add_missing_keys()

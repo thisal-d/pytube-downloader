@@ -8,7 +8,6 @@ from tkinter import PhotoImage
 from typing import Literal
 
 import customtkinter as ctk
-from pytubefix import request as pytube_request
 
 from services import (
     DownloadManager,
@@ -18,6 +17,7 @@ from services import (
     VideoConvertManager,
     VideoCountTracker,
 )
+from services.segmented_downloader import SegmentedDownloader
 from settings import (
     AppearanceSettings,
     GeneralSettings,
@@ -334,69 +334,91 @@ class DownloadingVideo(Video):
 
         self.bytes_downloaded = 0
         self.download_time = 0
+        downloader = SegmentedDownloader(
+            url=download_stream.url,
+            file_size=download_file_size,
+            file_path=download_file_name,
+            connections=GeneralSettings.settings["connections_per_download"],
+            chunk_size=GeneralSettings.settings["chunk_size"],
+        )
         try:
-            with open(download_file_name, "wb") as self.downloading_file:
-                stream = pytube_request.stream(download_stream.url)
-                while 1:
-                    try:
-                        if self.pause_requested:
-                            if self.pause_resume_btn_command != "resume":
-                                self.pause_resume_btn.configure(command=self.resume_downloading)
-                                self.download_state = "paused"
-                                if self.mode == "playlist":
-                                    self.video_download_status_callback(self, self.download_state)
-                                self.display_status()
-                                self.set_resume_btn()
-                                self.pause_resume_btn_command = "resume"
-                            time.sleep(0.3)
-                            continue
+            downloader.start()
+            # The workers download in the background; this loop only reports progress
+            # and relays pause / remove requests, a few times a second.
+            tick_time = time.time()
+            speed_time, speed_bytes = tick_time, 0
+            while True:
+                if self.download_state == "removed":
+                    downloader.cancel()
+                    downloader.wait(5)
+                    downloader.remove_file()
+                    return
 
-                        time_s = time.time()
-                        self.download_state = "downloading"
-                        self.pause_resume_btn_command = "pause"
-                        chunk = next(stream, None)
-                        time_e = time.time()
-                        if chunk:
-                            self.downloading_file.write(chunk)
-                            # Calculate running time
-                            self.total_download_time += time_e - time_s
-                            self.download_time += time_e - time_s
+                if self.pause_requested:
+                    downloader.pause()
+                    if self.pause_resume_btn_command != "resume":
+                        self.pause_resume_btn.configure(command=self.resume_downloading)
+                        self.download_state = "paused"
+                        if self.mode == "playlist":
+                            self.video_download_status_callback(self, self.download_state)
+                        self.display_status()
+                        self.set_resume_btn()
+                        self.pause_resume_btn_command = "resume"
+                    time.sleep(0.3)
+                    tick_time = speed_time = time.time()
+                    speed_bytes = self.bytes_downloaded
+                    continue
 
-                            if self.net_speed_label is not None:
-                                self.net_speed_label.configure(
-                                    text=ValueConvertUtility.convert_size(len(chunk) / (time_e - time_s), 1) + "/s"
-                                )
-                            self.bytes_downloaded += len(chunk)
-                            self.total_bytes_downloaded += len(chunk)
+                if self.download_state == "paused":
+                    self.download_state = "downloading"
+                self.pause_resume_btn_command = "pause"
+                downloader.resume()
 
-                            self.set_downloading_progress()
-                        else:
-                            if self.bytes_downloaded == download_file_size:
-                                if download_type == "audio":
-                                    self.audio_download_completed = True
-                                elif download_type == "video":
-                                    self.video_download_completed = True
-                                    self.audio_for_video_download_completed = True
-                                elif download_type == "video_only":
-                                    self.video_download_completed = True
-                                elif download_type == "audio_for_video":
-                                    self.audio_for_video_download_completed = True
-                                break
-                            else:
-                                self.total_bytes_downloaded -= self.bytes_downloaded
-                                self.total_download_time -= self.download_time
-                                self.set_downloading_failed()
-                                break
+                finished = downloader.finished
+                if not finished:
+                    time.sleep(0.2)
 
-                    except Exception as error:
-                        _log.error("chunk write error: %s", error)
-                        self.total_bytes_downloaded -= self.bytes_downloaded
-                        self.total_download_time -= self.download_time
-                        self.set_downloading_failed()
-                        break
+                now = time.time()
+                self.total_download_time += now - tick_time
+                self.download_time += now - tick_time
+                tick_time = now
+
+                new_bytes = downloader.bytes_downloaded - self.bytes_downloaded
+                self.bytes_downloaded += new_bytes
+                self.total_bytes_downloaded += new_bytes
+
+                if now - speed_time >= 1:
+                    if self.net_speed_label is not None:
+                        speed = (self.bytes_downloaded - speed_bytes) / (now - speed_time)
+                        self.net_speed_label.configure(text=ValueConvertUtility.convert_size(speed, 1) + "/s")
+                    speed_time, speed_bytes = now, self.bytes_downloaded
+
+                self.set_downloading_progress()
+
+                if finished:
+                    break
+
+            if downloader.succeeded:
+                if download_type == "audio":
+                    self.audio_download_completed = True
+                elif download_type == "video":
+                    self.video_download_completed = True
+                    self.audio_for_video_download_completed = True
+                elif download_type == "video_only":
+                    self.video_download_completed = True
+                elif download_type == "audio_for_video":
+                    self.audio_for_video_download_completed = True
+            else:
+                _log.error("download failed: %s", downloader.error)
+                self.total_bytes_downloaded -= self.bytes_downloaded
+                self.total_download_time -= self.download_time
+                self.set_downloading_failed()
 
         except Exception as error:
-            _log.error("download_file open/stream error: %s", error)
+            _log.error("download_file error: %s", error)
+            downloader.cancel()
+            self.total_bytes_downloaded -= self.bytes_downloaded
+            self.total_download_time -= self.download_time
             self.set_downloading_failed()
 
     def converting(self):
@@ -419,7 +441,7 @@ class DownloadingVideo(Video):
             "-c:v",
             "copy",
             "-c:a",
-            "aac",
+            "copy",  # the audio stream is already AAC, so there is nothing to re-encode
             self.converted_file_name,
             "-y",  # Overwrite the output file if it exists
         ]
